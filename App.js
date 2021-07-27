@@ -7,6 +7,7 @@ import {NavigationContainer, useNavigation} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import linking from './controller/linking';
 import {AuthContext} from './controller/Utils';
+import messaging from '@react-native-firebase/messaging';
 
 // ===== Screens ===== //
 import SplashScreen from './controller/SplashScreen';
@@ -78,7 +79,24 @@ const App = () => {
     [],
   );
 
+  const requestUserPermission = async () => {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+    }
+  };
+
   useEffect(() => {
+    requestUserPermission();
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      alert(JSON.stringify('Body:' + ' ' + remoteMessage.notification.body));
+      // alert('App.js' + ' ' + JSON.stringify(remoteMessage.notification));
+    });
+
     setTimeout(() => {
       const bootstrapAsync = async () => {
         let userToken;
@@ -91,6 +109,7 @@ const App = () => {
 
       bootstrapAsync();
     }, 3000);
+    return unsubscribe;
   }, []);
 
   return (
