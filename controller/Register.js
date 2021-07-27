@@ -359,7 +359,7 @@ const Register = ({navigation}) => {
 
             <View style={styles.actionSection}>
               <View style={styles.actionRow}>
-                <View
+                <Pressable
                   style={styles.actionBox}
                   onPress={() => requestGalleryPermission('DL')}>
                   {drivingLicensePath == '' ? (
@@ -374,7 +374,7 @@ const Register = ({navigation}) => {
                       }}
                     />
                   )}
-                </View>
+                </Pressable>
                 <View style={styles.actionDiv}>
                   <Text style={styles.actionTxt}>
                     Upload Driving License Image
@@ -385,7 +385,7 @@ const Register = ({navigation}) => {
 
             <View style={styles.actionSection}>
               <View style={styles.actionRow}>
-                <View
+                <Pressable
                   style={styles.actionBox}
                   onPress={() => requestGalleryPermission('RegBikePlate')}>
                   {bikeRegImgPath == '' ? (
@@ -400,7 +400,7 @@ const Register = ({navigation}) => {
                       }}
                     />
                   )}
-                </View>
+                </Pressable>
                 <View style={styles.actionDiv}>
                   <Text style={styles.actionTxt}>
                     Upload Bike's Registration Plate Image
@@ -411,7 +411,7 @@ const Register = ({navigation}) => {
 
             <View style={styles.actionSection}>
               <View style={styles.actionRow}>
-                <View
+                <Pressable
                   style={styles.actionBox}
                   onPress={() => requestGalleryPermission('bikeInsure')}>
                   {bikeInsuranceImgPath == '' ? (
@@ -426,7 +426,7 @@ const Register = ({navigation}) => {
                       }}
                     />
                   )}
-                </View>
+                </Pressable>
                 <View style={styles.actionDiv}>
                   <Text style={styles.actionTxt}>
                     Upload Bike's Insurance papers
@@ -437,7 +437,7 @@ const Register = ({navigation}) => {
 
             <View style={styles.actionSection}>
               <View style={styles.actionRow}>
-                <View
+                <Pressable
                   style={styles.actionBox}
                   onPress={() => requestGalleryPermission('PollutionImg')}>
                   {bikePollImgPath == '' ? (
@@ -452,7 +452,7 @@ const Register = ({navigation}) => {
                       }}
                     />
                   )}
-                </View>
+                </Pressable>
                 <View style={styles.actionDiv}>
                   <Text style={styles.actionTxt}>
                     Upload Pollution Papers Image
