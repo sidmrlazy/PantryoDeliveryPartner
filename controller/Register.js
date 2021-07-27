@@ -8,24 +8,220 @@ import {
   ScrollView,
   LogBox,
   Platform,
+  PermissionsAndroid,
+  Image,
+  ToastAndroid,
 } from 'react-native';
 
 // Library
 import Icons from 'react-native-vector-icons/Ionicons';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
-const Register = () => {
+///////////Loader Screeen
+import LoaderScreen from '../controller/LoaderScreen';
+
+const Register = ({navigation}) => {
+  const [isLoading, setLoading] = useState(false);
+  const [FCMToken, setFCMToken] = useState('');
   const [profileImg, setProfileImg] = useState('');
+  const [profileImgPath, setProfileImgPath] = useState('');
   const [name, setName] = useState('');
   const [contactNumber, setContactNumber] = useState('');
   const [address, setAddress] = useState('');
   const [pincode, setPincode] = useState('');
   const [bikeNumber, setBikeNumber] = useState('');
   const [idImg, setIdImg] = useState('');
+  const [idImgPath, setIdImgPath] = useState('');
   const [drivingLicense, setDrivingLicense] = useState('');
+  const [drivingLicensePath, setDrivingLicensePath] = useState('');
   const [bikeRegImg, setBikeRegImg] = useState('');
+  const [bikeRegImgPath, setBikeRegImgPath] = useState('');
   const [bikeInsuranceImg, setBikeInsuranceImg] = useState('');
+  const [bikeInsuranceImgPath, setBikeInsuranceImgPath] = useState('');
   const [bikePollImg, setBikePollImg] = useState('');
+  const [bikePollImgPath, setBikePollImgPath] = useState('');
+
+  ///Take Image
+  const requestGalleryPermission = async selectForImage => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        {
+          title: 'Pantryo Delivery App Camera Permission',
+          message: 'Pantryo Delivery App  needs access to your camera ',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        let SelectFor = selectForImage;
+        let options = {
+          storageOptions: {
+            skipBackup: true,
+            path: 'images',
+          },
+          maxWidth: 900,
+          maxHeight: 900,
+          quality: 1,
+          videoQuality: 'medium',
+          durationLimit: 30,
+          includeBase64: true,
+        };
+        await launchImageLibrary(options, res => {
+          if (res) {
+            if (res.errorCode == 'permission') {
+              alert('Permission not granted');
+              return;
+            } else if (res.errorCode == 'others') {
+              alert(res.errorMessage);
+              return;
+            } else if (res.didCancel) {
+              // console.log('User cancelled image picker');
+            } else {
+              let temp = {name: res.fileName, uri: res.uri, type: res.type};
+              if (SelectFor == 'Profile') {
+                setProfileImgPath(res.uri);
+                setProfileImg(temp);
+              }
+              if (SelectFor == 'IdProof') {
+                setIdImgPath(res.uri);
+                setIdImg(temp);
+              }
+              if (SelectFor == 'DL') {
+                setDrivingLicensePath(res.uri);
+                setDrivingLicense(temp);
+              }
+              if (SelectFor == 'RegBikePlate') {
+                setBikeRegImgPath(res.uri);
+                setBikeRegImg(temp);
+              }
+              if (SelectFor == 'bikeInsure') {
+                setBikeInsuranceImgPath(res.uri);
+                setBikeInsuranceImg(temp);
+              }
+              if (SelectFor == 'PollutionImg') {
+                setBikePollImgPath(res.uri);
+                setBikePollImg(temp);
+              }
+            }
+          }
+        });
+      } else {
+        console.log('Camera permission denied');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
+
+  ///////======Toast==========//////////
+  const showToast = msg => {
+    ToastAndroid.showWithGravityAndOffset(
+      msg,
+      ToastAndroid.SHORT,
+      ToastAndroid.BOTTOM,
+      25,
+      50,
+    );
+  };
+
+  //////////////Register
+  const registrationApi = async () => {
+    if (!profileImg) {
+      showToast('Upload Profile Image it`s Required');
+      return;
+    } else if (!name) {
+      showToast('Enter your Full Name');
+      return;
+    } else if (contactNumber) {
+      showToast('Please Enter your Mobile Number');
+      return;
+    } else if (!contactNumber.length !== 10) {
+      showToast('Please Enter Valid Mobile Number');
+      return;
+    } else if (!address) {
+      showToast('Please Enter Your Address');
+      return;
+    } else if (!bikeNumber) {
+      showToast('Please Enter Your Registered Bike Number');
+      return;
+    } else if (!idImg) {
+      showToast('Upload your Id Proof it`s Required');
+      return;
+    } else if (!pincode) {
+      showToast('Please Enter Your  Pincode');
+      return;
+    } else if (!drivingLicense) {
+      showToast('Upload your Driving License it`s Required');
+      return;
+    } else if (!bikeRegImg) {
+      showToast('Upload your Registered Bike Plate Image it`s Required');
+      return;
+    } else if (!bikeInsuranceImg) {
+      showToast('Upload your Bike Insurance Paper it`s Required');
+      return;
+    } else if (!bikePollImg) {
+      showToast('Upload your Bike Pollution paper it`s Required');
+      return;
+    } else {
+      // const data = new FormData();
+      // data.append('profileImg', profileImg);
+      // data.append('fullname', name);
+      // data.append('contactNumber', contactNumber);
+      // data.append('address', address);
+      // data.append('pincode', pincode);
+      // data.append('bikeRegistrationNumber', bikeNumber);
+      // data.append('idProofImage', idImg);
+      // data.append('drivingLicenseImage', drivingLicense);
+      // data.append('bikeRegistrationPaperImage', bikeRegImg);
+      // data.append('bikeInsurancepaperImage', bikeInsuranceImg);
+      // data.append('pollutionPaperImage', bikePollImg);
+      // data.append('userToken', FCMToken);
+      setLoading(true);
+      fetch(
+        'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=DeliveryPartnerRegister',
+        {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'multipart/form-data;',
+          },
+          body: JSON.stringify({
+            contactNumber: contactNumber,
+          }),
+        },
+      )
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (result) {
+          if (result.error == 0) {
+            navigation.navigate('OtpVerification', {
+              profileImg: profileImg,
+              fullname: name,
+              contactNumber: contactNumber,
+              address: address,
+              pincode: pincode,
+              bikeRegistrationNumber: bikeNumber,
+              idProofImage: idImg,
+              drivingLicenseImage: drivingLicense,
+              bikeRegistrationPaperImage: bikeRegImg,
+              bikeInsurancepaperImage: bikeInsuranceImg,
+              pollutionPaperImage: bikePollImg,
+              generatedOtp: result.resend_otp,
+            });
+          } else {
+            showToast('Something went wrong');
+          }
+        })
+        .catch(error => {
+          console.error(error);
+        })
+        .finally(() => setLoading(false));
+    }
+  };
+  //////////////Register
 
   useEffect(() => {
     LogBox.ignoreAllLogs();
@@ -36,10 +232,24 @@ const Register = () => {
   return (
     <>
       <ScrollView style={styles.scroll}>
+        {isLoading == true ? <LoaderScreen /> : null}
         <View style={styles.container}>
           <View style={styles.imgSection}>
-            <Pressable style={styles.box}>
-              <Icons name="camera-outline" size={30} color="#fff" />
+            <Pressable
+              style={styles.box}
+              onPress={() => requestGalleryPermission('Profile')}>
+              {profileImg !== '' ? (
+                <Image
+                  source={{uri: profileImgPath}}
+                  style={{
+                    height: 90,
+                    width: 90,
+                    borderRadius: 100,
+                  }}
+                />
+              ) : (
+                <Icons name="camera-outline" size={30} color="#fff" />
+              )}
             </Pressable>
             <Text style={styles.heading}>Take Picture</Text>
             <Text style={styles.caption}>
@@ -51,24 +261,30 @@ const Register = () => {
           <View style={styles.section}>
             <TextInput
               placeholder="Full Name"
+              placeholderTextColor="#777"
               autoCapitalize="words"
               autoCompleteType="name"
               style={styles.input}
+              onChangeText={text => setName(text)}
             />
           </View>
 
           <View style={styles.section}>
             <TextInput
               placeholder="Mobile Number"
+              maxLength={10}
+              placeholderTextColor="#777"
               keyboardType="phone-pad"
               autoCompleteType="tel"
               style={styles.input}
+              onChangeText={text => setContactNumber(text)}
             />
           </View>
 
           <View style={styles.section}>
             <TextInput
               placeholder="Address"
+              placeholderTextColor="#777"
               keyboardType="default"
               autoCapitalize="words"
               autoCompleteType="street-address"
@@ -76,15 +292,18 @@ const Register = () => {
               style={styles.input}
               numberOfLines={5}
               multiline={true}
+              onChangeText={text => setAddress(text)}
             />
           </View>
 
           <View style={styles.section}>
             <TextInput
               placeholder="Pincode"
+              placeholderTextColor="#777"
               keyboardType="number-pad"
               autoCompleteType="postal-code"
               style={styles.input}
+              onChangeText={text => setPincode(text)}
             />
           </View>
 
@@ -99,17 +318,32 @@ const Register = () => {
             <View style={styles.section}>
               <TextInput
                 placeholder="Bike Registration Number"
+                placeholderTextColor="#777"
                 keyboardType="default"
                 autoCapitalize="characters"
                 style={styles.input}
+                onChangeText={text => setBikeNumber(text)}
               />
             </View>
 
             <View style={styles.actionSection}>
               <View style={styles.actionRow}>
-                <View style={styles.actionBox}>
-                  <Icons name="image-outline" size={20} />
-                </View>
+                <Pressable
+                  style={styles.actionBox}
+                  onPress={() => requestGalleryPermission('IdProof')}>
+                  {idImgPath == '' ? (
+                    <Icons name="image-outline" size={20} />
+                  ) : (
+                    <Image
+                      source={{uri: idImgPath}}
+                      style={{
+                        height: 95,
+                        width: 95,
+                        borderRadius: 5,
+                      }}
+                    />
+                  )}
+                </Pressable>
                 <View style={styles.actionDiv}>
                   <Text style={styles.actionTxt}>Upload ID Proof Image</Text>
                   <Text
@@ -125,8 +359,21 @@ const Register = () => {
 
             <View style={styles.actionSection}>
               <View style={styles.actionRow}>
-                <View style={styles.actionBox}>
-                  <Icons name="image-outline" size={20} />
+                <View
+                  style={styles.actionBox}
+                  onPress={() => requestGalleryPermission('DL')}>
+                  {drivingLicensePath == '' ? (
+                    <Icons name="image-outline" size={20} />
+                  ) : (
+                    <Image
+                      source={{uri: drivingLicensePath}}
+                      style={{
+                        height: 95,
+                        width: 95,
+                        borderRadius: 5,
+                      }}
+                    />
+                  )}
                 </View>
                 <View style={styles.actionDiv}>
                   <Text style={styles.actionTxt}>
@@ -138,8 +385,21 @@ const Register = () => {
 
             <View style={styles.actionSection}>
               <View style={styles.actionRow}>
-                <View style={styles.actionBox}>
-                  <Icons name="image-outline" size={20} />
+                <View
+                  style={styles.actionBox}
+                  onPress={() => requestGalleryPermission('RegBikePlate')}>
+                  {bikeRegImgPath == '' ? (
+                    <Icons name="image-outline" size={20} />
+                  ) : (
+                    <Image
+                      source={{uri: bikeRegImgPath}}
+                      style={{
+                        height: 95,
+                        width: 95,
+                        borderRadius: 5,
+                      }}
+                    />
+                  )}
                 </View>
                 <View style={styles.actionDiv}>
                   <Text style={styles.actionTxt}>
@@ -151,8 +411,21 @@ const Register = () => {
 
             <View style={styles.actionSection}>
               <View style={styles.actionRow}>
-                <View style={styles.actionBox}>
-                  <Icons name="image-outline" size={20} />
+                <View
+                  style={styles.actionBox}
+                  onPress={() => requestGalleryPermission('bikeInsure')}>
+                  {bikeInsuranceImgPath == '' ? (
+                    <Icons name="image-outline" size={20} />
+                  ) : (
+                    <Image
+                      source={{uri: bikeInsuranceImgPath}}
+                      style={{
+                        height: 95,
+                        width: 95,
+                        borderRadius: 5,
+                      }}
+                    />
+                  )}
                 </View>
                 <View style={styles.actionDiv}>
                   <Text style={styles.actionTxt}>
@@ -164,8 +437,21 @@ const Register = () => {
 
             <View style={styles.actionSection}>
               <View style={styles.actionRow}>
-                <View style={styles.actionBox}>
-                  <Icons name="image-outline" size={20} />
+                <View
+                  style={styles.actionBox}
+                  onPress={() => requestGalleryPermission('PollutionImg')}>
+                  {bikePollImgPath == '' ? (
+                    <Icons name="image-outline" size={20} />
+                  ) : (
+                    <Image
+                      source={{uri: bikePollImgPath}}
+                      style={{
+                        height: 95,
+                        width: 95,
+                        borderRadius: 5,
+                      }}
+                    />
+                  )}
                 </View>
                 <View style={styles.actionDiv}>
                   <Text style={styles.actionTxt}>
@@ -175,7 +461,10 @@ const Register = () => {
               </View>
             </View>
 
-            <Pressable style={styles.loginBtn}>
+            <Pressable
+              onPress={() => registrationApi()}
+              // onPress={() => navigation.navigate('OtpVerification')}
+              style={styles.loginBtn}>
               <Text style={styles.loginBtnTxt}>SUBMIT</Text>
             </Pressable>
           </View>
@@ -236,6 +525,7 @@ const styles = StyleSheet.create({
   input: {
     fontFamily: 'OpenSans-Regular',
     fontSize: 16,
+    color: '#000',
   },
   divider: {
     width: '100%',
