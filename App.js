@@ -77,9 +77,22 @@ const App = () => {
     [],
   );
 
+  const requestUserPermission = async () => {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+    }
+  };
+
   useEffect(() => {
+    requestUserPermission();
     const unsubscribe = messaging().onMessage(async remoteMessage => {
-      alert(JSON.stringify(remoteMessage.notification.android));
+      alert(JSON.stringify('Body:' + ' ' + remoteMessage.notification.body));
+      // alert('App.js' + ' ' + JSON.stringify(remoteMessage.notification));
     });
 
     setTimeout(() => {
