@@ -1,0 +1,44 @@
+======== Theme Colors ========
+1. #FFFFFF
+2. #FEF9E5
+3. #E6AF88
+4. #F4AA79
+5. #C6B5C7
+6. #5E3360
+
+======== Font Used ========
+1. OpenSans-Regular
+2. OpenSans-Medium
+3. OpenSans-SemiBold
+4. OpenSans-Bold
+5. OpenSans-ExtraBold
+6. FredokaOne-Regular
+================================
+
+======== Libraries Used ========
+1. React Navigation
+2. React Native Async Storage
+3. React Native Vector Icons - Ionicons
+4. React Native CheckBox
+5. React Native Animatable
+6. React Native Dropdown Picker
+7. React Native Snap Carousel
+================================
+
+======================== Screens List & Documentation ========================
+1. SplashScreen - Splash Screen will be active for only 3 Seconds    
+
+2. Login Screen -
+    a) If User is already registered then re-direct the user to the HomeScreen 
+    and hold the user in session so that he does not have to login again and again
+    b) If User Mobile number does not exist in the database take user to OTP verification
+    screen. After OTP Validation, take user to HomeScreen
+3. Home Screen -
+    a) Get user current location and show results to user according to the location
+    b) If User changes his location save the location of the user and show the results accordingly
+    c) 
+
+
+
+
+

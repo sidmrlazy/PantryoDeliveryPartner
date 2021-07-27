@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "941915246436",
+    "project_id": "pantryo-delivery-partner",
+    "storage_bucket": "pantryo-delivery-partner.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:941915246436:android:9004d3e4943e1ef0413471",
+        "android_client_info": {
+          "package_name": "com.pantryodeliverypartner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "941915246436-5tadfve8hfpsvvqsksqlvkoh005td5h1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9VsJFXPk8Z4jSeyqUGAG9Vm8zLhwAVvA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "941915246436-5tadfve8hfpsvvqsksqlvkoh005td5h1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
