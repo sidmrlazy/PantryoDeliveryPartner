@@ -7,6 +7,7 @@ import {NavigationContainer, useNavigation} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import linking from './controller/linking';
 import {AuthContext} from './controller/Utils';
+import messaging from '@react-native-firebase/messaging';
 
 // ===== Screens ===== //
 import SplashScreen from './controller/SplashScreen';
@@ -77,6 +78,10 @@ const App = () => {
   );
 
   useEffect(() => {
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      alert(JSON.stringify(remoteMessage.notification.android));
+    });
+
     setTimeout(() => {
       const bootstrapAsync = async () => {
         let userToken;
@@ -89,6 +94,7 @@ const App = () => {
 
       bootstrapAsync();
     }, 3000);
+    return unsubscribe;
   }, []);
 
   return (
