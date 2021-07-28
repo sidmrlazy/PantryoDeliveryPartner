@@ -74,9 +74,11 @@ const App = () => {
   const authContext = useMemo(
     () => ({
       signIn: async data => {
-        const {contactNumber} = data;
+        const {contactNumber, delivery_id, userToken} = data;
         AsyncStorage.setItem('contactNumber', contactNumber);
+        AsyncStorage.setItem('user_id', delivery_id);
         dispatch({type: 'SIGN_IN', token: 'userToken'});
+        AsyncStorage.setItem('userToken', userToken);
         showToast('Welcome Partner!');
       },
       signOut: () => dispatch({type: 'SIGN_OUT'}),

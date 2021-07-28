@@ -19,6 +19,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Screens
 import Register from './Register';
+import OtpVerification from './OtpVerification';
+import LoaderScreen from './LoaderScreen';
 
 const LoginScreen = ({navigation}) => {
   const [contactNumber, setContactNumber] = React.useState('');
@@ -31,7 +33,6 @@ const LoginScreen = ({navigation}) => {
     messaging()
       .getToken()
       .then(token => {
-        console.log(token);
         return setToken(token);
       });
   };
@@ -47,39 +48,51 @@ const LoginScreen = ({navigation}) => {
   };
 
   const loginApi = async () => {
-    fetch(
-      'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=DeliveryPartnerLogin',
-      {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
+    if (!contactNumber) {
+      showToast('Enter your Registered Mobile Number');
+      return;
+    } else if (contactNumber.length !== 10) {
+      showToast('Enter valid Mobile Number');
+      return;
+    } else {
+      setLoading(true);
+      fetch(
+        'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=DeliveryPartnerLogin',
+        {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            contactNumber: contactNumber,
+            userToken: token,
+          }),
         },
-        body: JSON.stringify({
-          contactNumber: contactNumber,
-        }),
-      },
-    )
-      .then(function (response) {
-        return response.json();
-      })
-      .then(function (result) {
-        console.log(result);
-        if (result.error == 0) {
-          let delivery_id = result.delivery_id;
-          let contactNumber = result.contactNumber;
-          signIn({
-            delivery_id,
-            contactNumber,
-          });
-        } else {
-          showToast('Error:' + ' ' + result.msg);
-        }
-      })
-      .catch(error => {
-        console.error(error);
-      })
-      .finally(() => setLoading(false));
+      )
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (result) {
+          console.log(result);
+          if (result.error == 0) {
+            let delivery_id = result.delivery_id;
+            let contactNumber = result.contactNumber;
+            let userToken = result.userToken;
+            signIn({
+              delivery_id,
+              contactNumber,
+              userToken,
+            });
+          } else {
+            showToast('Error:' + ' ' + result.msg);
+          }
+        })
+        .catch(error => {
+          console.error(error);
+        })
+        .finally(() => setLoading(false));
+    }
   };
 
   React.useEffect(() => {
@@ -87,6 +100,7 @@ const LoginScreen = ({navigation}) => {
   }, []);
   return (
     <>
+      {loading == true ? <LoaderScreen /> : null}
       <View style={styles.topContainer}>
         <View style={styles.topRow}>
           <View style={styles.div}>
@@ -113,10 +127,12 @@ const LoginScreen = ({navigation}) => {
             <Icons name="phone-portrait-outline" size={20} color="#5E3360" />
             <TextInput
               placeholder="Mobile Number"
+              placeholderTextColor="#777"
               keyboardType="phone-pad"
               style={styles.txtInput}
               onChangeText={text => setContactNumber(text)}
               onSubmitEditing={loginApi}
+              maxLength={10}
             />
           </View>
         </View>
@@ -160,6 +176,21 @@ const LoginScreenContainer = () => {
         component={Register}
         options={{
           title: 'Register',
+          headerStyle: {
+            backgroundColor: '#fff',
+          },
+          headerTintColor: '#000',
+          headerTitleStyle: {
+            fontFamily: 'OpenSans-SemiBold',
+            fontSize: 18,
+          },
+        }}
+      />
+      <Stack.Screen
+        name="OtpVerification"
+        component={OtpVerification}
+        options={{
+          title: 'OtpVerification',
           headerStyle: {
             backgroundColor: '#fff',
           },
@@ -254,6 +285,7 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans-SemiBold',
     fontSize: 16,
     flex: 1,
+    color: '#000',
   },
   loginBtn: {
     marginTop: 20,
