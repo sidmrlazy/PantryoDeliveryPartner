@@ -10,21 +10,31 @@ const HomeScreen = () => {
       <View
         style={{
           flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
+          justifyContent: 'flex-start',
+          alignItems: 'flex-start',
           backgroundColor: '#fff',
+          paddingHorizontal: 20,
+          paddingVertical: 20,
         }}>
-        <TouchableOpacity
+        <View
           style={{
-            width: '80%',
-            backgroundColor: '#777',
+            flexDirection: 'row',
             justifyContent: 'center',
             alignItems: 'center',
-            paddingVertical: 18,
-          }}
-          onPress={sendNotification}>
-          <Text>HomeScreen</Text>
-        </TouchableOpacity>
+          }}>
+          <View
+            style={{
+              flex: 1,
+              borderWidth: 0.5,
+              height: 150,
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginHorizontal: 5,
+              borderRadius: 5,
+            }}>
+            <Text>New Orders</Text>
+          </View>
+        </View>
       </View>
     </>
   );

@@ -8,6 +8,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import linking from './controller/linking';
 import {AuthContext} from './controller/Utils';
 import messaging from '@react-native-firebase/messaging';
+import analytics from '@react-native-firebase/analytics';
 
 // ===== Screens ===== //
 import SplashScreen from './controller/SplashScreen';
@@ -18,6 +19,13 @@ import Navigation from './controller/Navigation';
 const Stack = createStackNavigator();
 
 const App = () => {
+  const navigationRef = useRef();
+  const routeNameRef = useRef();
+
+  // const navigationNew = useNavigation();
+  const [loading, setLoading] = useState(true);
+  const [initialRoute, setInitialRoute] = useState('Navigation');
+
   const showToast = msg => {
     ToastAndroid.showWithGravityAndOffset(
       msg,
@@ -112,8 +120,31 @@ const App = () => {
 
   return (
     <AuthContext.Provider value={authContext}>
-      <NavigationContainer linking={linking}>
-        <Stack.Navigator headerMode="none">
+      <NavigationContainer
+        ref={navigationRef}
+        onReady={() =>
+          (routeNameRef.current = navigationRef.current.getCurrentRoute().name)
+        }
+        onReady={() =>
+          (routeNameRef.current = navigationRef.current.getCurrentRoute().name)
+        }
+        onStateChange={async () => {
+          const previousRouteName = routeNameRef.current;
+          const currentRouteName = navigationRef.current.getCurrentRoute().name;
+
+          if (previousRouteName !== currentRouteName) {
+            // await Analytics.setCurrentScreen(currentRouteName);
+            await analytics().logScreenView({
+              screen_name: currentRouteName,
+              screen_class: currentRouteName,
+            });
+          }
+
+          // Save the current route name for later comparison
+          routeNameRef.current = currentRouteName;
+        }}
+        linking={linking}>
+        <Stack.Navigator initialRouteName={initialRoute} headerMode="none">
           {state.isLoading ? (
             <Stack.Screen name="SplashScreen" component={SplashScreen} />
           ) : state.userToken == null ? (
