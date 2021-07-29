@@ -54,19 +54,19 @@ const OtpVerification = ({navigation, route}) => {
     } else if (!otp) {
       showToast('OTP not found');
       return;
-    } else if (!val) {
+    } else if (!internalVal) {
       showToast('Enter your OTP');
       return;
-    } else if (val.length !== 6) {
+    } else if (internalVal.length !== 6) {
       showToast('Enter valid OTP');
       return;
     } else if (!name) {
       showToast('Enter your Full Name');
       return;
-    } else if (contactNumber) {
+    } else if (!contactNumber) {
       showToast('Please Enter your Mobile Number');
       return;
-    } else if (!contactNumber.length !== 10) {
+    } else if (contactNumber.length !== 10) {
       showToast('Please Enter Valid Mobile Number');
       return;
     } else if (!address) {
@@ -97,7 +97,7 @@ const OtpVerification = ({navigation, route}) => {
       const data = new FormData();
       data.append('profileImg', profileImg);
       data.append('generatedOtp', otp);
-      data.append('enteredOtp', val);
+      data.append('enteredOtp', internalVal);
       data.append('fullname', name);
       data.append('contactNumber', contactNumber);
       data.append('address', address);
@@ -118,15 +118,16 @@ const OtpVerification = ({navigation, route}) => {
             Accept: 'application/json',
             'Content-Type': 'multipart/form-data;',
           },
-          body: data,
+          body: JSON.stringify(data),
         },
       )
         .then(function (response) {
           return response.json();
         })
         .then(function (result) {
+          console.log(result);
           if (result.error == 0) {
-            navigation.navigate('OtpVerification', {fullname});
+            // navigation.navigate('OtpVerification', {fullname});
           } else {
             showToast('Something went wrong');
           }

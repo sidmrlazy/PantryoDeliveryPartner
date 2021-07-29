@@ -134,10 +134,10 @@ const Register = ({navigation}) => {
     } else if (!name) {
       showToast('Enter your Full Name');
       return;
-    } else if (contactNumber) {
+    } else if (!contactNumber) {
       showToast('Please Enter your Mobile Number');
       return;
-    } else if (!contactNumber.length !== 10) {
+    } else if (contactNumber.length !== 10) {
       showToast('Please Enter Valid Mobile Number');
       return;
     } else if (!address) {
@@ -196,6 +196,7 @@ const Register = ({navigation}) => {
           return response.json();
         })
         .then(function (result) {
+          console.log(result);
           if (result.error == 0) {
             navigation.navigate('OtpVerification', {
               profileImg: profileImg,
