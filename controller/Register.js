@@ -239,14 +239,15 @@ const Register = ({navigation}) => {
               style={styles.box}
               onPress={() => requestGalleryPermission('Profile')}>
               {profileImg !== '' ? (
-                <Image
-                  source={{uri: profileImgPath}}
-                  style={{
-                    height: 100,
-                    width: 100,
-                    borderRadius: 100,
-                  }}
-                />
+                // <Image
+                //   source={{uri: profileImgPath}}
+                //   style={{
+                //     height: 100,
+                //     width: 100,
+                //     borderRadius: 100,
+                //   }}
+                // />
+                <Icons name="checkbox-outline" size={30} color="green" />
               ) : (
                 <Icons name="camera-outline" size={30} color="#fff" />
               )}
@@ -334,14 +335,15 @@ const Register = ({navigation}) => {
                   {idImgPath == '' ? (
                     <Icons name="image-outline" size={20} />
                   ) : (
-                    <Image
-                      source={{uri: idImgPath}}
-                      style={{
-                        height: 95,
-                        width: 95,
-                        borderRadius: 5,
-                      }}
-                    />
+                    // <Image
+                    //   source={{uri: idImgPath}}
+                    //   style={{
+                    //     height: 95,
+                    //     width: 95,
+                    //     borderRadius: 5,
+                    //   }}
+                    // />
+                    <Icons name="checkbox-outline" size={30} color="green" />
                   )}
                 </Pressable>
                 <View style={styles.actionDiv}>
@@ -365,14 +367,15 @@ const Register = ({navigation}) => {
                   {drivingLicensePath == '' ? (
                     <Icons name="image-outline" size={20} />
                   ) : (
-                    <Image
-                      source={{uri: drivingLicensePath}}
-                      style={{
-                        height: 95,
-                        width: 95,
-                        borderRadius: 5,
-                      }}
-                    />
+                    // <Image
+                    //   source={{uri: drivingLicensePath}}
+                    //   style={{
+                    //     height: 95,
+                    //     width: 95,
+                    //     borderRadius: 5,
+                    //   }}
+                    // />
+                    <Icons name="checkbox-outline" size={30} color="green" />
                   )}
                 </Pressable>
                 <View style={styles.actionDiv}>
@@ -391,14 +394,15 @@ const Register = ({navigation}) => {
                   {bikeRegImgPath == '' ? (
                     <Icons name="image-outline" size={20} />
                   ) : (
-                    <Image
-                      source={{uri: bikeRegImgPath}}
-                      style={{
-                        height: 95,
-                        width: 95,
-                        borderRadius: 5,
-                      }}
-                    />
+                    // <Image
+                    //   source={{uri: bikeRegImgPath}}
+                    //   style={{
+                    //     height: 95,
+                    //     width: 95,
+                    //     borderRadius: 5,
+                    //   }}
+                    // />
+                    <Icons name="checkbox-outline" size={30} color="green" />
                   )}
                 </Pressable>
                 <View style={styles.actionDiv}>
@@ -417,14 +421,15 @@ const Register = ({navigation}) => {
                   {bikeInsuranceImgPath == '' ? (
                     <Icons name="image-outline" size={20} />
                   ) : (
-                    <Image
-                      source={{uri: bikeInsuranceImgPath}}
-                      style={{
-                        height: 95,
-                        width: 95,
-                        borderRadius: 5,
-                      }}
-                    />
+                    // <Image
+                    //   source={{uri: bikeInsuranceImgPath}}
+                    //   style={{
+                    //     height: 95,
+                    //     width: 95,
+                    //     borderRadius: 5,
+                    //   }}
+                    // />
+                    <Icons name="checkbox-outline" size={30} color="green" />
                   )}
                 </Pressable>
                 <View style={styles.actionDiv}>
@@ -443,14 +448,15 @@ const Register = ({navigation}) => {
                   {bikePollImgPath == '' ? (
                     <Icons name="image-outline" size={20} />
                   ) : (
-                    <Image
-                      source={{uri: bikePollImgPath}}
-                      style={{
-                        height: 95,
-                        width: 95,
-                        borderRadius: 5,
-                      }}
-                    />
+                    // <Image
+                    //   source={{uri: bikePollImgPath}}
+                    //   style={{
+                    //     height: 95,
+                    //     width: 95,
+                    //     borderRadius: 5,
+                    //   }}
+                    // />
+                    <Icons name="checkbox-outline" size={30} color="green" />
                   )}
                 </Pressable>
                 <View style={styles.actionDiv}>
@@ -500,7 +506,7 @@ const styles = StyleSheet.create({
     height: 100,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#c7c7c7c7',
+    backgroundColor: '#e0e0e0e0',
     borderRadius: 100,
     marginBottom: 20,
   },
@@ -570,7 +576,7 @@ const styles = StyleSheet.create({
   actionBox: {
     width: 100,
     height: 100,
-    backgroundColor: '#c7c7c7c7',
+    backgroundColor: '#e0e0e0e0',
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',

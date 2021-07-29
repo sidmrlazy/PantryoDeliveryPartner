@@ -192,9 +192,9 @@ const LoginScreenContainer = () => {
         name="OtpVerification"
         component={OtpVerification}
         options={{
-          title: 'OtpVerification',
+          title: 'OTP Verification',
           headerStyle: {
-            backgroundColor: '#fff',
+            backgroundColor: '#FEF9E5',
           },
           headerTintColor: '#000',
           headerTitleStyle: {
