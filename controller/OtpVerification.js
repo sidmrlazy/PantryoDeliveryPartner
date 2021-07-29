@@ -151,6 +151,7 @@ const OtpVerification = ({navigation, route}) => {
   const textInputFocus = () => {
     textInput.focus();
   };
+
   const onChangeText = val => {
     setInternalVal(val);
   };
