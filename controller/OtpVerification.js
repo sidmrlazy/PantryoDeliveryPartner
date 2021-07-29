@@ -15,8 +15,10 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import LoaderScreen from './LoaderScreen';
+import {AuthContext} from './Utils';
 
 const OtpVerification = ({navigation, route}) => {
+  const {signIn} = React.useContext(AuthContext);
   let textInput = useRef(null);
   const lengthInput = 6;
   const [internalVal, setInternalVal] = useState('');
@@ -110,15 +112,17 @@ const OtpVerification = ({navigation, route}) => {
       data.append('pollutionPaperImage', bikePollImg);
       data.append('userToken', FCMToken);
       setLoading(true);
+      // console.log(data);
+      // return;
       fetch(
-        'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=DeliveryPartnerRegistration',
+        'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/PantryoDeliveryPartnerRegistration.php',
         {
           method: 'POST',
           headers: {
             Accept: 'application/json',
             'Content-Type': 'multipart/form-data;',
           },
-          body: JSON.stringify(data),
+          body: data,
         },
       )
         .then(function (response) {
@@ -127,9 +131,18 @@ const OtpVerification = ({navigation, route}) => {
         .then(function (result) {
           console.log(result);
           if (result.error == 0) {
-            // navigation.navigate('OtpVerification', {fullname});
+            let delivery_id = result.delivery_id;
+            let contactNumber = result.contactNumber;
+            let userToken = result.userToken;
+            let userName = result.fullname;
+            signIn({
+              delivery_id,
+              contactNumber,
+              userToken,
+              userName,
+            });
           } else {
-            showToast('Something went wrong');
+            showToast(result.msg);
           }
         })
         .catch(error => {
@@ -165,6 +178,7 @@ const OtpVerification = ({navigation, route}) => {
     setOTP(route.params.generatedOtp);
     setContactNumber(route.params.contactNumber);
     setProfileImg(route.params.profileImg);
+    console.log(route.params.profileImg);
     setName(route.params.fullname);
     setAddress(route.params.address);
     setPincode(route.params.pincode);

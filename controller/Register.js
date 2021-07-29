@@ -15,7 +15,7 @@ import {
 
 // Library
 import Icons from 'react-native-vector-icons/Ionicons';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import * as ImagePicker from 'react-native-image-picker';
 
 // Loader Screeen
 import LoaderScreen from '../controller/LoaderScreen';
@@ -68,7 +68,7 @@ const Register = ({navigation}) => {
           durationLimit: 30,
           includeBase64: true,
         };
-        await launchImageLibrary(options, res => {
+        await ImagePicker.launchImageLibrary(options, res => {
           if (res) {
             if (res.errorCode == 'permission') {
               alert('Permission not granted');
@@ -79,29 +79,34 @@ const Register = ({navigation}) => {
             } else if (res.didCancel) {
               // console.log('User cancelled image picker');
             } else {
-              let temp = {name: res.fileName, uri: res.uri, type: res.type};
+              let temp = {
+                name: res.assets[0].fileName,
+                uri: res.assets[0].uri,
+                type: res.assets[0].type,
+              };
+              // console.log(temp);
               if (SelectFor == 'Profile') {
-                setProfileImgPath(res.uri);
+                setProfileImgPath(res.assets[0].uri);
                 setProfileImg(temp);
               }
               if (SelectFor == 'IdProof') {
-                setIdImgPath(res.uri);
+                setIdImgPath(res.assets[0].uri);
                 setIdImg(temp);
               }
               if (SelectFor == 'DL') {
-                setDrivingLicensePath(res.uri);
+                setDrivingLicensePath(res.assets[0].uri);
                 setDrivingLicense(temp);
               }
               if (SelectFor == 'RegBikePlate') {
-                setBikeRegImgPath(res.uri);
+                setBikeRegImgPath(res.assets[0].uri);
                 setBikeRegImg(temp);
               }
               if (SelectFor == 'bikeInsure') {
-                setBikeInsuranceImgPath(res.uri);
+                setBikeInsuranceImgPath(res.assets[0].uri);
                 setBikeInsuranceImg(temp);
               }
               if (SelectFor == 'PollutionImg') {
-                setBikePollImgPath(res.uri);
+                setBikePollImgPath(res.assets[0].uri);
                 setBikePollImg(temp);
               }
             }
@@ -239,16 +244,16 @@ const Register = ({navigation}) => {
               style={styles.box}
               onPress={() => requestGalleryPermission('Profile')}>
               {profileImg !== '' ? (
-                // <Image
-                //   source={{uri: profileImgPath}}
-                //   style={{
-                //     height: 100,
-                //     width: 100,
-                //     borderRadius: 100,
-                //   }}
-                // />
-                <Icons name="checkbox-outline" size={30} color="green" />
+                <Image
+                  source={{uri: profileImgPath}}
+                  style={{
+                    height: 100,
+                    width: 100,
+                    borderRadius: 100,
+                  }}
+                />
               ) : (
+                // <Icons name="checkbox-outline" size={30} color="green" />
                 <Icons name="camera-outline" size={30} color="#fff" />
               )}
             </Pressable>
@@ -335,15 +340,15 @@ const Register = ({navigation}) => {
                   {idImgPath == '' ? (
                     <Icons name="image-outline" size={20} />
                   ) : (
-                    // <Image
-                    //   source={{uri: idImgPath}}
-                    //   style={{
-                    //     height: 95,
-                    //     width: 95,
-                    //     borderRadius: 5,
-                    //   }}
-                    // />
-                    <Icons name="checkbox-outline" size={30} color="green" />
+                    <Image
+                      source={{uri: idImgPath}}
+                      style={{
+                        height: 95,
+                        width: 95,
+                        borderRadius: 5,
+                      }}
+                    />
+                    // <Icons name="checkbox-outline" size={30} color="green" />
                   )}
                 </Pressable>
                 <View style={styles.actionDiv}>
@@ -367,15 +372,15 @@ const Register = ({navigation}) => {
                   {drivingLicensePath == '' ? (
                     <Icons name="image-outline" size={20} />
                   ) : (
-                    // <Image
-                    //   source={{uri: drivingLicensePath}}
-                    //   style={{
-                    //     height: 95,
-                    //     width: 95,
-                    //     borderRadius: 5,
-                    //   }}
-                    // />
-                    <Icons name="checkbox-outline" size={30} color="green" />
+                    <Image
+                      source={{uri: drivingLicensePath}}
+                      style={{
+                        height: 95,
+                        width: 95,
+                        borderRadius: 5,
+                      }}
+                    />
+                    // <Icons name="checkbox-outline" size={30} color="green" />
                   )}
                 </Pressable>
                 <View style={styles.actionDiv}>
@@ -394,15 +399,15 @@ const Register = ({navigation}) => {
                   {bikeRegImgPath == '' ? (
                     <Icons name="image-outline" size={20} />
                   ) : (
-                    // <Image
-                    //   source={{uri: bikeRegImgPath}}
-                    //   style={{
-                    //     height: 95,
-                    //     width: 95,
-                    //     borderRadius: 5,
-                    //   }}
-                    // />
-                    <Icons name="checkbox-outline" size={30} color="green" />
+                    <Image
+                      source={{uri: bikeRegImgPath}}
+                      style={{
+                        height: 95,
+                        width: 95,
+                        borderRadius: 5,
+                      }}
+                    />
+                    // <Icons name="checkbox-outline" size={30} color="green" />
                   )}
                 </Pressable>
                 <View style={styles.actionDiv}>
@@ -421,15 +426,15 @@ const Register = ({navigation}) => {
                   {bikeInsuranceImgPath == '' ? (
                     <Icons name="image-outline" size={20} />
                   ) : (
-                    // <Image
-                    //   source={{uri: bikeInsuranceImgPath}}
-                    //   style={{
-                    //     height: 95,
-                    //     width: 95,
-                    //     borderRadius: 5,
-                    //   }}
-                    // />
-                    <Icons name="checkbox-outline" size={30} color="green" />
+                    <Image
+                      source={{uri: bikeInsuranceImgPath}}
+                      style={{
+                        height: 95,
+                        width: 95,
+                        borderRadius: 5,
+                      }}
+                    />
+                    // <Icons name="checkbox-outline" size={30} color="green" />
                   )}
                 </Pressable>
                 <View style={styles.actionDiv}>
@@ -448,15 +453,15 @@ const Register = ({navigation}) => {
                   {bikePollImgPath == '' ? (
                     <Icons name="image-outline" size={20} />
                   ) : (
-                    // <Image
-                    //   source={{uri: bikePollImgPath}}
-                    //   style={{
-                    //     height: 95,
-                    //     width: 95,
-                    //     borderRadius: 5,
-                    //   }}
-                    // />
-                    <Icons name="checkbox-outline" size={30} color="green" />
+                    <Image
+                      source={{uri: bikePollImgPath}}
+                      style={{
+                        height: 95,
+                        width: 95,
+                        borderRadius: 5,
+                      }}
+                    />
+                    // <Icons name="checkbox-outline" size={30} color="green" />
                   )}
                 </Pressable>
                 <View style={styles.actionDiv}>
