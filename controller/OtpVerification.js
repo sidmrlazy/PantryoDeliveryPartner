@@ -8,13 +8,13 @@ import {
   TextInput,
   Alert,
   ToastAndroid,
+  LogBox,
 } from 'react-native';
 
+// Library
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 import messaging from '@react-native-firebase/messaging';
 import LoaderScreen from './LoaderScreen';
-import {get} from 'react-native/Libraries/Utilities/PixelRatio';
 
 const OtpVerification = ({navigation, route}) => {
   let textInput = useRef(null);
@@ -35,7 +35,7 @@ const OtpVerification = ({navigation, route}) => {
   const [bikeInsuranceImg, setBikeInsuranceImg] = useState('');
   const [bikePollImg, setBikePollImg] = useState('');
 
-  //////////Show Toast
+  // Show Toast
   const showToast = msg => {
     ToastAndroid.showWithGravityAndOffset(
       msg,
@@ -46,27 +46,27 @@ const OtpVerification = ({navigation, route}) => {
     );
   };
 
-  ///////////Otp Match
+  // OTP Match
   const otpMatch = async () => {
     if (!profileImg) {
       showToast('Upload Profile Image it`s Required');
       return;
-    } else if (!otp) {
+    } else if (!internalVal) {
       showToast('OTP not found');
       return;
-    } else if (!val) {
+    } else if (!internalVal) {
       showToast('Enter your OTP');
       return;
-    } else if (val.length !== 6) {
+    } else if (internalVal.length !== 6) {
       showToast('Enter valid OTP');
       return;
     } else if (!name) {
       showToast('Enter your Full Name');
       return;
-    } else if (contactNumber) {
+    } else if (!contactNumber) {
       showToast('Please Enter your Mobile Number');
       return;
-    } else if (!contactNumber.length !== 10) {
+    } else if (contactNumber.length !== 10) {
       showToast('Please Enter Valid Mobile Number');
       return;
     } else if (!address) {
@@ -97,7 +97,7 @@ const OtpVerification = ({navigation, route}) => {
       const data = new FormData();
       data.append('profileImg', profileImg);
       data.append('generatedOtp', otp);
-      data.append('enteredOtp', val);
+      data.append('enteredOtp', internalVal);
       data.append('fullname', name);
       data.append('contactNumber', contactNumber);
       data.append('address', address);
@@ -125,6 +125,7 @@ const OtpVerification = ({navigation, route}) => {
           return response.json();
         })
         .then(function (result) {
+          console.log(result);
           if (result.error == 0) {
             navigation.navigate('OtpVerification', {fullname});
           } else {
@@ -155,6 +156,9 @@ const OtpVerification = ({navigation, route}) => {
   };
 
   useEffect(() => {
+    LogBox.ignoreAllLogs();
+    LogBox.ignoreLogs(['Warning: ...']);
+    LogBox.ignoreLogs(['VirtualizedLists should never be nested...']);
     textInputFocus();
     getDeviceToken();
     setOTP(route.params.generatedOtp);

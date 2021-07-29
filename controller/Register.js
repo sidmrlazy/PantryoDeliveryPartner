@@ -17,7 +17,7 @@ import {
 import Icons from 'react-native-vector-icons/Ionicons';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
-///////////Loader Screeen
+// Loader Screeen
 import LoaderScreen from '../controller/LoaderScreen';
 
 const Register = ({navigation}) => {
@@ -41,14 +41,14 @@ const Register = ({navigation}) => {
   const [bikePollImg, setBikePollImg] = useState('');
   const [bikePollImgPath, setBikePollImgPath] = useState('');
 
-  ///Take Image
+  // Take Image
   const requestGalleryPermission = async selectForImage => {
     try {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.CAMERA,
         {
-          title: 'Pantryo Delivery App Camera Permission',
-          message: 'Pantryo Delivery App  needs access to your camera ',
+          title: 'Pantryo Delivery Partner App Camera Permission',
+          message: 'Pantryo Delivery Partner App needs access to your camera ',
           buttonNeutral: 'Ask Me Later',
           buttonNegative: 'Cancel',
           buttonPositive: 'OK',
@@ -115,7 +115,7 @@ const Register = ({navigation}) => {
     }
   };
 
-  ///////======Toast==========//////////
+  // Toast
   const showToast = msg => {
     ToastAndroid.showWithGravityAndOffset(
       msg,
@@ -126,7 +126,7 @@ const Register = ({navigation}) => {
     );
   };
 
-  //////////////Register
+  // Registeration API
   const registrationApi = async () => {
     if (!profileImg) {
       showToast('Upload Profile Image it`s Required');
@@ -134,10 +134,10 @@ const Register = ({navigation}) => {
     } else if (!name) {
       showToast('Enter your Full Name');
       return;
-    } else if (contactNumber) {
+    } else if (!contactNumber) {
       showToast('Please Enter your Mobile Number');
       return;
-    } else if (!contactNumber.length !== 10) {
+    } else if (contactNumber.length !== 10) {
       showToast('Please Enter Valid Mobile Number');
       return;
     } else if (!address) {
@@ -196,6 +196,7 @@ const Register = ({navigation}) => {
           return response.json();
         })
         .then(function (result) {
+          console.log(result);
           if (result.error == 0) {
             navigation.navigate('OtpVerification', {
               profileImg: profileImg,
@@ -221,7 +222,6 @@ const Register = ({navigation}) => {
         .finally(() => setLoading(false));
     }
   };
-  //////////////Register
 
   useEffect(() => {
     LogBox.ignoreAllLogs();
@@ -242,8 +242,8 @@ const Register = ({navigation}) => {
                 <Image
                   source={{uri: profileImgPath}}
                   style={{
-                    height: 90,
-                    width: 90,
+                    height: 100,
+                    width: 100,
                     borderRadius: 100,
                   }}
                 />
