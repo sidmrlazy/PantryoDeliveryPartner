@@ -74,8 +74,9 @@ const App = () => {
   const authContext = useMemo(
     () => ({
       signIn: async data => {
-        const {contactNumber, delivery_id, userToken} = data;
+        const {contactNumber, delivery_id, userToken, userName} = data;
         AsyncStorage.setItem('contactNumber', contactNumber);
+        AsyncStorage.setItem('userName', userName);
         AsyncStorage.setItem('user_id', delivery_id);
         dispatch({type: 'SIGN_IN', token: 'userToken'});
         AsyncStorage.setItem('userToken', userToken);

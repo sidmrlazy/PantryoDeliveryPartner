@@ -74,15 +74,17 @@ const LoginScreen = ({navigation}) => {
           return response.json();
         })
         .then(function (result) {
-          console.log(result);
+          // console.log(result);
           if (result.error == 0) {
             let delivery_id = result.delivery_id;
             let contactNumber = result.contactNumber;
             let userToken = result.userToken;
+            let userName = result.fullname;
             signIn({
               delivery_id,
               contactNumber,
               userToken,
+              userName,
             });
           } else {
             showToast('Error:' + ' ' + result.msg);
