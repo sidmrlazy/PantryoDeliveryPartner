@@ -118,7 +118,7 @@ const OtpVerification = ({navigation, route}) => {
             Accept: 'application/json',
             'Content-Type': 'multipart/form-data;',
           },
-          body: data,
+          body: JSON.stringify(data),
         },
       )
         .then(function (response) {
@@ -127,7 +127,7 @@ const OtpVerification = ({navigation, route}) => {
         .then(function (result) {
           console.log(result);
           if (result.error == 0) {
-            navigation.navigate('OtpVerification', {fullname});
+            // navigation.navigate('OtpVerification', {fullname});
           } else {
             showToast('Something went wrong');
           }
@@ -151,6 +151,7 @@ const OtpVerification = ({navigation, route}) => {
   const textInputFocus = () => {
     textInput.focus();
   };
+
   const onChangeText = val => {
     setInternalVal(val);
   };
