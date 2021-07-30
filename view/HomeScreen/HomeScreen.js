@@ -1,10 +1,12 @@
 import React from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 
 // Libraries
+import {createStackNavigator} from '@react-navigation/stack';
 import {sendNotification, testNotification} from '../../model/notification';
+import FeatureTest from './Component/FeaturesTest';
 
-const HomeScreen = () => {
+const HomeScreen = ({navigation}) => {
   return (
     <>
       <View
@@ -32,7 +34,11 @@ const HomeScreen = () => {
               marginHorizontal: 5,
               borderRadius: 5,
             }}>
-            <Text>New Orders</Text>
+            {/* <Text>New Orders</Text> */}
+            <TouchableOpacity
+              onPress={() => navigation.navigate('FeatureTest')}>
+              <Text>Features Test</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -40,4 +46,21 @@ const HomeScreen = () => {
   );
 };
 
-export default HomeScreen;
+const Stack = createStackNavigator();
+
+function Home() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="HomeScreen"
+        component={HomeScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen name="FeatureTest" component={FeatureTest} />
+    </Stack.Navigator>
+  );
+}
+
+export default Home;
