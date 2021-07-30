@@ -1,8 +1,12 @@
 import React, {useEffect} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet, Switch} from 'react-native';
 
 // Libraries
-import {sendNotification, testNotification} from '../../model/notification';
+import {
+  sendNotification,
+  jobStarted,
+  jobStopped,
+} from '../../model/notification';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icons from 'react-native-vector-icons/Ionicons';
 import LottieView from 'lottie-react-native';
@@ -10,10 +14,14 @@ import LottieView from 'lottie-react-native';
 const HomeScreen = () => {
   const [name, setName] = React.useState('');
   const [mobile, setMobile] = React.useState('');
+  const [bikeNo, setBikeNo] = React.useState('');
+  const [isEnabled, setIsEnabled] = React.useState(false);
+  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
   const userProfileData = async () => {
     setName(await AsyncStorage.getItem('userName'));
     setMobile(await AsyncStorage.getItem('contactNumber'));
+    setBikeNo(await AsyncStorage.getItem('bikeRegistrationNumber'));
   };
 
   React.useEffect(() => {
@@ -31,6 +39,34 @@ const HomeScreen = () => {
           <View style={styles.textContainer}>
             <Text style={styles.userName}>{name}</Text>
             <Text style={styles.mobile}>{mobile}</Text>
+            <Text style={styles.bike}>{bikeNo}</Text>
+          </View>
+          <View style={styles.startBtn}>
+            {isEnabled ? (
+              <>
+                <Text style={styles.btntxt}>Stop</Text>
+                <Switch
+                  trackColor={{false: '#767577', true: '#f4f3f4'}}
+                  thumbColor={isEnabled ? 'green' : '#f4f3f4'}
+                  ios_backgroundColor="#3e3e3e"
+                  onValueChange={toggleSwitch}
+                  value={isEnabled}
+                  onChange={jobStopped}
+                />
+              </>
+            ) : (
+              <>
+                <Text style={styles.btntxt}>Start</Text>
+                <Switch
+                  trackColor={{false: '#767577', true: '#81b0ff'}}
+                  thumbColor={isEnabled ? 'green' : '#f4f3f4'}
+                  ios_backgroundColor="#3e3e3e"
+                  onValueChange={toggleSwitch}
+                  value={isEnabled}
+                  onChange={jobStarted}
+                />
+              </>
+            )}
           </View>
         </View>
         {/* ====== Header End ====== */}
@@ -114,6 +150,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#fff',
   },
+  bike: {
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 16,
+    color: '#fff',
+    marginTop: 10,
+  },
   row: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -158,5 +200,15 @@ const styles = StyleSheet.create({
   new: {
     fontFamily: 'OpenSans-Bold',
     fontSize: 24,
+  },
+  startBtn: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  btntxt: {
+    fontFamily: 'OpensSans-Bold',
+    fontSize: 18,
+    color: '#fff',
+    marginBottom: 5,
   },
 });

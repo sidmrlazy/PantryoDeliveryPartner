@@ -111,7 +111,13 @@ const App = () => {
   useEffect(() => {
     requestUserPermission();
     const unsubscribe = messaging().onMessage(async remoteMessage => {
-      alert(JSON.stringify('Body:' + ' ' + remoteMessage.notification.body));
+      alert(
+        JSON.stringify(
+          remoteMessage.notification.title +
+            ' ' +
+            remoteMessage.notification.body,
+        ),
+      );
       // alert('App.js' + ' ' + JSON.stringify(remoteMessage.notification));
     });
 
