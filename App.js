@@ -74,10 +74,19 @@ const App = () => {
   const authContext = useMemo(
     () => ({
       signIn: async data => {
-        const {contactNumber, delivery_id, userToken, userName} = data;
+        const {
+          contactNumber,
+          delivery_id,
+          userToken,
+          userName,
+          bikeNumber,
+          profileImage,
+        } = data;
         AsyncStorage.setItem('contactNumber', contactNumber);
         AsyncStorage.setItem('userName', userName);
         AsyncStorage.setItem('user_id', delivery_id);
+        AsyncStorage.setItem('bikeRegistrationNumber', bikeNumber);
+        AsyncStorage.setItem('profileImage', profileImage);
         dispatch({type: 'SIGN_IN', token: 'userToken'});
         AsyncStorage.setItem('userToken', userToken);
         showToast('Welcome Partner!');
