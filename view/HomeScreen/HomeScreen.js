@@ -3,8 +3,16 @@ import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 
 // Libraries
 import {sendNotification, testNotification} from '../../model/notification';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = () => {
+  const [name, setName] = React.useState('');
+
+  const userProfileData = async () => {
+    setName(await AsyncStorage.getItem('customer_name'));
+    setMobile(await AsyncStorage.getItem('customer_mobile'));
+  };
+
   return (
     <>
       <View
