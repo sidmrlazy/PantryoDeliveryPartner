@@ -82,20 +82,22 @@ const FeaturesTest = ({route, navigation}) => {
   return (
     <View style={{flex: 1}}>
       <View style={{flex: 1}}>
-        <MapView
-          style={StyleSheet.absoluteFill}
-          provider={PROVIDER_GOOGLE}
-          initialRegion={region}>
-          <Marker coordinate={fromLocation} />
-          <Marker coordinate={toLocation} />
-          <MapViewDirections
-            origin={fromLocation}
-            destination={toLocation}
-            apikey={'AIzaSyCGYq77KEoSXWWiV_a7wXaaNPw9mSJT_30'}
-            strokeColor="red"
-            strokeWidth={3}
-          />
-        </MapView>
+        {fromLocation && (
+          <MapView
+            style={StyleSheet.absoluteFill}
+            provider={PROVIDER_GOOGLE}
+            initialRegion={region}>
+            <Marker coordinate={fromLocation} />
+            <Marker coordinate={toLocation} />
+            <MapViewDirections
+              origin={fromLocation}
+              destination={toLocation}
+              apikey={'AIzaSyCGYq77KEoSXWWiV_a7wXaaNPw9mSJT_30'}
+              strokeColor="red"
+              strokeWidth={3}
+            />
+          </MapView>
+        )}
       </View>
     </View>
   );

@@ -27,10 +27,11 @@ navigator.geolocation = require('@react-native-community/geolocation');
 import FeatureTest from './Component/FeaturesTest';
 
 const HomeScreen = ({navigation}) => {
+  const NO_LOCATION_PROVIDER_AVAILABLE = 2;
   const [name, setName] = React.useState('');
   const [mobile, setMobile] = React.useState('');
   const [bikeNo, setBikeNo] = React.useState('');
-  const [profile, setProfile] = React.useState('');
+  const [profileImg, setProfileImg] = React.useState('');
   const [isEnabled, setIsEnabled] = React.useState(false);
   const [currentLocation, setCurrentLocation] = React.useState(null);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
@@ -39,9 +40,7 @@ const HomeScreen = ({navigation}) => {
     setName(await AsyncStorage.getItem('userName'));
     setMobile(await AsyncStorage.getItem('contactNumber'));
     setBikeNo(await AsyncStorage.getItem('bikeRegistrationNumber'));
-    setProfile(await AsyncStorage.getItem('profileImage'));
-    // console.log('Bike Number:' + ' ' + bikeNo);
-    // console.log('Image:' + ' ' + profile);
+    setProfileImg(await AsyncStorage.getItem('profileImage'));
   };
 
   const requestLocationPermission = async () => {
@@ -59,7 +58,7 @@ const HomeScreen = ({navigation}) => {
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
           getOneTimeLocation();
         } else {
-          setLocationStatus('Permission Denied');
+          showToast('Permission Denied');
           requestLocationPermission();
         }
       } catch (err) {
@@ -116,12 +115,19 @@ const HomeScreen = ({navigation}) => {
         {/* ====== Header Start ====== */}
         <View style={styles.topHeader}>
           <View style={styles.profileBox}>
-            {profile !== '' ? (
-              <>
-                <Image source={{uri: profile}} style={styles.profileImg} />
-              </>
-            ) : (
+            {profileImg === '' ? (
               <Icons name="image-outline" size={25} color="#fff" />
+            ) : (
+              <Image
+                source={{uri: profileImg}}
+                style={{
+                  width: 150,
+                  height: 150,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: 100,
+                }}
+              />
             )}
           </View>
           <View style={styles.textContainer}>
@@ -197,28 +203,29 @@ const HomeScreen = ({navigation}) => {
         {/* ====== Tab Row End ====== */}
 
         {/* ====== Tab Row Start ====== */}
-        <View style={styles.row}>
-          <TouchableOpacity
-            // onPress={() => navigation.navigate('FeatureTest')}
-            onPress={() =>
-              navigation.navigate('FeatureTest', {
-                currentLocation: currentLocation,
-              })
-            }
-            style={styles.tab}>
-            <View style={styles.lottieContainer}>
-              <LottieView
-                source={require('../../assets/lottie/newOrders.json')}
-                autoPlay
-                loop
-                size={styles.lottie}
-              />
-            </View>
-            <View style={styles.div}>
-              <Text style={styles.label}>FeatureTest</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
+        {currentLocation && (
+          <View style={styles.row}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('FeatureTest', {
+                  currentLocation: currentLocation,
+                })
+              }
+              style={styles.tab}>
+              <View style={styles.lottieContainer}>
+                <LottieView
+                  source={require('../../assets/lottie/newOrders.json')}
+                  autoPlay
+                  loop
+                  size={styles.lottie}
+                />
+              </View>
+              <View style={styles.div}>
+                <Text style={styles.label}>FeatureTest</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        )}
         {/* ====== Tab Row End ====== */}
       </View>
     </>

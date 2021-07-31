@@ -41,6 +41,7 @@ const Register = ({navigation}) => {
   const [bikeInsuranceImgPath, setBikeInsuranceImgPath] = useState('');
   const [bikePollImg, setBikePollImg] = useState('');
   const [bikePollImgPath, setBikePollImgPath] = useState('');
+  const [isMounted, setIsMounted] = useState(true);
 
   // Request Gallery Permission and then open Gallery if granted
   const requestGalleryPermission = async selectForImage => {
@@ -81,33 +82,33 @@ const Register = ({navigation}) => {
               // console.log('User cancelled image picker');
             } else {
               let temp = {
-                name: res.assets[0].fileName,
-                uri: res.assets[0].uri,
-                type: res.assets[0].type,
+                name: res.fileName,
+                uri: res.uri,
+                type: res.type,
               };
               // console.log(temp);
               if (SelectFor == 'Profile') {
-                setProfileImgPath(res.assets[0].uri);
+                setProfileImgPath(res.uri);
                 setProfileImg(temp);
               }
               if (SelectFor == 'IdProof') {
-                setIdImgPath(res.assets[0].uri);
+                setIdImgPath(res.uri);
                 setIdImg(temp);
               }
               if (SelectFor == 'DL') {
-                setDrivingLicensePath(res.assets[0].uri);
+                setDrivingLicensePath(res.uri);
                 setDrivingLicense(temp);
               }
               if (SelectFor == 'RegBikePlate') {
-                setBikeRegImgPath(res.assets[0].uri);
+                setBikeRegImgPath(res.uri);
                 setBikeRegImg(temp);
               }
               if (SelectFor == 'bikeInsure') {
-                setBikeInsuranceImgPath(res.assets[0].uri);
+                setBikeInsuranceImgPath(res.uri);
                 setBikeInsuranceImg(temp);
               }
               if (SelectFor == 'PollutionImg') {
-                setBikePollImgPath(res.assets[0].uri);
+                setBikePollImgPath(res.uri);
                 setBikePollImg(temp);
               }
             }
@@ -202,7 +203,7 @@ const Register = ({navigation}) => {
           return response.json();
         })
         .then(function (result) {
-          console.log(result);
+          // console.log(result);
           if (result.error == 0) {
             navigation.navigate('OtpVerification', {
               profileImg: profileImg,
@@ -233,6 +234,7 @@ const Register = ({navigation}) => {
     LogBox.ignoreAllLogs();
     LogBox.ignoreLogs(['Warning: ...']);
     LogBox.ignoreLogs(['VirtualizedLists should never be nested...']);
+    return setIsMounted(false);
   }, []);
 
   return (
