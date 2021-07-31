@@ -79,13 +79,13 @@ const App = () => {
           delivery_id,
           userToken,
           userName,
-          bikeNumber,
+          bikeRegistrationNumber,
           profileImage,
         } = data;
         AsyncStorage.setItem('contactNumber', contactNumber);
         AsyncStorage.setItem('userName', userName);
         AsyncStorage.setItem('user_id', delivery_id);
-        AsyncStorage.setItem('bikeRegistrationNumber', bikeNumber);
+        AsyncStorage.setItem('bikeRegistrationNumber', bikeRegistrationNumber);
         AsyncStorage.setItem('profileImage', profileImage);
         dispatch({type: 'SIGN_IN', token: 'userToken'});
         AsyncStorage.setItem('userToken', userToken);

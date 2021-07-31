@@ -7,6 +7,7 @@ import {
   Switch,
   PermissionsAndroid,
   ToastAndroid,
+  Image,
 } from 'react-native';
 
 // Libraries
@@ -29,6 +30,7 @@ const HomeScreen = ({navigation}) => {
   const [name, setName] = React.useState('');
   const [mobile, setMobile] = React.useState('');
   const [bikeNo, setBikeNo] = React.useState('');
+  const [profile, setProfile] = React.useState('');
   const [isEnabled, setIsEnabled] = React.useState(false);
   const [currentLocation, setCurrentLocation] = React.useState(null);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
@@ -37,6 +39,9 @@ const HomeScreen = ({navigation}) => {
     setName(await AsyncStorage.getItem('userName'));
     setMobile(await AsyncStorage.getItem('contactNumber'));
     setBikeNo(await AsyncStorage.getItem('bikeRegistrationNumber'));
+    setProfile(await AsyncStorage.getItem('profileImage'));
+    // console.log('Bike Number:' + ' ' + bikeNo);
+    // console.log('Image:' + ' ' + profile);
   };
 
   const requestLocationPermission = async () => {
@@ -79,12 +84,12 @@ const HomeScreen = ({navigation}) => {
     navigator.geolocation.getCurrentPosition(
       position => {
         let fromLoc = position.coords;
-        let cordinate = {
+        let coordinate = {
           latitude: fromLoc.latitude,
           longitude: fromLoc.longitude,
         };
         // console.log(cordinate);
-        setCurrentLocation(cordinate);
+        setCurrentLocation(coordinate);
       },
       error => {
         if (error.code === NO_LOCATION_PROVIDER_AVAILABLE) {
@@ -99,9 +104,10 @@ const HomeScreen = ({navigation}) => {
     );
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     requestLocationPermission();
     userProfileData();
+    // console.log('Image' + ' ' + profile);
   }, []);
 
   return (
@@ -110,42 +116,51 @@ const HomeScreen = ({navigation}) => {
         {/* ====== Header Start ====== */}
         <View style={styles.topHeader}>
           <View style={styles.profileBox}>
-            <Icons name="image-outline" size={25} color="#fff" />
+            {profile !== '' ? (
+              <>
+                <Image source={{uri: profile}} style={styles.profileImg} />
+              </>
+            ) : (
+              <Icons name="image-outline" size={25} color="#fff" />
+            )}
           </View>
           <View style={styles.textContainer}>
             <Text style={styles.userName}>{name}</Text>
             <Text style={styles.mobile}>{mobile}</Text>
             <Text style={styles.bike}>{bikeNo}</Text>
           </View>
-          <View style={styles.startBtn}>
+        </View>
+        {/* ====== Header End ====== */}
+
+        {/* ====== Switch Section Start ====== */}
+        <View style={styles.switchContainer}>
+          <View style={styles.switchTab}>
             {isEnabled ? (
               <>
-                <Text style={styles.btntxt}>Stop</Text>
+                <Text style={styles.switchTxt}>End Day</Text>
                 <Switch
-                  trackColor={{false: '#767577', true: '#f4f3f4'}}
-                  thumbColor={isEnabled ? 'green' : '#f4f3f4'}
+                  trackColor={{false: '#767577', true: '#a5a2a8'}}
+                  thumbColor={isEnabled ? '#4d8751' : '#f4f3f4'}
                   ios_backgroundColor="#3e3e3e"
                   onValueChange={toggleSwitch}
                   value={isEnabled}
-                  onChange={jobStopped}
                 />
               </>
             ) : (
               <>
-                <Text style={styles.btntxt}>Start</Text>
+                <Text style={styles.switchTxt}>Start Delivering</Text>
                 <Switch
-                  trackColor={{false: '#767577', true: '#81b0ff'}}
-                  thumbColor={isEnabled ? 'green' : '#f4f3f4'}
+                  trackColor={{false: '#767577', true: '#a5a2a8'}}
+                  thumbColor={isEnabled ? '#4d8751' : '#f4f3f4'}
                   ios_backgroundColor="#3e3e3e"
                   onValueChange={toggleSwitch}
                   value={isEnabled}
-                  onChange={jobStarted}
                 />
               </>
             )}
           </View>
         </View>
-        {/* ====== Header End ====== */}
+        {/* ====== Switch Section End ====== */}
 
         {/* ====== Tab Row Start ====== */}
         <View style={styles.row}>
@@ -180,9 +195,11 @@ const HomeScreen = ({navigation}) => {
           </TouchableOpacity>
         </View>
         {/* ====== Tab Row End ====== */}
+
         {/* ====== Tab Row Start ====== */}
         <View style={styles.row}>
           <TouchableOpacity
+            // onPress={() => navigation.navigate('FeatureTest')}
             onPress={() =>
               navigation.navigate('FeatureTest', {
                 currentLocation: currentLocation,
@@ -246,8 +263,8 @@ const styles = StyleSheet.create({
   profileBox: {
     marginRight: 10,
     backgroundColor: '#777',
-    width: 100,
-    height: 100,
+    width: 150,
+    height: 150,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 100,
@@ -317,14 +334,36 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans-Bold',
     fontSize: 24,
   },
-  startBtn: {
-    justifyContent: 'center',
-    alignItems: 'center',
+  profileImg: {
+    width: 150,
+    height: 150,
+    borderRadius: 100,
   },
-  btntxt: {
-    fontFamily: 'OpensSans-Bold',
-    fontSize: 18,
-    color: '#fff',
-    marginBottom: 5,
+  switchContainer: {
+    paddingHorizontal: 15,
+    width: '100%',
+    backgroundColor: '#fff',
+  },
+  switchTab: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.36,
+    shadowRadius: 6.68,
+    elevation: 11,
+    backgroundColor: '#fff',
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    borderRadius: 5,
+  },
+  switchTxt: {
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 20,
+    flex: 1,
   },
 });
