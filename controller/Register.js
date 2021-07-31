@@ -16,6 +16,7 @@ import {
 // Library
 import Icons from 'react-native-vector-icons/Ionicons';
 import * as ImagePicker from 'react-native-image-picker';
+import * as launchCamera from 'react-native-image-picker';
 
 // Loader Screeen
 import LoaderScreen from '../controller/LoaderScreen';
@@ -69,7 +70,7 @@ const Register = ({navigation}) => {
           durationLimit: 30,
           includeBase64: true,
         };
-        await ImagePicker.launchImageLibrary(options, res => {
+        await ImagePicker.launchCamera(options, res => {
           if (res) {
             if (res.errorCode == 'permission') {
               alert('Permission not granted');

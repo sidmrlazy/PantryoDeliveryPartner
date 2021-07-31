@@ -10,7 +10,7 @@ import {
   Dimensions,
 } from 'react-native';
 
-///////////////
+// Library
 import Icons from 'react-native-vector-icons/Ionicons';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
@@ -36,18 +36,22 @@ const FeaturesTest = ({route, navigation}) => {
   React.useEffect(() => {
     //     let {currentLocation} = route.params;
     let fromLoc = route.params.currentLocation;
-    // console.log(fromLoc);
-    let mapRegion = {
-      latitude: fromLoc.latitude,
-      longitude: fromLoc.longitude,
-      latitudeDelta: LATITUDE_DELTA,
-      longitudeDelta: LONGITUDE_DELTA,
-    };
-    setFromLocation(fromLoc);
-    setRegion(mapRegion);
+    console.log(fromLoc);
+    // let mapRegion = {
+    //   // latitude: fromLoc.latitude,
+    //   // longitude: fromLoc.longitude,
+    //   // latitudeDelta: LATITUDE_DELTA,
+    //   // longitudeDelta: LONGITUDE_DELTA,
+    //   // latitude: toLocation,
+    //   // longitude: toLocation,
+    //   // latitudeDelta: LATITUDE_DELTA,
+    //   // longitudeDelta: LONGITUDE_DELTA,
+    // };
+    // setFromLocation(fromLoc);
+    // setRegion(mapRegion);
   }, []);
 
-  //////////Destination Marker
+  // Destination Marker
   const destinationMarker = () => {
     <Marker coordinate={fromLocation}>
       <View
