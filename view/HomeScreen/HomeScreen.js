@@ -4,13 +4,21 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
+  Switch,
   PermissionsAndroid,
   ToastAndroid,
 } from 'react-native';
 
 // Libraries
+import {
+  sendNotification,
+  jobStarted,
+  jobStopped,
+} from '../../model/notification';
+
+// Libraries
 import {createStackNavigator} from '@react-navigation/stack';
-import {sendNotification, testNotification} from '../../model/notification';
+// import {sendNotification, testNotification} from '../../model/notification';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icons from 'react-native-vector-icons/Ionicons';
 import LottieView from 'lottie-react-native';
@@ -20,11 +28,15 @@ import FeatureTest from './Component/FeaturesTest';
 const HomeScreen = ({navigation}) => {
   const [name, setName] = React.useState('');
   const [mobile, setMobile] = React.useState('');
+  const [bikeNo, setBikeNo] = React.useState('');
+  const [isEnabled, setIsEnabled] = React.useState(false);
   const [currentLocation, setCurrentLocation] = React.useState(null);
+  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
   const userProfileData = async () => {
     setName(await AsyncStorage.getItem('userName'));
     setMobile(await AsyncStorage.getItem('contactNumber'));
+    setBikeNo(await AsyncStorage.getItem('bikeRegistrationNumber'));
   };
 
   const requestLocationPermission = async () => {
@@ -103,6 +115,34 @@ const HomeScreen = ({navigation}) => {
           <View style={styles.textContainer}>
             <Text style={styles.userName}>{name}</Text>
             <Text style={styles.mobile}>{mobile}</Text>
+            <Text style={styles.bike}>{bikeNo}</Text>
+          </View>
+          <View style={styles.startBtn}>
+            {isEnabled ? (
+              <>
+                <Text style={styles.btntxt}>Stop</Text>
+                <Switch
+                  trackColor={{false: '#767577', true: '#f4f3f4'}}
+                  thumbColor={isEnabled ? 'green' : '#f4f3f4'}
+                  ios_backgroundColor="#3e3e3e"
+                  onValueChange={toggleSwitch}
+                  value={isEnabled}
+                  onChange={jobStopped}
+                />
+              </>
+            ) : (
+              <>
+                <Text style={styles.btntxt}>Start</Text>
+                <Switch
+                  trackColor={{false: '#767577', true: '#81b0ff'}}
+                  thumbColor={isEnabled ? 'green' : '#f4f3f4'}
+                  ios_backgroundColor="#3e3e3e"
+                  onValueChange={toggleSwitch}
+                  value={isEnabled}
+                  onChange={jobStarted}
+                />
+              </>
+            )}
           </View>
         </View>
         {/* ====== Header End ====== */}
@@ -226,6 +266,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#fff',
   },
+  bike: {
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 16,
+    color: '#fff',
+    marginTop: 10,
+  },
   row: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -270,5 +316,15 @@ const styles = StyleSheet.create({
   new: {
     fontFamily: 'OpenSans-Bold',
     fontSize: 24,
+  },
+  startBtn: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  btntxt: {
+    fontFamily: 'OpensSans-Bold',
+    fontSize: 18,
+    color: '#fff',
+    marginBottom: 5,
   },
 });
