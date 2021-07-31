@@ -1,5 +1,12 @@
 import React, {useEffect} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  PermissionsAndroid,
+  ToastAndroid,
+} from 'react-native';
 
 // Libraries
 import {createStackNavigator} from '@react-navigation/stack';
@@ -7,19 +14,81 @@ import {sendNotification, testNotification} from '../../model/notification';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icons from 'react-native-vector-icons/Ionicons';
 import LottieView from 'lottie-react-native';
-
+navigator.geolocation = require('@react-native-community/geolocation');
 import FeatureTest from './Component/FeaturesTest';
 
-const HomeScreen = () => {
+const HomeScreen = ({navigation}) => {
   const [name, setName] = React.useState('');
   const [mobile, setMobile] = React.useState('');
+  const [currentLocation, setCurrentLocation] = React.useState(null);
 
   const userProfileData = async () => {
     setName(await AsyncStorage.getItem('userName'));
     setMobile(await AsyncStorage.getItem('contactNumber'));
   };
 
+  const requestLocationPermission = async () => {
+    if (Platform.OS === 'ios') {
+      getOneTimeLocation();
+    } else {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          {
+            title: 'Location Access Required',
+            message: 'This App needs access to your location',
+          },
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          getOneTimeLocation();
+        } else {
+          setLocationStatus('Permission Denied');
+          requestLocationPermission();
+        }
+      } catch (err) {
+        console.warn(err);
+      }
+    }
+  };
+
+  // ======= Show Toast ========== //
+  const showToast = msg => {
+    ToastAndroid.showWithGravityAndOffset(
+      msg,
+      ToastAndroid.SHORT,
+      ToastAndroid.BOTTOM,
+      25,
+      50,
+    );
+  };
+
+  // ====== Get Longitude and Latitude========== //
+  const getOneTimeLocation = async () => {
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        let fromLoc = position.coords;
+        let cordinate = {
+          latitude: fromLoc.latitude,
+          longitude: fromLoc.longitude,
+        };
+        // console.log(cordinate);
+        setCurrentLocation(cordinate);
+      },
+      error => {
+        if (error.code === NO_LOCATION_PROVIDER_AVAILABLE) {
+          showToast('Please on your Location');
+        }
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 20000,
+        maximumAge: 2000,
+      },
+    );
+  };
+
   React.useEffect(() => {
+    requestLocationPermission();
     userProfileData();
   }, []);
 
@@ -67,6 +136,29 @@ const HomeScreen = () => {
             <View style={styles.div}>
               <Text style={styles.label}>Orders Completed</Text>
               <Text style={styles.new}>10</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+        {/* ====== Tab Row End ====== */}
+        {/* ====== Tab Row Start ====== */}
+        <View style={styles.row}>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('FeatureTest', {
+                currentLocation: currentLocation,
+              })
+            }
+            style={styles.tab}>
+            <View style={styles.lottieContainer}>
+              <LottieView
+                source={require('../../assets/lottie/newOrders.json')}
+                autoPlay
+                loop
+                size={styles.lottie}
+              />
+            </View>
+            <View style={styles.div}>
+              <Text style={styles.label}>FeatureTest</Text>
             </View>
           </TouchableOpacity>
         </View>

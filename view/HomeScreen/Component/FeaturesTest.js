@@ -13,7 +13,7 @@ import {
 ///////////////
 import Icons from 'react-native-vector-icons/Ionicons';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
-navigator.geolocation = require('@react-native-community/geolocation');
+import MapViewDirections from 'react-native-maps-directions';
 
 const {width, height} = Dimensions.get('window');
 const SCREEN_HEIGHT = height;
@@ -27,88 +27,29 @@ const FeaturesTest = ({route, navigation}) => {
   const [shop, setShop] = React.useState(null);
   const [street, setStreet] = React.useState('');
   const [fromLocation, setFromLocation] = React.useState(null);
-  const [toLocation, setToLocation] = React.useState(null);
+  const [toLocation, setToLocation] = React.useState({
+    latitude: 26.9426,
+    longitude: 80.9383,
+  });
   const [region, setRegion] = React.useState(null);
-  const [coordinates, setCoordinates] = React.useState(null);
-  const [lat, setLatitude] = React.useState(null);
-  const [long, setLongitude] = React.useState(null);
-
-  const requestLocationPermission = async () => {
-    if (Platform.OS === 'ios') {
-      getOneTimeLocation();
-    } else {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          {
-            title: 'Location Access Required',
-            message: 'This App needs access to your location',
-          },
-        );
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          getOneTimeLocation();
-        } else {
-          setLocationStatus('Permission Denied');
-          requestLocationPermission();
-        }
-      } catch (err) {
-        console.warn(err);
-      }
-    }
-  };
-
-  // ======= Show Toast ========== //
-  const showToast = msg => {
-    ToastAndroid.showWithGravityAndOffset(
-      msg,
-      ToastAndroid.SHORT,
-      ToastAndroid.BOTTOM,
-      25,
-      50,
-    );
-  };
-
-  // ====== Get Longitude and Latitude========== //
-  const getOneTimeLocation = async () => {
-    navigator.geolocation.getCurrentPosition(
-      position => {
-        //   const currentLongitude = JSON.stringify(position.coords.longitude);
-        //   const currentLatitude = JSON.stringify(position.coords.latitude);
-        let fromLoc = position.coords;
-        let cordinate = {
-          latitude: fromLoc.latitude,
-          longitude: fromLoc.longitude,
-        };
-        let mapRegion = {
-          latitude: fromLoc.latitude,
-          longitude: fromLoc.longitude,
-          latitudeDelta: LATITUDE_DELTA,
-          longitudeDelta: LONGITUDE_DELTA,
-        };
-        setFromLocation(fromLoc);
-        setRegion(mapRegion);
-        setCoordinates(cordinate);
-      },
-      error => {
-        if (error.code === NO_LOCATION_PROVIDER_AVAILABLE) {
-          showToast('Please on your Location');
-        }
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 20000,
-        maximumAge: 2000,
-      },
-    );
-  };
 
   React.useEffect(() => {
-    requestLocationPermission();
+    //     let {currentLocation} = route.params;
+    let fromLoc = route.params.currentLocation;
+    // console.log(fromLoc);
+    let mapRegion = {
+      latitude: fromLoc.latitude,
+      longitude: fromLoc.longitude,
+      latitudeDelta: LATITUDE_DELTA,
+      longitudeDelta: LONGITUDE_DELTA,
+    };
+    setFromLocation(fromLoc);
+    setRegion(mapRegion);
   }, []);
 
   //////////Destination Marker
   const destinationMarker = () => {
-    <Marker title="You" description="Your Location" coordinate={coordinates}>
+    <Marker coordinate={fromLocation}>
       <View
         style={{
           flex: 1,
@@ -117,7 +58,7 @@ const FeaturesTest = ({route, navigation}) => {
           borderRadius: 20,
           height: 40,
           width: 40,
-          backgroundColor: '#777',
+          backgroundColor: 'red',
         }}>
         <View
           style={{
@@ -128,22 +69,29 @@ const FeaturesTest = ({route, navigation}) => {
             alignItems: 'center',
             backgroundColor: '#8654ad',
           }}>
-          <Icons name="location" size={25} color="#fff" />
+          <Icons name="pin" size={75} color="#777777" />
         </View>
       </View>
     </Marker>;
   };
+
   return (
     <View style={{flex: 1}}>
       <View style={{flex: 1}}>
-        {fromLocation && (
-          <MapView
-            style={{flex: 1}}
-            provider={PROVIDER_GOOGLE}
-            initialRegion={region}>
-            {destinationMarker()}
-          </MapView>
-        )}
+        <MapView
+          style={StyleSheet.absoluteFill}
+          provider={PROVIDER_GOOGLE}
+          initialRegion={region}>
+          <Marker coordinate={fromLocation} />
+          <Marker coordinate={toLocation} />
+          <MapViewDirections
+            origin={fromLocation}
+            destination={toLocation}
+            apikey={'AIzaSyCGYq77KEoSXWWiV_a7wXaaNPw9mSJT_30'}
+            strokeColor="red"
+            strokeWidth={3}
+          />
+        </MapView>
       </View>
     </View>
   );
