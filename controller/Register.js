@@ -69,7 +69,7 @@ const Register = ({navigation}) => {
           durationLimit: 30,
           includeBase64: true,
         };
-        await ImagePicker.launchImageLibrary(options, res => {
+        await ImagePicker.launchCamera(options, res => {
           if (res) {
             if (res.errorCode == 'permission') {
               alert('Permission not granted');
