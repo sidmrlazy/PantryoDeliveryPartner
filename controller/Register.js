@@ -42,7 +42,7 @@ const Register = ({navigation}) => {
   const [bikePollImg, setBikePollImg] = useState('');
   const [bikePollImgPath, setBikePollImgPath] = useState('');
 
-  // Take Image
+  // Request Gallery Permission and then open Gallery if granted
   const requestGalleryPermission = async selectForImage => {
     try {
       const granted = await PermissionsAndroid.request(
@@ -132,7 +132,7 @@ const Register = ({navigation}) => {
     );
   };
 
-  // Registeration API
+  // Registeration Function
   const registrationApi = async () => {
     if (!profileImg) {
       showToast('Upload Profile Image it`s Required');
