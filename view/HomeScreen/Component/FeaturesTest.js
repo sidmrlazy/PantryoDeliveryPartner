@@ -15,6 +15,9 @@ import Icons from 'react-native-vector-icons/Ionicons';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 
+// Image
+import fromImage from '../../../assets/logo/PantryoPartnerLogo.png';
+
 const {width, height} = Dimensions.get('window');
 const SCREEN_HEIGHT = height;
 const SCREEN_WIDTH = width;
@@ -36,19 +39,15 @@ const FeaturesTest = ({route, navigation}) => {
   React.useEffect(() => {
     //     let {currentLocation} = route.params;
     let fromLoc = route.params.currentLocation;
-    console.log(fromLoc);
-    // let mapRegion = {
-    //   // latitude: fromLoc.latitude,
-    //   // longitude: fromLoc.longitude,
-    //   // latitudeDelta: LATITUDE_DELTA,
-    //   // longitudeDelta: LONGITUDE_DELTA,
-    //   // latitude: toLocation,
-    //   // longitude: toLocation,
-    //   // latitudeDelta: LATITUDE_DELTA,
-    //   // longitudeDelta: LONGITUDE_DELTA,
-    // };
-    // setFromLocation(fromLoc);
-    // setRegion(mapRegion);
+    // console.log(fromLoc);
+    let mapRegion = {
+      latitude: fromLoc.latitude,
+      longitude: fromLoc.longitude,
+      latitudeDelta: LATITUDE_DELTA,
+      longitudeDelta: LONGITUDE_DELTA,
+    };
+    setFromLocation(fromLoc);
+    setRegion(mapRegion);
   }, []);
 
   // Destination Marker
@@ -81,13 +80,16 @@ const FeaturesTest = ({route, navigation}) => {
 
   return (
     <View style={{flex: 1}}>
-      <View style={{flex: 1}}>
-        {fromLocation && (
+      {fromLocation && (
+        <>
           <MapView
+            zoomEnabled={true}
+            showsUserLocation={true}
+            showsCompass={true}
             style={StyleSheet.absoluteFill}
             provider={PROVIDER_GOOGLE}
             initialRegion={region}>
-            <Marker coordinate={fromLocation} />
+            <Marker coordinate={fromLocation} pinColor="#777" />
             <Marker coordinate={toLocation} />
             <MapViewDirections
               origin={fromLocation}
@@ -97,8 +99,8 @@ const FeaturesTest = ({route, navigation}) => {
               strokeWidth={3}
             />
           </MapView>
-        )}
-      </View>
+        </>
+      )}
     </View>
   );
 };

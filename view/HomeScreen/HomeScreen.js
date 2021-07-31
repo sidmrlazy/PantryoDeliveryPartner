@@ -196,7 +196,7 @@ const HomeScreen = ({navigation}) => {
             </View>
             <View style={styles.div}>
               <Text style={styles.label}>Orders Completed</Text>
-              <Text style={styles.new}>10</Text>
+              <Text style={styles.new}>60</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 10,
-    marginTop: 30,
+    marginTop: 20,
   },
   tab: {
     flex: 1,
@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
   },
   new: {
     fontFamily: 'OpenSans-Bold',
-    fontSize: 24,
+    fontSize: 30,
   },
   profileImg: {
     width: 150,
