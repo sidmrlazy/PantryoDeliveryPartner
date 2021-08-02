@@ -10,7 +10,7 @@ import {
   Image,
 } from 'react-native';
 
-// Libraries
+// Notifications
 import {
   sendNotification,
   jobStarted,
@@ -24,7 +24,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icons from 'react-native-vector-icons/Ionicons';
 import LottieView from 'lottie-react-native';
 navigator.geolocation = require('@react-native-community/geolocation');
+
+// Screens
 import FeatureTest from './Component/FeaturesTest';
+import NewOrders from './Orders/NewOrders';
 
 const HomeScreen = ({navigation}) => {
   const NO_LOCATION_PROVIDER_AVAILABLE = 2;
@@ -120,13 +123,7 @@ const HomeScreen = ({navigation}) => {
             ) : (
               <Image
                 source={{uri: profileImg}}
-                style={{
-                  width: 150,
-                  height: 150,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  borderRadius: 100,
-                }}
+                style={styles.profImg}
               />
             )}
           </View>
@@ -170,7 +167,9 @@ const HomeScreen = ({navigation}) => {
 
         {/* ====== Tab Row Start ====== */}
         <View style={styles.row}>
-          <TouchableOpacity onPress={sendNotification} style={styles.tab}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('NewOrders')}
+            style={styles.tab}>
             <View style={styles.lottieContainer}>
               <LottieView
                 source={require('../../assets/lottie/newOrders.json')}
@@ -242,6 +241,16 @@ function Home() {
         component={HomeScreen}
         options={{
           headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="NewOrders"
+        component={NewOrders}
+        options={{
+          title: 'New Orders',
+          headerTitleStyle: {
+            fontFamily: 'OpenSans-SemiBold',
+          },
         }}
       />
       <Stack.Screen name="FeatureTest" component={FeatureTest} />
@@ -373,4 +382,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     flex: 1,
   },
+  profImg: {
+    width: 150,
+    height: 150,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 100,
+  }
 });
