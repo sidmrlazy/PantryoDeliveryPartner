@@ -8,6 +8,7 @@ import {
   PermissionsAndroid,
   ToastAndroid,
   Image,
+  AppState,
 } from 'react-native';
 
 // Notifications
@@ -41,6 +42,11 @@ const HomeScreen = ({navigation}) => {
   const [long, setLong] = React.useState('');
   const [userId, setUserId] = React.useState('');
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+
+  const appState = React.useRef(AppState.currentState);
+  const [appStateVisible, setAppStateVisible] = React.useState(
+    appState.current,
+  );
 
   const userProfileData = async () => {
     setUserId(await AsyncStorage.getItem('user_id'));
@@ -116,6 +122,7 @@ const HomeScreen = ({navigation}) => {
   // Function to continuously track user and update his Lat/Long in Database
   const updateUserLocation = async () => {
     let user_id = await AsyncStorage.getItem('user_id');
+
     await fetch(
       'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=DeliveryPartnerLocationUpdate',
       {
@@ -136,11 +143,12 @@ const HomeScreen = ({navigation}) => {
       })
       .then(function (result) {
         if (result.error == 0) {
+          // console.log(result.status);
           showToast(
             'Your GPS Location has been updated to receive orders from this location',
           );
         } else {
-          console.log('Error 401');
+          // console.log('Error 401' + ' ' + result.msg);
         }
       })
       .catch(error => {
@@ -151,8 +159,34 @@ const HomeScreen = ({navigation}) => {
   useEffect(() => {
     requestLocationPermission();
     userProfileData();
-    updateUserLocation();
+
+    // Condition to update user location if the App is in background mode or Foreground mode
+    if (appStateVisible == 'active') {
+      updateUserLocation();
+    } else if (appStateVisible == 'AppState background') {
+      updateUserLocation();
+    }
+
+    AppState.addEventListener('change', _handleAppStateChange);
+
+    return () => {
+      AppState.removeEventListener('change', _handleAppStateChange);
+    };
   }, []);
+
+  // Function to get App State
+  const _handleAppStateChange = nextAppState => {
+    if (
+      appState.current.match(/inactive|background/) &&
+      nextAppState === 'active'
+    ) {
+      // console.log('foreground!');
+    }
+
+    appState.current = nextAppState;
+    setAppStateVisible(appState.current);
+    // console.log('AppState', appState.current);
+  };
 
   return (
     <>
@@ -318,8 +352,8 @@ const styles = StyleSheet.create({
   profileBox: {
     marginRight: 10,
     backgroundColor: '#777',
-    width: 150,
-    height: 150,
+    width: 120,
+    height: 120,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 100,
@@ -422,10 +456,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   profImg: {
-    width: 150,
-    height: 150,
+    width: 120,
+    height: 120,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 100,
+    borderRadius: 120,
   },
 });
