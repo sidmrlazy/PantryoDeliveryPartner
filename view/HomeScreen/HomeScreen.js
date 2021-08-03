@@ -37,9 +37,13 @@ const HomeScreen = ({navigation}) => {
   const [profileImg, setProfileImg] = React.useState('');
   const [isEnabled, setIsEnabled] = React.useState(false);
   const [currentLocation, setCurrentLocation] = React.useState(null);
+  const [lat, setLat] = React.useState('');
+  const [long, setLong] = React.useState('');
+  const [userId, setUserId] = React.useState('');
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
   const userProfileData = async () => {
+    setUserId(await AsyncStorage.getItem('user_id'));
     setName(await AsyncStorage.getItem('userName'));
     setMobile(await AsyncStorage.getItem('contactNumber'));
     setBikeNo(await AsyncStorage.getItem('bikeRegistrationNumber'));
@@ -90,7 +94,10 @@ const HomeScreen = ({navigation}) => {
           latitude: fromLoc.latitude,
           longitude: fromLoc.longitude,
         };
-        // console.log(cordinate);
+        // console.log(coordinate.latitude);
+        // console.log(coordinate.longitude);
+        setLat(coordinate.latitude);
+        setLong(coordinate.longitude);
         setCurrentLocation(coordinate);
       },
       error => {
@@ -106,10 +113,45 @@ const HomeScreen = ({navigation}) => {
     );
   };
 
+  // Function to continuously track user and update his Lat/Long in Database
+  const updateUserLocation = async () => {
+    let user_id = await AsyncStorage.getItem('user_id');
+    await fetch(
+      'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=DeliveryPartnerLocationUpdate',
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/JSON',
+          'Content-Type': 'application/JSON',
+        },
+        body: JSON.stringify({
+          delivery_id: user_id,
+          delivery_partner_latitude: lat,
+          delivery_partner_longitude: long,
+        }),
+      },
+    )
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (result) {
+        if (result.error == 0) {
+          showToast(
+            'Your GPS Location has been updated to receive orders from this location',
+          );
+        } else {
+          console.log('Error 401');
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
+
   useEffect(() => {
     requestLocationPermission();
     userProfileData();
-    // console.log('Image' + ' ' + profile);
+    updateUserLocation();
   }, []);
 
   return (
@@ -121,10 +163,7 @@ const HomeScreen = ({navigation}) => {
             {profileImg === '' ? (
               <Icons name="image-outline" size={25} color="#fff" />
             ) : (
-              <Image
-                source={{uri: profileImg}}
-                style={styles.profImg}
-              />
+              <Image source={{uri: profileImg}} style={styles.profImg} />
             )}
           </View>
           <View style={styles.textContainer}>
@@ -202,7 +241,7 @@ const HomeScreen = ({navigation}) => {
         {/* ====== Tab Row End ====== */}
 
         {/* ====== Tab Row Start ====== */}
-        {currentLocation && (
+        {/* {currentLocation && (
           <View style={styles.row}>
             <TouchableOpacity
               onPress={() =>
@@ -224,7 +263,7 @@ const HomeScreen = ({navigation}) => {
               </View>
             </TouchableOpacity>
           </View>
-        )}
+        )} */}
         {/* ====== Tab Row End ====== */}
       </View>
     </>
@@ -388,5 +427,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 100,
-  }
+  },
 });
