@@ -8,15 +8,12 @@ import {
   PermissionsAndroid,
   ToastAndroid,
   Image,
-  AppState,
+  Modal,
+  FlatList,
+  RefreshControl,
+  ScrollView,
+  LogBox,
 } from 'react-native';
-
-// Notifications
-import {
-  sendNotification,
-  jobStarted,
-  jobStopped,
-} from '../../model/notification';
 
 // Libraries
 import {createStackNavigator} from '@react-navigation/stack';
@@ -30,6 +27,11 @@ navigator.geolocation = require('@react-native-community/geolocation');
 import FeatureTest from './Component/FeaturesTest';
 import NewOrders from './Orders/NewOrders';
 
+// Timer for Refreshing
+const wait = timeout => {
+  return new Promise(resolve => setTimeout(resolve, timeout));
+};
+
 const HomeScreen = ({navigation}) => {
   const NO_LOCATION_PROVIDER_AVAILABLE = 2;
   const [name, setName] = React.useState('');
@@ -42,18 +44,122 @@ const HomeScreen = ({navigation}) => {
   const [long, setLong] = React.useState('');
   const [userId, setUserId] = React.useState('');
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const [newOrder, setNewOrder] = React.useState('');
+  const [loading, setLoading] = React.useState(true);
+  const [refreshing, setRefreshing] = React.useState(false);
 
-  const appState = React.useRef(AppState.currentState);
-  const [appStateVisible, setAppStateVisible] = React.useState(
-    appState.current,
-  );
+  // Order Variables
+  const [customerToken, setCustomerToken] = React.useState('');
+  const [partnerToken, setPartnerToken] = React.useState('');
+  const [orderId, setOrderId] = React.useState('');
+  const [status, setStatus] = React.useState('1');
+  const [customerName, setCustomerName] = React.useState('');
+  const [customerMobile, setCustomerMobile] = React.useState('');
+  const [partnerPinCode, setPartnerPincode] = React.useState('');
+  const [shopName, setShopName] = React.useState('');
+  const [productQty, setProductQty] = React.useState('');
+  const [productUnit, setProductUnit] = React.useState('');
+  const [itemQty, setItemQty] = React.useState('');
+  const [productName, setProductName] = React.useState('');
 
+  // API URL variables
+  const ChangeOrderStatus =
+    'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=deliveryPartnerStatus';
+  const ReceiveOrders =
+    'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=deliveryPartnerStatus';
+
+  // User Profile
   const userProfileData = async () => {
     setUserId(await AsyncStorage.getItem('user_id'));
     setName(await AsyncStorage.getItem('userName'));
     setMobile(await AsyncStorage.getItem('contactNumber'));
     setBikeNo(await AsyncStorage.getItem('bikeRegistrationNumber'));
     setProfileImg(await AsyncStorage.getItem('profileImage'));
+  };
+
+  // OnRefresh
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    getOrders();
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
+
+  const CustomerServerKey =
+    'AAAAIIoSzdk:APA91bFqAg9Vu4T-_LYX5EPz9UVtqZTp0bRWOpkJLgm6GqIf4QAJtrW6RISmqWHZl6T-ykQrNLpo39kbRHLBsfGmqyz5JP8hxNCUzrfw8ECkcOItsO173OGeIrPf01_jiTLGjJsgwr33';
+  const PartnerServerKey =
+    'AAAALC3Ugt8:APA91bFdhqYhHLlDedpHpuCBX7puDR5x1qsrmc6k3gh-pXIBaUoxTJ3t91pVuBwV51GdrSnYLb9McgZYbGnkVR6-A8BnqsUL8nQKN8Bg3qwwH9puZ01uCt4tnGU7w0qNXL0S-x8Ofnaf';
+
+  // Notification to Partner
+  const sendNotificationToPartner = async () => {
+    const userToken = partnerToken;
+    const DELIVERY_PARTNER_FIREBASE_API_KEY = PartnerServerKey;
+    const message = {
+      to: userToken,
+      notification: {
+        title: 'Order Confirmation',
+        body: name + ' has accepted your order and is on his way.',
+        vibrate: 1,
+        sound: 1,
+        show_in_foreground: true,
+        priority: 'high',
+        content_available: true,
+      },
+      data: {
+        title: 'Order Confirmation',
+        body: name + ' has accepted your order and is on his way.',
+      },
+    };
+
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      Authorization: 'key=' + DELIVERY_PARTNER_FIREBASE_API_KEY,
+    });
+    let response = await fetch('https://fcm.googleapis.com/fcm/send', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(message),
+    });
+    response = await response.json();
+    console.log(response);
+  };
+
+  // Notification to Customer
+  const sendNotificationToCustomer = async () => {
+    const userToken = customerToken;
+    const DELIVERY_PARTNER_FIREBASE_API_KEY = CustomerServerKey;
+    const message = {
+      to: userToken,
+      notification: {
+        title: 'Pantryo Delivery Partner Assigned',
+        body:
+          name +
+          ' has been assigned to pick up your order. Please wait while your order is being picked up',
+        vibrate: 1,
+        sound: 1,
+        show_in_foreground: true,
+        priority: 'high',
+        content_available: true,
+      },
+      data: {
+        title: 'Pantryo Delivery Partner Assigned',
+        body:
+          name +
+          ' has been assigned to pick up your order. Please wait while your order is being picked up',
+      },
+    };
+
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      Authorization: 'key=' + DELIVERY_PARTNER_FIREBASE_API_KEY,
+    });
+    let response = await fetch('https://fcm.googleapis.com/fcm/send', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(message),
+    });
+    response = await response.json();
+    console.log(response);
   };
 
   const requestLocationPermission = async () => {
@@ -144,9 +250,9 @@ const HomeScreen = ({navigation}) => {
       .then(function (result) {
         if (result.error == 0) {
           // console.log(result.status);
-          showToast(
-            'Your GPS Location has been updated to receive orders from this location',
-          );
+          // showToast(
+          //   'Your GPS Location has been updated to receive orders from this location',
+          // );
         } else {
           // console.log('Error 401' + ' ' + result.msg);
         }
@@ -156,37 +262,92 @@ const HomeScreen = ({navigation}) => {
       });
   };
 
+  // Receive Orders and Show Order details
+  const getOrders = async () => {
+    await fetch(
+      'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=showOrderDeliveryPartner',
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/JSON',
+          'Content-Type': 'application/JSON',
+        },
+        body: JSON.stringify({
+          delivery_id: userId,
+        }),
+      },
+    )
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (result) {
+        console.log(result.allorder);
+        getOrders();
+        if (result.error == 0) {
+          setNewOrder(result.allorder);
+          setModalVisible(true);
+        } else {
+          // showToast('Fetching Orders, Please pull down to refresh!');
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      })
+      .finally(() => setLoading(false));
+  };
+
+  // Accept Orders
+  const changeOrderStatus = async () => {
+    await fetch(
+      'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=deliveryPartnerStatus',
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/JSON',
+          'Content-Type': 'application/JSON',
+        },
+        body: JSON.stringify({
+          order_id: orderId,
+          delivery_id: userId,
+          delivery_status: status,
+        }),
+      },
+    )
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (result) {
+        console.log(result);
+        sendNotificationToPartner();
+        sendNotificationToCustomer();
+        setModalVisible(false);
+        // navigation.navigate('NewOrders', {
+        //   order_id: orderId,
+        //   delivery_id: userId,
+        //   delivery_status: status,
+        //   customerName: customerName,
+        //   customerMobile: customerMobile,
+        //   itemQty: itemQty,
+        //   partnerPinCode: partnerPinCode,
+        //   shopName: shopName,
+        //   productName: productName,
+        //   productQty: productQty,
+        //   productUnit: productUnit,
+        //   customerToken: customerToken,
+        //   partnerToken: partnerToken,
+        // });
+      });
+  };
+
   useEffect(() => {
+    getOrders();
+    LogBox.ignoreAllLogs(true);
+    LogBox.ignoreLogs(['Warning: ...']);
+    LogBox.ignoreLogs(['VirtualizedLists should never be nested...']);
     requestLocationPermission();
     userProfileData();
-
-    // Condition to update user location if the App is in background mode or Foreground mode
-    if (appStateVisible == 'active') {
-      updateUserLocation();
-    } else if (appStateVisible == 'AppState background') {
-      updateUserLocation();
-    }
-
-    AppState.addEventListener('change', _handleAppStateChange);
-
-    return () => {
-      AppState.removeEventListener('change', _handleAppStateChange);
-    };
+    updateUserLocation();
   }, []);
-
-  // Function to get App State
-  const _handleAppStateChange = nextAppState => {
-    if (
-      appState.current.match(/inactive|background/) &&
-      nextAppState === 'active'
-    ) {
-      // console.log('foreground!');
-    }
-
-    appState.current = nextAppState;
-    setAppStateVisible(appState.current);
-    // console.log('AppState', appState.current);
-  };
 
   return (
     <>
@@ -209,80 +370,47 @@ const HomeScreen = ({navigation}) => {
         {/* ====== Header End ====== */}
 
         {/* ====== Switch Section Start ====== */}
-        <View style={styles.switchContainer}>
-          <View style={styles.switchTab}>
-            {isEnabled ? (
-              <>
-                <Text style={styles.switchTxt}>End Day</Text>
-                <Switch
-                  trackColor={{false: '#767577', true: '#a5a2a8'}}
-                  thumbColor={isEnabled ? '#4d8751' : '#f4f3f4'}
-                  ios_backgroundColor="#3e3e3e"
-                  onValueChange={toggleSwitch}
-                  value={isEnabled}
-                />
-              </>
-            ) : (
-              <>
-                <Text style={styles.switchTxt}>Start Delivering</Text>
-                <Switch
-                  trackColor={{false: '#767577', true: '#a5a2a8'}}
-                  thumbColor={isEnabled ? '#4d8751' : '#f4f3f4'}
-                  ios_backgroundColor="#3e3e3e"
-                  onValueChange={toggleSwitch}
-                  value={isEnabled}
-                />
-              </>
-            )}
+        <ScrollView
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          style={{
+            width: '100%',
+            backgroundColor: '#fff',
+          }}>
+          <View style={styles.switchContainer}>
+            <View style={styles.switchTab}>
+              {isEnabled ? (
+                <>
+                  <Text style={styles.switchTxt}>End Day</Text>
+                  <Switch
+                    trackColor={{false: '#767577', true: '#a5a2a8'}}
+                    thumbColor={isEnabled ? '#4d8751' : '#f4f3f4'}
+                    ios_backgroundColor="#3e3e3e"
+                    onValueChange={toggleSwitch}
+                    value={isEnabled}
+                  />
+                </>
+              ) : (
+                <>
+                  <Text style={styles.switchTxt}>Start Delivering</Text>
+                  <Switch
+                    trackColor={{false: '#767577', true: '#a5a2a8'}}
+                    thumbColor={isEnabled ? '#4d8751' : '#f4f3f4'}
+                    ios_backgroundColor="#3e3e3e"
+                    onValueChange={toggleSwitch}
+                    value={isEnabled}
+                  />
+                </>
+              )}
+            </View>
           </View>
-        </View>
-        {/* ====== Switch Section End ====== */}
+          {/* ====== Switch Section End ====== */}
 
-        {/* ====== Tab Row Start ====== */}
-        <View style={styles.row}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('NewOrders')}
-            style={styles.tab}>
-            <View style={styles.lottieContainer}>
-              <LottieView
-                source={require('../../assets/lottie/newOrders.json')}
-                autoPlay
-                loop
-                size={styles.lottie}
-              />
-            </View>
-            <View style={styles.div}>
-              <Text style={styles.label}>New Orders</Text>
-              <Text style={styles.new}>10</Text>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={sendNotification} style={styles.tab}>
-            <View style={styles.lottieContainer}>
-              <LottieView
-                source={require('../../assets/lottie/completed.json')}
-                autoPlay
-                loop
-                size={styles.lottie}
-              />
-            </View>
-            <View style={styles.div}>
-              <Text style={styles.label}>Orders Completed</Text>
-              <Text style={styles.new}>60</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-        {/* ====== Tab Row End ====== */}
-
-        {/* ====== Tab Row Start ====== */}
-        {/* {currentLocation && (
+          {/* ====== Tab Row Start ====== */}
           <View style={styles.row}>
             <TouchableOpacity
-              onPress={() =>
-                navigation.navigate('FeatureTest', {
-                  currentLocation: currentLocation,
-                })
-              }
+              onPress={() => navigation.navigate('NewOrders')}
               style={styles.tab}>
               <View style={styles.lottieContainer}>
                 <LottieView
@@ -293,12 +421,120 @@ const HomeScreen = ({navigation}) => {
                 />
               </View>
               <View style={styles.div}>
-                <Text style={styles.label}>FeatureTest</Text>
+                <Text style={styles.label}>New Orders</Text>
+                <Text style={styles.new}>10</Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.tab}>
+              <View style={styles.lottieContainer}>
+                <LottieView
+                  source={require('../../assets/lottie/completed.json')}
+                  autoPlay
+                  loop
+                  size={styles.lottie}
+                />
+              </View>
+              <View style={styles.div}>
+                <Text style={styles.label}>Orders Completed</Text>
+                <Text style={styles.new}>60</Text>
               </View>
             </TouchableOpacity>
           </View>
-        )} */}
+        </ScrollView>
         {/* ====== Tab Row End ====== */}
+
+        {loading ? (
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <LottieView
+              source={require('../../assets/lottie/newOrders.json')}
+              autoPlay
+              loop
+              size={styles.lottie}
+            />
+          </View>
+        ) : newOrder !== '' ? (
+          <>
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={() => {
+                setModalVisible(!modalVisible);
+              }}>
+              <View style={styles.modalBack}>
+                <View style={styles.modalCard}>
+                  <FlatList
+                    data={newOrder}
+                    style={{width: '100%'}}
+                    keyExtractor={item => item.confirm_order_id}
+                    renderItem={({item}) => (
+                      <>
+                        {/* ======== Setting Values ======== */}
+                        {setCustomerToken(item.CustomerUserToken)}
+                        {setPartnerToken(item.partnerUserToken)}
+                        {setOrderId(item.order_id)}
+                        {setCustomerName(item.customer_name)}
+                        {setCustomerMobile(item.customerMobileNumber)}
+                        {setItemQty(item.numberOfProduct)}
+                        {setPartnerPincode(item.PartnerPickupAddress)}
+                        {setShopName(item.setShopName)}
+                        {setProductName(item.productName)}
+                        {setProductQty(item.productQty)}
+                        {setProductUnit(item.productUnit)}
+                        {/* ======== Setting Values ======== */}
+                        <View style={styles.flatListContainer}>
+                          <View style={styles.lottieContainerNew}>
+                            <LottieView
+                              source={require('../../assets/lottie/Hurray.json')}
+                              autoPlay
+                              loop
+                              size={styles.lottie}
+                            />
+                          </View>
+                          <View style={styles.flatListRow}>
+                            <Text style={styles.newOrder}>
+                              New Order Received!
+                            </Text>
+                            <Text style={styles.orderIdLabel}>
+                              Order ID:{' '}
+                              <Text style={styles.orderId}>
+                                {item.order_id}
+                              </Text>
+                            </Text>
+
+                            <Text style={styles.description}>
+                              Pick up {item.numberOfProduct} Item from{' '}
+                              {item.shopName}
+                            </Text>
+                          </View>
+                        </View>
+                        <TouchableOpacity
+                          onPress={() => {
+                            changeOrderStatus(), setStatus('1');
+                          }}
+                          style={styles.flatListAccept}>
+                          <Text style={styles.flatListAcceptBtnTxt}>
+                            Accept
+                          </Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.rejectBtn}>
+                          <Text style={styles.rejectBtnTxt}>Reject</Text>
+                        </TouchableOpacity>
+                      </>
+                    )}
+                  />
+                </View>
+              </View>
+            </Modal>
+          </>
+        ) : null}
       </View>
     </>
   );
@@ -326,7 +562,7 @@ function Home() {
           },
         }}
       />
-      <Stack.Screen name="FeatureTest" component={FeatureTest} />
+      {/* <Stack.Screen name="FeatureTest" component={FeatureTest} /> */}
     </Stack.Navigator>
   );
 }
@@ -384,6 +620,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 10,
     marginTop: 20,
+    paddingBottom: 20,
   },
   tab: {
     flex: 1,
@@ -461,5 +698,81 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 120,
+  },
+  modalBack: {
+    backgroundColor: 'rgba(52, 52, 52, 0.8)',
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  modalCard: {
+    backgroundColor: '#fff',
+    width: '100%',
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  },
+  flatListContainer: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    flexDirection: 'row',
+    paddingVertical: 20,
+  },
+  lottieContainerNew: {
+    width: 100,
+    height: 100,
+  },
+  flatListRow: {
+    flex: 1,
+  },
+  newOrder: {
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 24,
+    marginBottom: 10,
+    color: '#5E3360',
+  },
+  orderIdLabel: {
+    fontFamily: 'OpenSans-Regular',
+    fontSize: 20,
+  },
+  orderId: {
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 20,
+  },
+  description: {
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 20,
+  },
+  flatListAccept: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+    marginBottom: 20,
+    backgroundColor: 'green',
+    paddingVertical: 20,
+    borderRadius: 5,
+  },
+  flatListAcceptBtnTxt: {
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 20,
+    color: '#fff',
+  },
+
+  rejectBtn: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+    backgroundColor: 'red',
+    paddingVertical: 20,
+    borderRadius: 5,
+  },
+  rejectBtnTxt: {
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 20,
+    color: '#fff',
   },
 });

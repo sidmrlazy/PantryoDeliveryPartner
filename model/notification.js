@@ -1,3 +1,9 @@
+const DeliveryPartnerServerKey =
+  'AAAALC3Ugt8:APA91bFdhqYhHLlDedpHpuCBX7puDR5x1qsrmc6k3gh-pXIBaUoxTJ3t91pVuBwV51GdrSnYLb9McgZYbGnkVR6-A8BnqsUL8nQKN8Bg3qwwH9puZ01uCt4tnGU7w0qNXL0S-x8Ofnaf';
+
+const PartnerServerKey =
+  'AAAALC3Ugt8:APA91bFdhqYhHLlDedpHpuCBX7puDR5x1qsrmc6k3gh-pXIBaUoxTJ3t91pVuBwV51GdrSnYLb9McgZYbGnkVR6-A8BnqsUL8nQKN8Bg3qwwH9puZ01uCt4tnGU7w0qNXL0S-x8Ofnaf';
+
 const testNotification = async () => {
   const userToken =
     'fHH8f05jSZaV0gMhDrINzO:APA91bGPyqcsh63S3yymn2kk3zT1DT6laF6Ypj1IIv11RAcU5lDMDo1cmuiPvQAaG2epEOFH4Rldr1gRwoJi1158XHNN3FLE3WnIbG2sWpjoJfOmZtIziXK9djmHu-9TtPfrWsQ9AdY6';
@@ -36,13 +42,12 @@ const testNotification = async () => {
 const sendNotification = async () => {
   const userToken =
     'fHH8f05jSZaV0gMhDrINzO:APA91bGPyqcsh63S3yymn2kk3zT1DT6laF6Ypj1IIv11RAcU5lDMDo1cmuiPvQAaG2epEOFH4Rldr1gRwoJi1158XHNN3FLE3WnIbG2sWpjoJfOmZtIziXK9djmHu-9TtPfrWsQ9AdY6';
-  const DELIVERY_PARTNER_FIREBASE_API_KEY =
-    'AAAA206GD2Q:APA91bEaq_P49bzza39abiiZgUe_-vVytc7JacVYblNvLgqGPWgKYWZhT-6zdw68tmAsM4wkDDyftgYlXNFaMA5C8IVbEFqaTUUqXLsDA21-6HuiEJqcz-QsDaVkPKVckTAIYL3u3glj';
+  const DELIVERY_PARTNER_FIREBASE_API_KEY = DeliveryPartnerServerKey;
   const message = {
     to: userToken,
     notification: {
-      title: 'New Message',
-      body: 'Test message',
+      title: 'Notification Check',
+      body: 'Notification sent from Delivery Partner',
       vibrate: 1,
       sound: 1,
       show_in_foreground: true,
@@ -50,8 +55,8 @@ const sendNotification = async () => {
       content_available: true,
     },
     data: {
-      title: 'New Message',
-      body: 'Test message',
+      title: 'Notification Check',
+      body: 'Notification sent from Delivery Partner',
     },
   };
 
