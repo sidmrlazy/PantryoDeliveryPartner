@@ -281,7 +281,7 @@ const HomeScreen = ({navigation}) => {
         return response.json();
       })
       .then(function (result) {
-        console.log(result.allorder);
+        // console.log(result.allorder);
         getOrders();
         if (result.error == 0) {
           setNewOrder(result.allorder);
@@ -317,7 +317,7 @@ const HomeScreen = ({navigation}) => {
         return response.json();
       })
       .then(function (result) {
-        console.log(result);
+        // console.log(result);
         sendNotificationToPartner();
         sendNotificationToCustomer();
         setModalVisible(false);

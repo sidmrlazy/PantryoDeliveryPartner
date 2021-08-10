@@ -40,7 +40,7 @@ const NewOrders = ({route, navigation}) => {
         return response.json();
       })
       .then(function (result) {
-        console.log(result.allData);
+        // console.log(result.allData);
         setAllData(result.allData);
       })
       .catch(error => {
@@ -49,22 +49,22 @@ const NewOrders = ({route, navigation}) => {
   };
 
   useEffect(() => {
-    DATA = [
-      (userId = route.params.order_id),
-      // setUserId(route.params.delivery_id);
-      // setOrderId(route.params.delivery_id);
-      // setCustomerToken(route.params.customerToken);
-      // setPartnerToken(route.params.partnerToken);
-      // setStatus(route.params.delivery_status);
-      // setCustomerName(route.params.customerName);
-      // setCustomerMobile(route.params.customerMobile);
-      // setPartnerPincode(route.params.partnerPinCode);
-      // setShopName(route.params.shopName);
-      // setProductName(route.params.productName);
-      // setProductQty(route.params.productQty);
-      // setProductUnit(route.params.productUnit);
-      // setItemQty(route.params.itemQty);
-    ];
+    // DATA = [
+    //   (userId = route.params.order_id),
+    //   // setUserId(route.params.delivery_id);
+    //   // setOrderId(route.params.delivery_id);
+    //   // setCustomerToken(route.params.customerToken);
+    //   // setPartnerToken(route.params.partnerToken);
+    //   // setStatus(route.params.delivery_status);
+    //   // setCustomerName(route.params.customerName);
+    //   // setCustomerMobile(route.params.customerMobile);
+    //   // setPartnerPincode(route.params.partnerPinCode);
+    //   // setShopName(route.params.shopName);
+    //   // setProductName(route.params.productName);
+    //   // setProductQty(route.params.productQty);
+    //   // setProductUnit(route.params.productUnit);
+    //   // setItemQty(route.params.itemQty);
+    // ];
     userProfileData();
   }, []);
 
