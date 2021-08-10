@@ -62,6 +62,35 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:139755441625:android:04664fce2e82085de39dc8",
+        "android_client_info": {
+          "package_name": "com.pantryo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "139755441625-43ktof7cq8tm50adqi706spjn5fiv6h5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASZec-5bHaEq_l0wdzOW1vw_QTnD5pyrM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "139755441625-43ktof7cq8tm50adqi706spjn5fiv6h5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"
