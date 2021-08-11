@@ -1,8 +1,10 @@
 import React, {useEffect} from 'react';
-import {View, Text, StyleSheet, FlatList} from 'react-native';
+import {View, Text, StyleSheet, FlatList, Pressable} from 'react-native';
 
 // Libraries
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import Loader from '../../../controller/LoaderScreen';
 
 const NewOrders = ({route, navigation}) => {
   const [userId, setUserId] = React.useState('');
@@ -19,6 +21,13 @@ const NewOrders = ({route, navigation}) => {
   const [itemQty, setItemQty] = React.useState('');
   const [productName, setProductName] = React.useState('');
   const [allData, setAllData] = React.useState('');
+  const [Data, setData] = React.useState('');
+  const [isLoading, setLoading] = React.useState(true);
+
+  const customer_firebase_key =
+    'AAAAIIoSzdk:APA91bFqAg9Vu4T-_LYX5EPz9UVtqZTp0bRWOpkJLgm6GqIf4QAJtrW6RISmqWHZl6T-ykQrNLpo39kbRHLBsfGmqyz5JP8hxNCUzrfw8ECkcOItsO173OGeIrPf01_jiTLGjJsgwr33';
+  const delivery_partner_firebase_key =
+    'AAAALC3Ugt8:APA91bFdhqYhHLlDedpHpuCBX7puDR5x1qsrmc6k3gh-pXIBaUoxTJ3t91pVuBwV51GdrSnYLb9McgZYbGnkVR6-A8BnqsUL8nQKN8Bg3qwwH9puZ01uCt4tnGU7w0qNXL0S-x8Ofnaf';
 
   // User Profile
   const userProfileData = async () => {
@@ -26,26 +35,153 @@ const NewOrders = ({route, navigation}) => {
   };
 
   const getOrderData = async () => {
-    await fetch(allData, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/JSON',
-        'Content-Type': 'application/JSON',
+    let userId = await AsyncStorage.getItem('user_id');
+    await fetch(
+      'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=showOrderDeliveryPartner',
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/JSON',
+          'Content-Type': 'application/JSON',
+        },
+        body: JSON.stringify({
+          delivery_id: userId,
+        }),
       },
-      body: JSON.stringify({
-        delivery_id: userId,
-      }),
-    })
+    )
       .then(function (response) {
         return response.json();
       })
       .then(function (result) {
-        // console.log(result.allData);
-        setAllData(result.allData);
+        console.log(result);
+        if (result.error == 0) {
+          setData(result.allorder);
+        }
+        getOrderData();
       })
       .catch(error => {
         console.error(error);
-      });
+      })
+      .finally(() => setLoading(false));
+  };
+
+  ///////////////////////Accept Order or Cancel
+  const AcceptCancel = async (
+    activitytype,
+    orderId,
+    customerToken,
+    partnerToken,
+  ) => {
+    console.log(partnerToken);
+    let userId = await AsyncStorage.getItem('user_id');
+    setLoading(true);
+    await fetch(
+      'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=deliveryPartnerStatus',
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/JSON',
+          'Content-Type': 'application/JSON',
+        },
+        body: JSON.stringify({
+          delivery_id: userId,
+          order_id: orderId,
+          delivery_status: activitytype,
+        }),
+      },
+    )
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (result) {
+        // console.log(result);
+        if (result.error == 0) {
+          if (activitytype == '1') {
+            notificationToCustomer(customerToken);
+            notificationToPartner(partnerToken);
+          }
+        }
+        getOrderData();
+      })
+      .catch(error => {
+        console.error(error);
+      })
+      .finally(() => setLoading(false));
+  };
+  ///////////////////////Accept Order or Cancel
+
+  const notificationToCustomer = async customerToken => {
+    let deliveryPartner = await AsyncStorage.getItem('userName');
+    const CUSTOMER_FIREBASE_API_KEY = customer_firebase_key;
+    const message = {
+      to: customerToken,
+      notification: {
+        title: 'Order Confirmation',
+        body: deliveryPartner + ' ' + 'is on his way to pickup your order',
+        vibrate: 1,
+        sound: 1,
+        show_in_foreground: true,
+        priority: 'high',
+        content_available: true,
+      },
+      data: {
+        title: 'Order Confirmation',
+        body: deliveryPartner + ' ' + ' is on his way to pickup your order',
+      },
+    };
+
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      Authorization: 'key=' + CUSTOMER_FIREBASE_API_KEY,
+    });
+    // https://fcm.googleapis.com/fcm/send
+    let response = await fetch('https://fcm.googleapis.com/fcm/send', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(message),
+    });
+    response = await response.json();
+    console.log(response);
+  };
+
+  const notificationToPartner = async partnerToken => {
+    let deliveryPartner = await AsyncStorage.getItem('userName');
+    const FIREBASE_API_KEY = delivery_partner_firebase_key;
+    const message = {
+      to: partnerToken,
+      notification: {
+        title: 'Order Confirmation',
+        body:
+          deliveryPartner +
+          ' ' +
+          'name has confirmed your order and is on his way',
+        vibrate: 1,
+        sound: 1,
+        show_in_foreground: true,
+        priority: 'high',
+        content_available: true,
+      },
+      data: {
+        title: 'Order Confirmation',
+        body:
+          deliveryPartner +
+          ' ' +
+          'name has confirmed your order and is on his way',
+      },
+    };
+
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      Authorization: 'key=' + FIREBASE_API_KEY,
+    });
+    // https://fcm.googleapis.com/fcm/send
+    let response = await fetch('https://fcm.googleapis.com/fcm/send', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(message),
+    });
+    response = await response.json();
+    console.log(response);
   };
 
   useEffect(() => {
@@ -65,34 +201,161 @@ const NewOrders = ({route, navigation}) => {
     //   // setProductUnit(route.params.productUnit);
     //   // setItemQty(route.params.itemQty);
     // ];
+    getOrderData();
     userProfileData();
   }, []);
 
   return (
     <>
-      <View style={styles.container}>
-        <FlatList
-          data={DATA}
-          keyExtractor={item => item.confirm_order_id}
-          renderItem={({item}) => (
-            <>
-              <View style={styles.orderDetails}>
-                <Text style={styles.customer}>{item.customerName}</Text>
+      {isLoading === true ? (
+        <Loader />
+      ) : (
+        <View style={styles.container}>
+          <FlatList
+            style={{width: '100%'}}
+            data={Data}
+            keyExtractor={item => item.confirm_order_id}
+            renderItem={({item}) => (
+              <>
+                <View style={styles.orderDetails}>
+                  <View style={styles.row}>
+                    <Text style={[styles.customer, {fontSize: 17}]}>
+                      Shop Name :
+                    </Text>
+                    <Text style={styles.customer}>{item.shopName}</Text>
+                  </View>
+                  <View style={styles.row}>
+                    <Text style={[styles.customer, {fontSize: 17}]}>
+                      Order Id :
+                    </Text>
+                    <Text style={styles.customer}>{item.order_id}</Text>
+                  </View>
 
-                <View style={styles.row}>
+                  {/* <View style={styles.row}>
                   <Text style={styles.product}>{productName}</Text>
                   <Text style={styles.weight}>
-                    {productQty}
-                    {productUnit}
+                    {item.productQty}
+                    {item.productUnit}
                   </Text>
                   <Text style={styles.operator}>X</Text>
-                  <Text style={styles.qty}>{itemQty}</Text>
+                  <Text style={styles.qty}>{item.numberOfProduct}</Text>
+                </View> */}
+                  <View style={styles.row}>
+                    {item.delivery_status == '0' ? (
+                      <>
+                        <Pressable
+                          onPress={() => {
+                            AcceptCancel(
+                              '1',
+                              item.order_id,
+                              item.CustomerUserToken,
+                              item.partnerUserToken,
+                            );
+                          }}
+                          style={{
+                            flex: 1,
+                            backgroundColor: 'green',
+                            paddingVertical: 10,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            width: '100%',
+                            marginRight: 5,
+                          }}>
+                          <Text
+                            style={{
+                              fontFamily: 'OpenSans-SemiBold',
+                              fontSize: 19,
+                              color: '#fff',
+                            }}>
+                            Accept
+                          </Text>
+                        </Pressable>
+                        <Pressable
+                          onPress={() => {
+                            AcceptCancel(
+                              '2',
+                              item.order_id,
+                              item.CustomerUserToken,
+                              item.partnerUserToken,
+                            );
+                          }}
+                          style={{
+                            flex: 1,
+                            backgroundColor: 'orange',
+                            paddingVertical: 10,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            width: '100%',
+                            marginLeft: 5,
+                          }}>
+                          <Text
+                            style={{
+                              fontFamily: 'OpenSans-SemiBold',
+                              fontSize: 19,
+                              color: '#fff',
+                            }}>
+                            Cancel
+                          </Text>
+                        </Pressable>
+                      </>
+                    ) : null}
+                    {item.delivery_status == '1' ? (
+                      <Pressable
+                        onPress={() => {
+                          AcceptCancel(
+                            '1',
+                            item.order_id,
+                            item.CustomerUserToken,
+                            item.partnerUserToken,
+                          );
+                        }}
+                        style={{
+                          flex: 1,
+                          backgroundColor: 'green',
+                          paddingVertical: 10,
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          width: '100%',
+                          marginRight: 5,
+                        }}>
+                        <Text
+                          style={{
+                            fontFamily: 'OpenSans-SemiBold',
+                            fontSize: 19,
+                            color: '#fff',
+                          }}>
+                          Accept
+                        </Text>
+                      </Pressable>
+                    ) : null}
+                    {item.delivery_status == '2' ? (
+                      <View
+                        style={{
+                          flex: 1,
+                          backgroundColor: 'orange',
+                          paddingVertical: 10,
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          width: '100%',
+                          marginLeft: 5,
+                        }}>
+                        <Text
+                          style={{
+                            fontFamily: 'OpenSans-SemiBold',
+                            fontSize: 19,
+                            color: '#fff',
+                          }}>
+                          Cancel
+                        </Text>
+                      </View>
+                    ) : null}
+                  </View>
                 </View>
-              </View>
-            </>
-          )}
-        />
-      </View>
+              </>
+            )}
+          />
+        </View>
+      )}
     </>
   );
 };
@@ -122,8 +385,8 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
     marginTop: 10,
     marginBottom: 10,
   },
@@ -131,11 +394,13 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans-Regular',
     flex: 1,
     fontSize: 18,
+    color: '#5E3360',
   },
   weight: {
     fontFamily: 'OpenSans-SemiBold',
     fontSize: 16,
     marginRight: 10,
+    color: '#5E3360',
   },
   operator: {
     fontFamily: 'OpenSans-SemiBold',
@@ -145,5 +410,6 @@ const styles = StyleSheet.create({
   qty: {
     fontFamily: 'OpenSans-SemiBold',
     fontSize: 16,
+    color: '#5E3360',
   },
 });
