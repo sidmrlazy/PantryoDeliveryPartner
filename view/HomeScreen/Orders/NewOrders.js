@@ -1,5 +1,13 @@
 import React, {useEffect} from 'react';
-import {View, Text, StyleSheet, FlatList, Pressable} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  Pressable,
+  Platform,
+  Linking,
+} from 'react-native';
 
 // Libraries
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -53,7 +61,7 @@ const NewOrders = ({route, navigation}) => {
         return response.json();
       })
       .then(function (result) {
-        console.log(result);
+        // console.log(result);
         if (result.error == 0) {
           setData(result.allorder);
         }
@@ -184,6 +192,27 @@ const NewOrders = ({route, navigation}) => {
     console.log(response);
   };
 
+  const openMapDirection = async (latitude, longitude) => {
+    const url = Platform.select({
+      ios: `comgooglemaps://?center=${latitude},${longitude}&q=${latitude},${longitude}&zoom=14&views=traffic"`,
+      android: `geo://?q=${latitude},${longitude}`,
+    });
+    Linking.canOpenURL(url)
+      .then(supported => {
+        if (supported) {
+          return Linking.openURL(url);
+        } else {
+          const browser_url = `https://www.google.de/maps/@${latitude},${longitude}`;
+          return Linking.openURL(browser_url);
+        }
+      })
+      .catch(() => {
+        if (Platform.OS === 'ios') {
+          Linking.openURL(`maps://?q=${latitude},${longitude}`);
+        }
+      });
+  };
+
   useEffect(() => {
     // DATA = [
     //   (userId = route.params.order_id),
@@ -301,17 +330,12 @@ const NewOrders = ({route, navigation}) => {
                     ) : null}
                     {item.delivery_status == '1' ? (
                       <Pressable
-                        onPress={() => {
-                          AcceptCancel(
-                            '1',
-                            item.order_id,
-                            item.CustomerUserToken,
-                            item.partnerUserToken,
-                          );
-                        }}
+                        onPress={() =>
+                          openMapDirection(item.patlatitude, item.patlongitude)
+                        }
                         style={{
                           flex: 1,
-                          backgroundColor: 'green',
+                          backgroundColor: '#676cda',
                           paddingVertical: 10,
                           justifyContent: 'center',
                           alignItems: 'center',
@@ -324,7 +348,7 @@ const NewOrders = ({route, navigation}) => {
                             fontSize: 19,
                             color: '#fff',
                           }}>
-                          Accept
+                          Partner Location
                         </Text>
                       </Pressable>
                     ) : null}
