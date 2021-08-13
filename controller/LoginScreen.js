@@ -33,6 +33,7 @@ const LoginScreen = ({navigation}) => {
     messaging()
       .getToken()
       .then(token => {
+        // console.log('Pantryo Delivery Partner Device Token: ' + token);
         return setToken(token);
       });
   };
@@ -104,6 +105,7 @@ const LoginScreen = ({navigation}) => {
   React.useEffect(() => {
     getDeviceToken();
   }, []);
+
   return (
     <>
       {loading == true ? <LoaderScreen /> : null}
@@ -214,6 +216,11 @@ const LoginScreenContainer = () => {
 export default LoginScreenContainer;
 
 const styles = StyleSheet.create({
+  scroll: {
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    backgroundColor: '#fff',
+  },
   topContainer: {
     flex: 2,
     justifyContent: 'flex-end',
@@ -251,11 +258,7 @@ const styles = StyleSheet.create({
     height: 200,
     paddingTop: 10,
   },
-  scroll: {
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    backgroundColor: '#fff',
-  },
+
   loginContainer: {
     flex: 1,
     justifyContent: 'center',

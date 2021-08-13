@@ -73,7 +73,7 @@ const NewOrders = ({route, navigation}) => {
       .finally(() => setLoading(false));
   };
 
-  ///////////////////////Accept Order or Cancel
+  // Accept Order or Cancel
   const AcceptCancel = async (
     activitytype,
     orderId,
@@ -116,8 +116,8 @@ const NewOrders = ({route, navigation}) => {
       })
       .finally(() => setLoading(false));
   };
-  ///////////////////////Accept Order or Cancel
 
+  // Send Notification to customer
   const notificationToCustomer = async customerToken => {
     let deliveryPartner = await AsyncStorage.getItem('userName');
     const CUSTOMER_FIREBASE_API_KEY = customer_firebase_key;
@@ -152,6 +152,7 @@ const NewOrders = ({route, navigation}) => {
     console.log(response);
   };
 
+  // Send Notification to Partner
   const notificationToPartner = async partnerToken => {
     let deliveryPartner = await AsyncStorage.getItem('userName');
     const FIREBASE_API_KEY = delivery_partner_firebase_key;
@@ -203,6 +204,7 @@ const NewOrders = ({route, navigation}) => {
           return Linking.openURL(url);
         } else {
           const browser_url = `https://www.google.de/maps/@${latitude},${longitude}`;
+
           return Linking.openURL(browser_url);
         }
       })
@@ -214,22 +216,6 @@ const NewOrders = ({route, navigation}) => {
   };
 
   useEffect(() => {
-    // DATA = [
-    //   (userId = route.params.order_id),
-    //   // setUserId(route.params.delivery_id);
-    //   // setOrderId(route.params.delivery_id);
-    //   // setCustomerToken(route.params.customerToken);
-    //   // setPartnerToken(route.params.partnerToken);
-    //   // setStatus(route.params.delivery_status);
-    //   // setCustomerName(route.params.customerName);
-    //   // setCustomerMobile(route.params.customerMobile);
-    //   // setPartnerPincode(route.params.partnerPinCode);
-    //   // setShopName(route.params.shopName);
-    //   // setProductName(route.params.productName);
-    //   // setProductQty(route.params.productQty);
-    //   // setProductUnit(route.params.productUnit);
-    //   // setItemQty(route.params.itemQty);
-    // ];
     getOrderData();
     userProfileData();
   }, []);
@@ -348,7 +334,7 @@ const NewOrders = ({route, navigation}) => {
                             fontSize: 19,
                             color: '#fff',
                           }}>
-                          Partner Location
+                          Go to Partner's Location
                         </Text>
                       </Pressable>
                     ) : null}
@@ -405,13 +391,12 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans-Bold',
     fontSize: 24,
     color: '#5E3360',
-    marginBottom: 20,
+    marginLeft: 10,
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-    marginTop: 10,
+    alignItems: 'center',
     marginBottom: 10,
   },
   product: {
