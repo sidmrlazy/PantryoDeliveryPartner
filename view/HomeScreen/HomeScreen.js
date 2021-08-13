@@ -48,6 +48,7 @@ const HomeScreen = ({navigation}) => {
   const [newOrder, setNewOrder] = React.useState('');
   const [loading, setLoading] = React.useState(true);
   const [refreshing, setRefreshing] = React.useState(false);
+  const [Data, setData] = React.useState('');
 
   // Order Variables
   const [customerToken, setCustomerToken] = React.useState('');
@@ -249,7 +250,7 @@ const HomeScreen = ({navigation}) => {
       })
       .then(function (result) {
         if (result.error == 0) {
-          // console.log(result.status);
+          console.log(result.status);
           // showToast(
           //   'Your GPS Location has been updated to receive orders from this location',
           // );
@@ -263,7 +264,8 @@ const HomeScreen = ({navigation}) => {
   };
 
   // Receive Orders and Show Order details
-  const getOrders = async () => {
+  const getOrderData = async () => {
+    let userId = await AsyncStorage.getItem('user_id');
     await fetch(
       'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=showOrderDeliveryPartner',
       {
@@ -281,14 +283,11 @@ const HomeScreen = ({navigation}) => {
         return response.json();
       })
       .then(function (result) {
-        // console.log(result.allorder);
-        getOrders();
-        if (result.error == 0) {
-          setNewOrder(result.allorder);
-          setModalVisible(true);
-        } else {
-          // showToast('Fetching Orders, Please pull down to refresh!');
-        }
+        console.log(result);
+        // if (result.error == 0) {
+        //   setData(result.allorder);
+        // }
+        getOrderData();
       })
       .catch(error => {
         console.error(error);
@@ -340,7 +339,7 @@ const HomeScreen = ({navigation}) => {
   };
 
   useEffect(() => {
-    getOrders();
+    getOrderData();
     LogBox.ignoreAllLogs(true);
     LogBox.ignoreLogs(['Warning: ...']);
     LogBox.ignoreLogs(['VirtualizedLists should never be nested...']);
