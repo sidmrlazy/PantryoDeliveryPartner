@@ -342,7 +342,7 @@ const NewOrders = ({route, navigation}) => {
                       <View
                         style={{
                           flex: 1,
-                          backgroundColor: 'orange',
+                          backgroundColor: 'red',
                           paddingVertical: 10,
                           justifyContent: 'center',
                           alignItems: 'center',
@@ -355,7 +355,7 @@ const NewOrders = ({route, navigation}) => {
                             fontSize: 19,
                             color: '#fff',
                           }}>
-                          Cancel
+                          Cancelled
                         </Text>
                       </View>
                     ) : null}
