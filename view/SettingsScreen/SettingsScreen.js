@@ -11,6 +11,13 @@ import ProfileScreen from './ProfileScreen';
 
 const Settings = ({navigation}) => {
   const {signOut} = React.useContext(AuthContext);
+  const [mounted, setmounted] = React.useState(true);
+
+    React.useEffect(() => {
+      return function cleanup() {
+        setmounted(false);
+      };
+    }, []);
 
   return (
     <>
