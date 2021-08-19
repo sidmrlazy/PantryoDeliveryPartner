@@ -283,11 +283,7 @@ const HomeScreen = ({navigation}) => {
         return response.json();
       })
       .then(function (result) {
-<<<<<<< HEAD
-        // console.log(result.allorder);
-=======
-        console.log(result);
->>>>>>> d80487592e67e220c229145431e19786af4ace98
+        // console.log(result);
         if (result.error == 0) {
           setNewOrder(result.allorder);
           // setModalVisible(true);
