@@ -82,7 +82,7 @@ const HomeScreen = ({navigation}) => {
   // OnRefresh
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-    getOrders();
+    getOrderData();
     wait(2000).then(() => setRefreshing(false));
   }, []);
 
@@ -284,9 +284,10 @@ const HomeScreen = ({navigation}) => {
       })
       .then(function (result) {
         console.log(result);
-        // if (result.error == 0) {
-        //   setData(result.allorder);
-        // }
+        if (result.error == 0) {
+          setNewOrder(result.allorder);
+          // setModalVisible(true);
+        }
         getOrderData();
       })
       .catch(error => {
@@ -514,18 +515,16 @@ const HomeScreen = ({navigation}) => {
                           </View>
                         </View>
                         <TouchableOpacity
-                          onPress={() => {
-                            changeOrderStatus(), setStatus('1');
-                          }}
+                          onPress={() => navigation.navigate('NewOrders')}
                           style={styles.flatListAccept}>
                           <Text style={styles.flatListAcceptBtnTxt}>
-                            Accept
+                            Get Details
                           </Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.rejectBtn}>
+                        {/* <TouchableOpacity style={styles.rejectBtn}>
                           <Text style={styles.rejectBtnTxt}>Reject</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                       </>
                     )}
                   />
@@ -640,8 +639,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   lottieContainer: {
-    width: 100,
-    height: 100,
+    width: 70,
+    height: 70,
   },
   lottie: {
     width: 50,
