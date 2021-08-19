@@ -250,7 +250,7 @@ const HomeScreen = ({navigation}) => {
       })
       .then(function (result) {
         if (result.error == 0) {
-          console.log(result.status);
+          // console.log(result.status);
           // showToast(
           //   'Your GPS Location has been updated to receive orders from this location',
           // );
@@ -283,11 +283,18 @@ const HomeScreen = ({navigation}) => {
         return response.json();
       })
       .then(function (result) {
+<<<<<<< HEAD
+        // console.log(result);
+        // if (result.error == 0) {
+        //   setData(result.allorder);
+        // }
+=======
         console.log(result);
         if (result.error == 0) {
           setNewOrder(result.allorder);
           // setModalVisible(true);
         }
+>>>>>>> 5da9e1dcab557d8a73af2fcf642b6804a6a9b5d5
         getOrderData();
       })
       .catch(error => {

@@ -12,6 +12,7 @@ import {
 
 // Libraries
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CheckBox from '@react-native-community/checkbox';
 
 import Loader from '../../../controller/LoaderScreen';
 
@@ -32,6 +33,8 @@ const NewOrders = ({route, navigation}) => {
   const [allData, setAllData] = React.useState('');
   const [Data, setData] = React.useState('');
   const [isLoading, setLoading] = React.useState(true);
+  const [mounted, setmounted] = React.useState(true);
+  const [toggleCheckBoxOne, setToggleCheckBoxOne] = React.useState(false);
 
   const customer_firebase_key =
     'AAAAIIoSzdk:APA91bFqAg9Vu4T-_LYX5EPz9UVtqZTp0bRWOpkJLgm6GqIf4QAJtrW6RISmqWHZl6T-ykQrNLpo39kbRHLBsfGmqyz5JP8hxNCUzrfw8ECkcOItsO173OGeIrPf01_jiTLGjJsgwr33';
@@ -45,6 +48,7 @@ const NewOrders = ({route, navigation}) => {
 
   const getOrderData = async () => {
     let userId = await AsyncStorage.getItem('user_id');
+    setmounted(true);
     await fetch(
       'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=showOrderDeliveryPartner',
       {
@@ -63,8 +67,10 @@ const NewOrders = ({route, navigation}) => {
       })
       .then(function (result) {
         // console.log(result);
-        if (result.error == 0) {
-          setData(result.allorder);
+        if (mounted) {
+          if (result.error == 0) {
+            setData(result.allorder);
+          }
         }
         getOrderData();
       })
@@ -216,9 +222,61 @@ const NewOrders = ({route, navigation}) => {
       });
   };
 
+  // status update
+  const updtateStatus = async (status, customername, orderId) => {
+    await fetch(
+      'https://gizmmoalchemy.com/api/pantryo/PartnerAppApi/PantryoPartner.php?flag=update_order_status',
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          order_status: status,
+          order_id: orderId,
+        }),
+      },
+    )
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (result) {
+        if (result.error == 0) {
+          setOrderStatus(status);
+          if (status === '3') {
+            setToggleCheckBoxTwo(true);
+            setModalVisible(false);
+            navigation.navigate('HomeScreen');
+          }
+          if (status === '2') {
+            notificationToCustomer();
+            setOrderStatus(status);
+            searchDeliveryPartner(customername);
+            setToggleCheckBoxOne(true);
+          }
+        } else {
+          if (status === '3') {
+            setToggleCheckBoxTwo(false);
+            setModalVisible(false);
+          }
+          if (status === '2') {
+            setToggleCheckBoxOne(false);
+          }
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      })
+      .finally(() => setLoading(false));
+  };
+
   useEffect(() => {
     getOrderData();
     userProfileData();
+    return function cleanup() {
+      setmounted(false);
+    };
   }, []);
 
   return (
@@ -323,6 +381,48 @@ const NewOrders = ({route, navigation}) => {
                     ) : null}
                     {/* ======== Status 2 End ======== */}
                   </View>
+                  {item.delivery_status == '1' ? (
+                    <View style={styles.tabRow}>
+                      <Text style={styles.statusName}>
+                        Reached at Pickup Destination
+                      </Text>
+                      {toggleCheckBoxOne == false ? (
+                        <CheckBox
+                          disabled={false}
+                          value={toggleCheckBoxOne}
+                          onValueChange={() => {
+                            updtateStatus(
+                              '3',
+                              item.customer_name,
+                              item.order_id,
+                            );
+                            // setCustomerName();
+                          }}
+                          style={styles.statusOne}
+                          lineWidth={2}
+                          hideBox={false}
+                          boxType={'circle'}
+                          tintColors={'#9E663C'}
+                          onCheckColor={'#6F763F'}
+                          onFillColor={'#4DABEC'}
+                          onTintColor={'#F4DCF8'}
+                        />
+                      ) : (
+                        <CheckBox
+                          disabled={true}
+                          value={toggleCheckBoxOne}
+                          style={styles.statusOne}
+                          lineWidth={2}
+                          hideBox={false}
+                          boxType={'circle'}
+                          tintColors={'#9E663C'}
+                          onCheckColor={'#6F763F'}
+                          onFillColor={'#4DABEC'}
+                          onTintColor={'#F4DCF8'}
+                        />
+                      )}
+                    </View>
+                  ) : null}
                 </View>
               </>
             )}
@@ -342,6 +442,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 5,
     paddingVertical: 10,
+  },
+  tabRow: {
+    marginTop: 20,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    flex: 1,
+  },
+  brandName: {
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 20,
   },
   card: {
     width: '100%',
