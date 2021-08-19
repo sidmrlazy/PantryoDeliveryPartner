@@ -368,14 +368,31 @@ const NewOrders = ({route, navigation}) => {
                     {item.delivery_status == '0' ? (
                       <>
                         <View style={styles.btnRow}>
-                          <View style={styles.btn}>
+                          <TouchableOpacity
+                            onPress={() => {
+                              AcceptCancel(
+                                '1',
+                                item.order_id,
+                                item.CustomerUserToken,
+                                item.partnerUserToken,
+                              );
+                            }}
+                            style={styles.btn}>
                             <Text style={styles.btnTxt}>Accept Order</Text>
-                          </View>
+                          </TouchableOpacity>
 
-                          <View
+                          <TouchableOpacity
+                            onPress={() => {
+                              AcceptCancel(
+                                '2',
+                                item.order_id,
+                                item.CustomerUserToken,
+                                item.partnerUserToken,
+                              );
+                            }}
                             style={[styles.btn, {backgroundColor: '#a83d36'}]}>
                             <Text style={styles.btnTxt}>Cancel</Text>
-                          </View>
+                          </TouchableOpacity>
                         </View>
                       </>
                     ) : null}
