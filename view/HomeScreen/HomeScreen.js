@@ -250,7 +250,7 @@ const HomeScreen = ({navigation}) => {
       })
       .then(function (result) {
         if (result.error == 0) {
-          console.log(result.status);
+          // console.log(result.status);
           // showToast(
           //   'Your GPS Location has been updated to receive orders from this location',
           // );
@@ -283,7 +283,7 @@ const HomeScreen = ({navigation}) => {
         return response.json();
       })
       .then(function (result) {
-        console.log(result);
+        // console.log(result);
         // if (result.error == 0) {
         //   setData(result.allorder);
         // }
