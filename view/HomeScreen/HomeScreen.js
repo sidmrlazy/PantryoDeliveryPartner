@@ -283,7 +283,11 @@ const HomeScreen = ({navigation}) => {
         return response.json();
       })
       .then(function (result) {
+<<<<<<< HEAD
         // console.log(result.allorder);
+=======
+        console.log(result);
+>>>>>>> d80487592e67e220c229145431e19786af4ace98
         if (result.error == 0) {
           setNewOrder(result.allorder);
           // setModalVisible(true);
@@ -438,6 +442,32 @@ const HomeScreen = ({navigation}) => {
               <View style={styles.div}>
                 <Text style={styles.label}>Orders Completed</Text>
                 <Text style={styles.new}>60</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.row}>
+            <TouchableOpacity style={styles.tab}>
+              <View style={[styles.lottieContainer, {marginLeft: 10}]}>
+                <LottieView
+                  source={require('../../assets/lottie/wallet.json')}
+                  autoPlay
+                  loop
+                  size={styles.lottie}
+                />
+              </View>
+              <View style={[styles.div, {marginLeft: 15}]}>
+                <Text style={styles.label}>You have earned</Text>
+                <Text style={styles.new}>
+                  ₹1500{' '}
+                  <Text
+                    style={{
+                      fontFamily: 'OpenSans-Regular',
+                      fontSize: 16,
+                    }}>
+                    today
+                  </Text>
+                </Text>
               </View>
             </TouchableOpacity>
           </View>
