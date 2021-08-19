@@ -225,7 +225,7 @@ const NewOrders = ({route, navigation}) => {
   // status update
   const updtateStatus = async (status, customername, orderId) => {
     await fetch(
-      'https://gizmmoalchemy.com/api/pantryo/PartnerAppApi/PantryoPartner.php?flag=update_order_status',
+      'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=deliveryStatusAndOtp',
       {
         method: 'POST',
         headers: {
@@ -233,7 +233,7 @@ const NewOrders = ({route, navigation}) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          order_status: status,
+          status: status,
           order_id: orderId,
         }),
       },
@@ -243,26 +243,7 @@ const NewOrders = ({route, navigation}) => {
       })
       .then(function (result) {
         if (result.error == 0) {
-          setOrderStatus(status);
-          if (status === '3') {
-            setToggleCheckBoxTwo(true);
-            setModalVisible(false);
-            navigation.navigate('HomeScreen');
-          }
-          if (status === '2') {
-            notificationToCustomer();
-            setOrderStatus(status);
-            searchDeliveryPartner(customername);
-            setToggleCheckBoxOne(true);
-          }
         } else {
-          if (status === '3') {
-            setToggleCheckBoxTwo(false);
-            setModalVisible(false);
-          }
-          if (status === '2') {
-            setToggleCheckBoxOne(false);
-          }
         }
       })
       .catch(error => {
