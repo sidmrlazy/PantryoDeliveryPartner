@@ -444,7 +444,7 @@ const HomeScreen = ({navigation}) => {
 
           <View style={styles.row}>
             <TouchableOpacity style={styles.tab}>
-              <View style={styles.lottieContainer}>
+              <View style={[styles.lottieContainer, {marginLeft: 10}]}>
                 <LottieView
                   source={require('../../assets/lottie/wallet.json')}
                   autoPlay
@@ -452,7 +452,7 @@ const HomeScreen = ({navigation}) => {
                   size={styles.lottie}
                 />
               </View>
-              <View style={styles.div}>
+              <View style={[styles.div, {marginLeft: 15}]}>
                 <Text style={styles.label}>You have earned</Text>
                 <Text style={styles.new}>
                   ₹1500{' '}
