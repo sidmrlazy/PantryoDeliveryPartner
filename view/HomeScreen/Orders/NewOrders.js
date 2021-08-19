@@ -159,6 +159,46 @@ const NewOrders = ({route, navigation}) => {
     console.log(response);
   };
 
+  const notificationToCustomerDeliveryBoyReach = async customerToken => {
+    let deliveryPartner = await AsyncStorage.getItem('userName');
+    const CUSTOMER_FIREBASE_API_KEY = customer_firebase_key;
+    const message = {
+      to: customerToken,
+      notification: {
+        title: 'Order Reached',
+        body:
+          deliveryPartner +
+          ' ' +
+          'has reached at your location. Thank you for ordering from Pantryo',
+        vibrate: 1,
+        sound: 1,
+        show_in_foreground: true,
+        priority: 'high',
+        content_available: true,
+      },
+      data: {
+        title: 'Order Reached',
+        body:
+          deliveryPartner +
+          ' ' +
+          ' has reached at your location. Thank you for ordering from Pantryo',
+      },
+    };
+
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      Authorization: 'key=' + CUSTOMER_FIREBASE_API_KEY,
+    });
+    // https://fcm.googleapis.com/fcm/send
+    let response = await fetch('https://fcm.googleapis.com/fcm/send', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(message),
+    });
+    response = await response.json();
+    console.log(response);
+  };
+
   // Send Notification to Partner
   const notificationToPartner = async partnerToken => {
     let deliveryPartner = await AsyncStorage.getItem('userName');
@@ -270,7 +310,13 @@ const NewOrders = ({route, navigation}) => {
   };
 
   // status update
-  const updtateStatus = async (status, customername, orderId, partnerToken) => {
+  const updtateStatus = async (
+    status,
+    customername,
+    orderId,
+    partnerToken,
+    customerToken,
+  ) => {
     await fetch(
       'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=deliveryStatusAndOtp',
       {
@@ -292,6 +338,9 @@ const NewOrders = ({route, navigation}) => {
         // console.log(result);
         if (result.error == 0) {
           notificationToPartnerDeliveryBoyReach(partnerToken, customername);
+        }
+        if (result.error == 21) {
+          notificationToCustomerDeliveryBoyReach(customerToken);
         }
         getOrderData();
       })
@@ -467,59 +516,64 @@ const NewOrders = ({route, navigation}) => {
                     ) : null}
                     {/* ======== Status 2 End ======== */}
                   </View>
-                  {item.orderStatus == '2' ? (
-                    <View style={styles.tabRow}>
-                      <Text style={styles.statusName}>
-                        Reached at Pickup Destination
-                      </Text>
-                      <CheckBox
-                        disabled={false}
-                        value={toggleCheckBoxOne}
-                        onValueChange={() => {
-                          updtateStatus(
-                            '3',
-                            item.customer_name,
-                            item.order_id,
-                            item.partnerUserToken,
-                          );
-                          // setCustomerName();
-                        }}
-                        style={styles.statusOne}
-                        lineWidth={2}
-                        hideBox={false}
-                        boxType={'circle'}
-                        tintColors={'#9E663C'}
-                        onCheckColor={'#6F763F'}
-                        onFillColor={'#4DABEC'}
-                        onTintColor={'#F4DCF8'}
-                      />
-                    </View>
-                  ) : item.orderStatus == '3' ? (
-                    <View style={styles.tabRow}>
-                      <Text style={styles.statusName}>
-                        Reached at Drop Point
-                      </Text>
-                      <CheckBox
-                        disabled={false}
-                        value={toggleCheckBoxOne}
-                        onValueChange={() => {
-                          updtateStatus(
-                            '4',
-                            item.customer_name,
-                            item.order_id,
-                            item.partnerUserToken,
-                          );
-                        }}
-                        style={styles.statusOne}
-                        lineWidth={2}
-                        hideBox={false}
-                        boxType={'circle'}
-                        tintColors={'#9E663C'}
-                        onCheckColor={'#6F763F'}
-                        onFillColor={'#4DABEC'}
-                        onTintColor={'#F4DCF8'}
-                      />
-                    </View>
+                  {item.delivery_status == '1' ? (
+                    <>
+                      {item.orderStatus == '2' ? (
+                        <View style={styles.tabRow}>
+                          <Text style={styles.statusName}>
+                            Reached at Pickup Destination
+                          </Text>
+                          <CheckBox
+                            disabled={false}
+                            value={toggleCheckBoxOne}
+                            onValueChange={() => {
+                              updtateStatus(
+                                '3',
+                                item.customer_name,
+                                item.order_id,
+                                item.partnerUserToken,
+                                item.CustomerUserToken,
+                              );
+                            }}
+                            style={styles.statusOne}
+                            lineWidth={2}
+                            hideBox={false}
+                            boxType={'circle'}
+                            tintColors={'#9E663C'}
+                            onCheckColor={'#6F763F'}
+                            onFillColor={'#4DABEC'}
+                            onTintColor={'#F4DCF8'}
+                          />
+                        </View>
+                      ) : item.orderStatus == '3' ? (
+                        <View style={styles.tabRow}>
+                          <Text style={styles.statusName}>
+                            Reached at Drop Point
+                          </Text>
+                          <CheckBox
+                            disabled={false}
+                            value={toggleCheckBoxOne}
+                            onValueChange={() => {
+                              updtateStatus(
+                                '4',
+                                item.customer_name,
+                                item.order_id,
+                                item.partnerUserToken,
+                                item.CustomerUserToken,
+                              );
+                            }}
+                            style={styles.statusOne}
+                            lineWidth={2}
+                            hideBox={false}
+                            boxType={'circle'}
+                            tintColors={'#9E663C'}
+                            onCheckColor={'#6F763F'}
+                            onFillColor={'#4DABEC'}
+                            onTintColor={'#F4DCF8'}
+                          />
+                        </View>
+                      ) : null}
+                    </>
                   ) : null}
                 </View>
               </>
