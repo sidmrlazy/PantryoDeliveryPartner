@@ -7,6 +7,7 @@ import {
   Pressable,
   Platform,
   Linking,
+  TouchableOpacity,
 } from 'react-native';
 
 // Libraries
@@ -290,85 +291,92 @@ const NewOrders = ({route, navigation}) => {
             keyExtractor={item => item.confirm_order_id}
             renderItem={({item}) => (
               <>
-                <View style={styles.orderDetails}>
-                  <View style={styles.row}>
-                    <Text style={[styles.customer, {fontSize: 17}]}>
-                      Shop Name :
-                    </Text>
-                    <Text style={styles.customer}>{item.shopName}</Text>
-                  </View>
-                  <View style={styles.row}>
-                    <Text style={[styles.customer, {fontSize: 17}]}>
-                      Order Id :
-                    </Text>
-                    <Text style={styles.customer}>{item.order_id}</Text>
-                  </View>
+                <View style={styles.container}>
+                  <View style={styles.card}>
+                    <Text style={styles.cardHeading}>New Order Received!</Text>
 
-                  {/* <View style={styles.row}>
-                  <Text style={styles.product}>{productName}</Text>
-                  <Text style={styles.weight}>
-                    {item.productQty}
-                    {item.productUnit}
-                  </Text>
-                  <Text style={styles.operator}>X</Text>
-                  <Text style={styles.qty}>{item.numberOfProduct}</Text>
-                </View> */}
-                  <View style={styles.row}>
+                    <View style={styles.orderDetailRow}>
+                      <View style={styles.div}>
+                        <Text style={styles.divLabel}>Order ID</Text>
+                        <Text style={styles.orderResponse}>
+                          {item.order_id}
+                        </Text>
+                      </View>
+                      <View style={styles.div}>
+                        <Text style={styles.divLabel}>Pickup from</Text>
+                        <Text style={styles.orderResponse}>
+                          {item.shopName}
+                        </Text>
+                      </View>
+                    </View>
+
+                    <View style={styles.itemDetailsSection}>
+                      <Text style={styles.caption}>
+                        Total products to pick up:{' '}
+                        <Text style={styles.innerCaption}>
+                          {item.numberOfProduct}
+                        </Text>
+                      </Text>
+                      <View style={styles.itemRow}>
+                        <Text style={styles.itemName}>{item.productName}</Text>
+                        <Text style={styles.Qty}>
+                          {item.productQty}
+                          {item.productUnit}
+                        </Text>
+                      </View>
+                    </View>
+
+                    {/* ======== Status 0 Start ======== */}
                     {item.delivery_status == '0' ? (
                       <>
-                        <Pressable
-                          onPress={() => {
-                            AcceptCancel(
-                              '1',
-                              item.order_id,
-                              item.CustomerUserToken,
-                              item.partnerUserToken,
-                            );
-                          }}
-                          style={{
-                            flex: 1,
-                            backgroundColor: 'green',
-                            paddingVertical: 10,
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            width: '100%',
-                            marginRight: 5,
-                          }}>
+                        <View style={styles.btnRow}>
+                          <View style={styles.btn}>
+                            <Text style={styles.btnTxt}>Accept Order</Text>
+                          </View>
+
+                          <View
+                            style={[styles.btn, {backgroundColor: '#a83d36'}]}>
+                            <Text style={styles.btnTxt}>Cancel</Text>
+                          </View>
+                        </View>
+                      </>
+                    ) : null}
+                    {/* ======== Status 0 End ======== */}
+
+                    {/* ======== Status 1 Start ======== */}
+                    {item.delivery_status == '1' ? (
+                      <>
+                        <View style={styles.btnRow}>
+                          <View style={styles.btn}>
+                            <Text style={styles.btnTxt}>
+                              Open Partner's Location
+                            </Text>
+                          </View>
+                        </View>
+                      </>
+                    ) : null}
+                    {/* ======== Status 1 End ======== */}
+
+                    {/* ======== Status 2 Start ======== */}
+                    {item.delivery_status == '2' ? (
+                      <>
+                        <View style={{marginTop: 15}}>
                           <Text
                             style={{
                               fontFamily: 'OpenSans-SemiBold',
-                              fontSize: 19,
-                              color: '#fff',
+                              fontSize: 16,
                             }}>
-                            Accept
+                            Status
                           </Text>
-                        </Pressable>
-                        <Pressable
-                          onPress={() => {
-                            AcceptCancel(
-                              '2',
-                              item.order_id,
-                              item.CustomerUserToken,
-                              item.partnerUserToken,
-                            );
-                          }}
-                          style={{
-                            flex: 1,
-                            backgroundColor: 'orange',
-                            paddingVertical: 10,
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            width: '100%',
-                            marginLeft: 5,
-                          }}>
                           <Text
                             style={{
-                              fontFamily: 'OpenSans-SemiBold',
-                              fontSize: 19,
-                              color: '#fff',
+                              fontFamily: 'OpenSans-Bold',
+                              fontSize: 18,
+                              color: '#a83d36',
                             }}>
-                            Cancel
+                            Cancelled by you
                           </Text>
+<<<<<<< HEAD
                         </Pressable>
                         <View style={styles.tabRow}>
                           <Text style={styles.statusName}>Confirm Order</Text>
@@ -459,6 +467,12 @@ const NewOrders = ({route, navigation}) => {
                         </Text>
                       </View>
                     ) : null}
+=======
+                        </View>
+                      </>
+                    ) : null}
+                    {/* ======== Status 2 End ======== */}
+>>>>>>> 5da9e1dcab557d8a73af2fcf642b6804a6a9b5d5
                   </View>
                   {item.delivery_status == '1' ? (
                     <View style={styles.tabRow}>
@@ -519,8 +533,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    paddingHorizontal: 5,
+    paddingVertical: 10,
   },
+<<<<<<< HEAD
   tabRow: {
     marginTop: 20,
     flexDirection: 'row',
@@ -533,45 +549,87 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   orderDetails: {
+=======
+  card: {
+>>>>>>> 5da9e1dcab557d8a73af2fcf642b6804a6a9b5d5
     width: '100%',
-    borderBottomWidth: 0.5,
-    paddingBottom: 20,
-    paddingTop: 20,
+    backgroundColor: '#fff',
+    borderRadius: 5,
     paddingHorizontal: 10,
-    borderBottomColor: '#c7c7c7c7',
+    paddingVertical: 20,
   },
-  customer: {
-    fontFamily: 'OpenSans-Bold',
-    fontSize: 24,
-    color: '#5E3360',
-    marginLeft: 10,
+  cardHeading: {
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 16,
   },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  product: {
-    fontFamily: 'OpenSans-Regular',
+  orderDetailRow: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  div: {
+    flex: 1,
+  },
+  divLabel: {
+    fontFamily: 'OpenSans-Regular',
+    fontSize: 16,
+    marginTop: 10,
+  },
+  orderResponse: {
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 20,
+    color: '#5E3360',
+  },
+  itemDetailsSection: {
+    marginTop: 10,
+    borderTopWidth: 0.5,
+    borderTopColor: '#c7c7c7c7',
+  },
+  caption: {
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 16,
+    marginTop: 20,
+  },
+  innerCaption: {
+    fontFamily: 'OpenSans-Bold',
     fontSize: 18,
     color: '#5E3360',
   },
-  weight: {
-    fontFamily: 'OpenSans-SemiBold',
-    fontSize: 16,
-    marginRight: 10,
-    color: '#5E3360',
+  itemRow: {
+    marginTop: 10,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    width: '100%',
   },
-  operator: {
-    fontFamily: 'OpenSans-SemiBold',
-    fontSize: 16,
+  itemName: {
+    fontFamily: 'OpenSans-Regular',
+    fontSize: 18,
     marginRight: 10,
   },
-  qty: {
-    fontFamily: 'OpenSans-SemiBold',
+  Qty: {
+    fontFamily: 'OpenSans-Regular',
     fontSize: 16,
-    color: '#5E3360',
+  },
+  btnRow: {
+    marginTop: 20,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  btn: {
+    flex: 1,
+    backgroundColor: 'green',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 18,
+    borderRadius: 5,
+    marginHorizontal: 5,
+  },
+  btnTxt: {
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 20,
+    color: '#fff',
   },
 });
