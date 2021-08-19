@@ -376,103 +376,10 @@ const NewOrders = ({route, navigation}) => {
                             }}>
                             Cancelled by you
                           </Text>
-<<<<<<< HEAD
-                        </Pressable>
-                        <View style={styles.tabRow}>
-                          <Text style={styles.statusName}>Confirm Order</Text>
-                          {toggleCheckBoxOne == false ? (
-                            <CheckBox
-                              disabled={false}
-                              value={toggleCheckBoxOne}
-                              onValueChange={() => {
-                                updtateStatus('2', item.customer_name);
-                                // setCustomerName();
-                              }}
-                              style={styles.statusOne}
-                              lineWidth={2}
-                              hideBox={false}
-                              boxType={'circle'}
-                              tintColors={'#9E663C'}
-                              onCheckColor={'#6F763F'}
-                              onFillColor={'#4DABEC'}
-                              onTintColor={'#F4DCF8'}
-                            />
-                          ) : (
-                            <CheckBox
-                              disabled={true}
-                              value={toggleCheckBoxOne}
-                              style={styles.statusOne}
-                              lineWidth={2}
-                              hideBox={false}
-                              boxType={'circle'}
-                              tintColors={'#9E663C'}
-                              onCheckColor={'#6F763F'}
-                              onFillColor={'#4DABEC'}
-                              onTintColor={'#F4DCF8'}
-                            />
-                          )}
-                        </View>
-                      </>
-                    ) : null}
-                    {item.delivery_status == '1' ? (
-                      <>
-                        {item.orderStatus !== '3' ||
-                        item.orderStatus !== '4' ? (
-                          <Pressable
-                            onPress={() =>
-                              openMapDirection(
-                                item.patlatitude,
-                                item.patlongitude,
-                              )
-                            }
-                            style={{
-                              flex: 1,
-                              backgroundColor: '#676cda',
-                              paddingVertical: 10,
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              width: '100%',
-                              marginRight: 5,
-                            }}>
-                            <Text
-                              style={{
-                                fontFamily: 'OpenSans-SemiBold',
-                                fontSize: 19,
-                                color: '#fff',
-                              }}>
-                              Go to Partner's Location
-                            </Text>
-                          </Pressable>
-                        ) : null}
-                      </>
-                    ) : null}
-                    {item.delivery_status == '2' ? (
-                      <View
-                        style={{
-                          flex: 1,
-                          backgroundColor: 'red',
-                          paddingVertical: 10,
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          width: '100%',
-                          marginLeft: 5,
-                        }}>
-                        <Text
-                          style={{
-                            fontFamily: 'OpenSans-SemiBold',
-                            fontSize: 19,
-                            color: '#fff',
-                          }}>
-                          Cancelled
-                        </Text>
-                      </View>
-                    ) : null}
-=======
                         </View>
                       </>
                     ) : null}
                     {/* ======== Status 2 End ======== */}
->>>>>>> 5da9e1dcab557d8a73af2fcf642b6804a6a9b5d5
                   </View>
                   {item.delivery_status == '1' ? (
                     <View style={styles.tabRow}>
@@ -536,7 +443,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     paddingVertical: 10,
   },
-<<<<<<< HEAD
   tabRow: {
     marginTop: 20,
     flexDirection: 'row',
@@ -548,10 +454,7 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans-SemiBold',
     fontSize: 20,
   },
-  orderDetails: {
-=======
   card: {
->>>>>>> 5da9e1dcab557d8a73af2fcf642b6804a6a9b5d5
     width: '100%',
     backgroundColor: '#fff',
     borderRadius: 5,
