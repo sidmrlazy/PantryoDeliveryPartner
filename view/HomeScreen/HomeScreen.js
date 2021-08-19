@@ -441,6 +441,32 @@ const HomeScreen = ({navigation}) => {
               </View>
             </TouchableOpacity>
           </View>
+
+          <View style={styles.row}>
+            <TouchableOpacity style={styles.tab}>
+              <View style={styles.lottieContainer}>
+                <LottieView
+                  source={require('../../assets/lottie/wallet.json')}
+                  autoPlay
+                  loop
+                  size={styles.lottie}
+                />
+              </View>
+              <View style={styles.div}>
+                <Text style={styles.label}>You have earned</Text>
+                <Text style={styles.new}>
+                  ₹1500{' '}
+                  <Text
+                    style={{
+                      fontFamily: 'OpenSans-Regular',
+                      fontSize: 16,
+                    }}>
+                    today
+                  </Text>
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
         </ScrollView>
         {/* ====== Tab Row End ====== */}
 
