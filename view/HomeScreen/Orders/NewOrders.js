@@ -359,6 +359,44 @@ const NewOrders = ({route, navigation}) => {
                         </Text>
                       </View>
                     ) : null}
+
+                   
+                  </View>
+                  <View style={styles.tabRow}>
+                    <Text style={styles.statusName}>
+                      Reached at Pickup Destination
+                    </Text>
+                    {toggleCheckBoxOne == false ? (
+                      <CheckBox
+                        disabled={false}
+                        value={toggleCheckBoxOne}
+                        onValueChange={() => {
+                          // updtateStatus('2', item.customer_name);
+                          // setCustomerName();
+                        }}
+                        style={styles.statusOne}
+                        lineWidth={2}
+                        hideBox={false}
+                        boxType={'circle'}
+                        tintColors={'#9E663C'}
+                        onCheckColor={'#6F763F'}
+                        onFillColor={'#4DABEC'}
+                        onTintColor={'#F4DCF8'}
+                      />
+                    ) : (
+                      <CheckBox
+                        disabled={true}
+                        value={toggleCheckBoxOne}
+                        style={styles.statusOne}
+                        lineWidth={2}
+                        hideBox={false}
+                        boxType={'circle'}
+                        tintColors={'#9E663C'}
+                        onCheckColor={'#6F763F'}
+                        onFillColor={'#4DABEC'}
+                        onTintColor={'#F4DCF8'}
+                      />
+                    )}
                   </View>
                 </View>
               </>
