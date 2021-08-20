@@ -64,6 +64,10 @@ const HomeScreen = ({navigation}) => {
   const [itemQty, setItemQty] = React.useState('');
   const [productName, setProductName] = React.useState('');
 
+  // Order Count Variables
+  const [orderCountFtd, setOrderCountFtd] = React.useState('');
+  const [totalOrdersLtd, setTotalOrdersLtd] = React.useState('');
+
   // API URL variables
   const ChangeOrderStatus =
     'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=deliveryPartnerStatus';
@@ -283,7 +287,7 @@ const HomeScreen = ({navigation}) => {
         return response.json();
       })
       .then(function (result) {
-        console.log(result);
+        // console.log(result);
         if (result.error == 0) {
           setNewOrder(result.allorder);
           // setModalVisible(true);
@@ -339,6 +343,62 @@ const HomeScreen = ({navigation}) => {
       });
   };
 
+  const orderCountToday = async () => {
+    await fetch(
+      'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartnerCount.php?flag=todayOrdercount',
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/JSON',
+          'Content-Type': 'application/JSON',
+        },
+        body: JSON.stringify({
+          delivery_id: userId,
+        }),
+      },
+    )
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (result) {
+        // console.log('OrderCountToday: ' + JSON.stringify(result.todayOrder));
+        if (result.error == 0) {
+          setOrderCountFtd(result.todayOrder);
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+
+  const totalOrders = async () => {
+    await fetch(
+      'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartnerCount.php?flag=allOrdercount',
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/JSON',
+          'Content-Type': 'application/JSON',
+        },
+        body: JSON.stringify({
+          delivery_id: userId,
+        }),
+      },
+    )
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (result) {
+        // console.log('Total Orders: ' + JSON.stringify(result));
+        if (result.error == 0) {
+          setTotalOrdersLtd(result.todayOrder);
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+
   useEffect(() => {
     getOrderData();
     LogBox.ignoreAllLogs(true);
@@ -346,6 +406,8 @@ const HomeScreen = ({navigation}) => {
     LogBox.ignoreLogs(['VirtualizedLists should never be nested...']);
     requestLocationPermission();
     userProfileData();
+    orderCountToday();
+    totalOrders();
     // updateUserLocation();
   }, []);
 
@@ -422,7 +484,7 @@ const HomeScreen = ({navigation}) => {
               </View>
               <View style={styles.div}>
                 <Text style={styles.label}>New Orders</Text>
-                <Text style={styles.new}>10</Text>
+                <Text style={styles.new}>{orderCountFtd}</Text>
               </View>
             </TouchableOpacity>
 
@@ -437,7 +499,7 @@ const HomeScreen = ({navigation}) => {
               </View>
               <View style={styles.div}>
                 <Text style={styles.label}>Orders Completed</Text>
-                <Text style={styles.new}>60</Text>
+                <Text style={styles.new}>{totalOrdersLtd}</Text>
               </View>
             </TouchableOpacity>
           </View>
