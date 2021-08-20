@@ -484,7 +484,9 @@ const HomeScreen = ({navigation}) => {
               </View>
               <View style={styles.div}>
                 <Text style={styles.label}>New Orders</Text>
-                <Text style={styles.new}>{orderCountFtd}</Text>
+                <Text style={styles.new}>
+                  {orderCountFtd ? orderCountFtd : '0'}
+                </Text>
               </View>
             </TouchableOpacity>
 
@@ -499,7 +501,9 @@ const HomeScreen = ({navigation}) => {
               </View>
               <View style={styles.div}>
                 <Text style={styles.label}>Orders Completed</Text>
-                <Text style={styles.new}>{totalOrdersLtd}</Text>
+                <Text style={styles.new}>
+                  {totalOrdersLtd ? totalOrdersLtd : '0'}
+                </Text>
               </View>
             </TouchableOpacity>
           </View>
