@@ -67,6 +67,7 @@ const HomeScreen = ({navigation}) => {
   // Order Count Variables
   const [orderCountFtd, setOrderCountFtd] = React.useState('');
   const [totalOrdersLtd, setTotalOrdersLtd] = React.useState('');
+  const [earnings, setEarnings] = React.useState('');
 
   // API URL variables
   const ChangeOrderStatus =
@@ -343,8 +344,9 @@ const HomeScreen = ({navigation}) => {
       });
   };
 
-  const orderCountToday = async () => {
-    await fetch(
+  // Order Count Today
+  const orderCountToday = () => {
+    fetch(
       'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartnerCount.php?flag=todayOrdercount',
       {
         method: 'POST',
@@ -361,7 +363,7 @@ const HomeScreen = ({navigation}) => {
         return response.json();
       })
       .then(function (result) {
-        // console.log('OrderCountToday: ' + JSON.stringify(result.todayOrder));
+        console.log('OrderCountToday: ' + JSON.stringify(result.todayOrder));
         if (result.error == 0) {
           setOrderCountFtd(result.todayOrder);
         }
@@ -371,8 +373,9 @@ const HomeScreen = ({navigation}) => {
       });
   };
 
-  const totalOrders = async () => {
-    await fetch(
+  // Total Orders Life To Date
+  const totalOrders = () => {
+    fetch(
       'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartnerCount.php?flag=allOrdercount',
       {
         method: 'POST',
@@ -389,9 +392,38 @@ const HomeScreen = ({navigation}) => {
         return response.json();
       })
       .then(function (result) {
-        // console.log('Total Orders: ' + JSON.stringify(result));
+        console.log('Total Orders: ' + JSON.stringify(result));
         if (result.error == 0) {
           setTotalOrdersLtd(result.todayOrder);
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+
+  // Total Earnings for the day
+  const totalEarningFtd = () => {
+    fetch(
+      'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartnerCount.php?flag=todayearning',
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/JSON',
+          'Content-Type': 'application/JSON',
+        },
+        body: JSON.stringify({
+          delivery_id: userId,
+        }),
+      },
+    )
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (result) {
+        console.log('Total Earnings FTD: ' + JSON.stringify(result));
+        if (result.error == 0) {
+          setEarnings(result.todayearn);
         }
       })
       .catch(error => {
@@ -408,6 +440,7 @@ const HomeScreen = ({navigation}) => {
     userProfileData();
     orderCountToday();
     totalOrders();
+    totalEarningFtd();
     // updateUserLocation();
   }, []);
 
@@ -484,7 +517,9 @@ const HomeScreen = ({navigation}) => {
               </View>
               <View style={styles.div}>
                 <Text style={styles.label}>New Orders</Text>
-                <Text style={styles.new}>{orderCountFtd}</Text>
+                <Text style={styles.new}>
+                  {orderCountFtd ? orderCountFtd : '0'}
+                </Text>
               </View>
             </TouchableOpacity>
 
@@ -499,7 +534,9 @@ const HomeScreen = ({navigation}) => {
               </View>
               <View style={styles.div}>
                 <Text style={styles.label}>Orders Completed</Text>
-                <Text style={styles.new}>{totalOrdersLtd}</Text>
+                <Text style={styles.new}>
+                  {totalOrdersLtd ? totalOrdersLtd : '0'}
+                </Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -517,7 +554,7 @@ const HomeScreen = ({navigation}) => {
               <View style={[styles.div, {marginLeft: 15}]}>
                 <Text style={styles.label}>You have earned</Text>
                 <Text style={styles.new}>
-                  ₹1500{' '}
+                  ₹{earnings ? earnings : '0'}{' '}
                   <Text
                     style={{
                       fontFamily: 'OpenSans-Regular',
