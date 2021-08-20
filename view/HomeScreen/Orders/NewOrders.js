@@ -87,7 +87,6 @@ const NewOrders = ({route, navigation}) => {
     customerToken,
     partnerToken,
   ) => {
-    console.log(partnerToken);
     let userId = await AsyncStorage.getItem('user_id');
     setLoading(true);
     await fetch(
@@ -109,19 +108,17 @@ const NewOrders = ({route, navigation}) => {
         return response.json();
       })
       .then(function (result) {
-        // console.log(result);
         if (result.error == 0) {
           if (activitytype == '1') {
             notificationToCustomer(customerToken);
             notificationToPartner(partnerToken);
           }
         }
-        getOrderData();
       })
       .catch(error => {
         console.error(error);
       })
-      .finally(() => setLoading(false));
+      .finally(() => getOrderData());
   };
 
   // Send Notification to customer
@@ -342,12 +339,13 @@ const NewOrders = ({route, navigation}) => {
         if (result.error == 21) {
           notificationToCustomerDeliveryBoyReach(customerToken);
         }
-        getOrderData();
       })
       .catch(error => {
         console.error(error);
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        getOrderData();
+      });
   };
 
   useEffect(() => {
@@ -403,13 +401,29 @@ const NewOrders = ({route, navigation}) => {
                           {item.productUnit}
                         </Text>
                       </View>
-                      {item.delivery_otp !== '' ? (
-                        <View style={styles.itemRow}>
-                          <Text style={styles.itemName}>
-                            Your Secret Code is :
-                          </Text>
-                          <Text style={styles.Qty}>{item.delivery_otp}</Text>
-                        </View>
+
+                      {item.orderStatus !== '4' ? (
+                        <>
+                          {item.delivery_otp !== '' ? (
+                            <View style={{marginTop: 15}}>
+                              <Text
+                                style={{
+                                  fontFamily: 'OpenSans-SemiBold',
+                                  fontSize: 16,
+                                }}>
+                                Your Secret Code is :
+                              </Text>
+                              <Text
+                                style={{
+                                  fontFamily: 'OpenSans-Bold',
+                                  fontSize: 16,
+                                  color: '#000',
+                                }}>
+                                {item.delivery_otp}
+                              </Text>
+                            </View>
+                          ) : null}
+                        </>
                       ) : null}
                     </View>
 
@@ -495,23 +509,25 @@ const NewOrders = ({route, navigation}) => {
                     ) : null}
                     {item.orderStatus == '4' ? (
                       <>
-                        <View style={{marginTop: 15}}>
-                          <Text
-                            style={{
-                              fontFamily: 'OpenSans-SemiBold',
-                              fontSize: 16,
-                            }}>
-                            Status
-                          </Text>
-                          <Text
-                            style={{
-                              fontFamily: 'OpenSans-Bold',
-                              fontSize: 18,
-                              color: 'green',
-                            }}>
-                            Item Delivered
-                          </Text>
-                        </View>
+                        {item.delivery_status == '1' ? (
+                          <View style={{marginTop: 15}}>
+                            <Text
+                              style={{
+                                fontFamily: 'OpenSans-SemiBold',
+                                fontSize: 16,
+                              }}>
+                              Status
+                            </Text>
+                            <Text
+                              style={{
+                                fontFamily: 'OpenSans-Bold',
+                                fontSize: 18,
+                                color: 'green',
+                              }}>
+                              Item Delivered
+                            </Text>
+                          </View>
+                        ) : null}
                       </>
                     ) : null}
                     {/* ======== Status 2 End ======== */}
