@@ -159,6 +159,46 @@ const NewOrders = ({route, navigation}) => {
     console.log(response);
   };
 
+  const notificationToCustomerDeliveryBoyReach = async customerToken => {
+    let deliveryPartner = await AsyncStorage.getItem('userName');
+    const CUSTOMER_FIREBASE_API_KEY = customer_firebase_key;
+    const message = {
+      to: customerToken,
+      notification: {
+        title: 'Order Reached',
+        body:
+          deliveryPartner +
+          ' ' +
+          'has reached at your location. Thank you for ordering from Pantryo',
+        vibrate: 1,
+        sound: 1,
+        show_in_foreground: true,
+        priority: 'high',
+        content_available: true,
+      },
+      data: {
+        title: 'Order Reached',
+        body:
+          deliveryPartner +
+          ' ' +
+          ' has reached at your location. Thank you for ordering from Pantryo',
+      },
+    };
+
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      Authorization: 'key=' + CUSTOMER_FIREBASE_API_KEY,
+    });
+    // https://fcm.googleapis.com/fcm/send
+    let response = await fetch('https://fcm.googleapis.com/fcm/send', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(message),
+    });
+    response = await response.json();
+    console.log(response);
+  };
+
   // Send Notification to Partner
   const notificationToPartner = async partnerToken => {
     let deliveryPartner = await AsyncStorage.getItem('userName');
@@ -200,6 +240,53 @@ const NewOrders = ({route, navigation}) => {
     console.log(response);
   };
 
+  const notificationToPartnerDeliveryBoyReach = async (
+    partnerToken,
+    customername,
+  ) => {
+    let deliveryPartner = await AsyncStorage.getItem('userName');
+    const FIREBASE_API_KEY = delivery_partner_firebase_key;
+    const message = {
+      to: partnerToken,
+      notification: {
+        title: 'Order Confirmation',
+        body:
+          deliveryPartner +
+          ' ' +
+          ' has arrived at your location to pickup the order for ' +
+          ' ' +
+          customername,
+        vibrate: 1,
+        sound: 1,
+        show_in_foreground: true,
+        priority: 'high',
+        content_available: true,
+      },
+      data: {
+        title: 'Order Confirmation',
+        body:
+          deliveryPartner +
+          ' ' +
+          ' has arrived at your location to pickup the order for ' +
+          ' ' +
+          customername,
+      },
+    };
+
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      Authorization: 'key=' + FIREBASE_API_KEY,
+    });
+    // https://fcm.googleapis.com/fcm/send
+    let response = await fetch('https://fcm.googleapis.com/fcm/send', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(message),
+    });
+    response = await response.json();
+    console.log(response);
+  };
+
   const openMapDirection = async (latitude, longitude) => {
     const url = Platform.select({
       ios: `comgooglemaps://?center=${latitude},${longitude}&q=${latitude},${longitude}&zoom=14&views=traffic"`,
@@ -223,9 +310,15 @@ const NewOrders = ({route, navigation}) => {
   };
 
   // status update
-  const updtateStatus = async (status, customername, orderId) => {
+  const updtateStatus = async (
+    status,
+    customername,
+    orderId,
+    partnerToken,
+    customerToken,
+  ) => {
     await fetch(
-      'https://gizmmoalchemy.com/api/pantryo/PartnerAppApi/PantryoPartner.php?flag=update_order_status',
+      'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=deliveryStatusAndOtp',
       {
         method: 'POST',
         headers: {
@@ -233,7 +326,7 @@ const NewOrders = ({route, navigation}) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          order_status: status,
+          status: status,
           order_id: orderId,
         }),
       },
@@ -242,28 +335,14 @@ const NewOrders = ({route, navigation}) => {
         return response.json();
       })
       .then(function (result) {
+        // console.log(result);
         if (result.error == 0) {
-          setOrderStatus(status);
-          if (status === '3') {
-            setToggleCheckBoxTwo(true);
-            setModalVisible(false);
-            navigation.navigate('HomeScreen');
-          }
-          if (status === '2') {
-            notificationToCustomer();
-            setOrderStatus(status);
-            searchDeliveryPartner(customername);
-            setToggleCheckBoxOne(true);
-          }
-        } else {
-          if (status === '3') {
-            setToggleCheckBoxTwo(false);
-            setModalVisible(false);
-          }
-          if (status === '2') {
-            setToggleCheckBoxOne(false);
-          }
+          notificationToPartnerDeliveryBoyReach(partnerToken, customername);
         }
+        if (result.error == 21) {
+          notificationToCustomerDeliveryBoyReach(customerToken);
+        }
+        getOrderData();
       })
       .catch(error => {
         console.error(error);
@@ -324,6 +403,14 @@ const NewOrders = ({route, navigation}) => {
                           {item.productUnit}
                         </Text>
                       </View>
+                      {item.delivery_otp !== '' ? (
+                        <View style={styles.itemRow}>
+                          <Text style={styles.itemName}>
+                            Your Secret Code is :
+                          </Text>
+                          <Text style={styles.Qty}>{item.delivery_otp}</Text>
+                        </View>
+                      ) : null}
                     </View>
 
                     {/* ======== Status 0 Start ======== */}
@@ -363,20 +450,23 @@ const NewOrders = ({route, navigation}) => {
                     {/* ======== Status 1 Start ======== */}
                     {item.delivery_status == '1' ? (
                       <>
-                        <View style={styles.btnRow}>
-                          <TouchableOpacity
-                            onPress={() =>
-                              openMapDirection(
-                                item.patlatitude,
-                                item.patlongitude,
-                              )
-                            }
-                            style={styles.btn}>
-                            <Text style={styles.btnTxt}>
-                              Open Partner's Location
-                            </Text>
-                          </TouchableOpacity>
-                        </View>
+                        {item.orderStatus == '2' ? (
+                          <View style={styles.btnRow}>
+                            <View style={styles.btn}>
+                              <Text style={styles.btnTxt}>
+                                Open Partner's Location
+                              </Text>
+                            </View>
+                          </View>
+                        ) : item.orderStatus == '3' ? (
+                          <View style={styles.btnRow}>
+                            <View style={styles.btn}>
+                              <Text style={styles.btnTxt}>
+                                Open Customer Location
+                              </Text>
+                            </View>
+                          </View>
+                        ) : null}
                       </>
                     ) : null}
                     {/* ======== Status 1 End ======== */}
@@ -403,49 +493,87 @@ const NewOrders = ({route, navigation}) => {
                         </View>
                       </>
                     ) : null}
+                    {item.orderStatus == '4' ? (
+                      <>
+                        <View style={{marginTop: 15}}>
+                          <Text
+                            style={{
+                              fontFamily: 'OpenSans-SemiBold',
+                              fontSize: 16,
+                            }}>
+                            Status
+                          </Text>
+                          <Text
+                            style={{
+                              fontFamily: 'OpenSans-Bold',
+                              fontSize: 18,
+                              color: 'green',
+                            }}>
+                            Item Delivered
+                          </Text>
+                        </View>
+                      </>
+                    ) : null}
                     {/* ======== Status 2 End ======== */}
                   </View>
                   {item.delivery_status == '1' ? (
-                    <View style={styles.tabRow}>
-                      <Text style={styles.statusName}>
-                        Reached at Pickup Destination
-                      </Text>
-                      {toggleCheckBoxOne == false ? (
-                        <CheckBox
-                          disabled={false}
-                          value={toggleCheckBoxOne}
-                          onValueChange={() => {
-                            updtateStatus(
-                              '3',
-                              item.customer_name,
-                              item.order_id,
-                            );
-                            // setCustomerName();
-                          }}
-                          style={styles.statusOne}
-                          lineWidth={2}
-                          hideBox={false}
-                          boxType={'circle'}
-                          tintColors={'#9E663C'}
-                          onCheckColor={'#6F763F'}
-                          onFillColor={'#4DABEC'}
-                          onTintColor={'#F4DCF8'}
-                        />
-                      ) : (
-                        <CheckBox
-                          disabled={true}
-                          value={toggleCheckBoxOne}
-                          style={styles.statusOne}
-                          lineWidth={2}
-                          hideBox={false}
-                          boxType={'circle'}
-                          tintColors={'#9E663C'}
-                          onCheckColor={'#6F763F'}
-                          onFillColor={'#4DABEC'}
-                          onTintColor={'#F4DCF8'}
-                        />
-                      )}
-                    </View>
+                    <>
+                      {item.orderStatus == '2' ? (
+                        <View style={styles.tabRow}>
+                          <Text style={styles.statusName}>
+                            Reached at Pickup Destination
+                          </Text>
+                          <CheckBox
+                            disabled={false}
+                            value={toggleCheckBoxOne}
+                            onValueChange={() => {
+                              updtateStatus(
+                                '3',
+                                item.customer_name,
+                                item.order_id,
+                                item.partnerUserToken,
+                                item.CustomerUserToken,
+                              );
+                            }}
+                            style={styles.statusOne}
+                            lineWidth={2}
+                            hideBox={false}
+                            boxType={'circle'}
+                            tintColors={'#9E663C'}
+                            onCheckColor={'#6F763F'}
+                            onFillColor={'#4DABEC'}
+                            onTintColor={'#F4DCF8'}
+                          />
+                        </View>
+                      ) : item.orderStatus == '3' ? (
+                        <View style={styles.tabRow}>
+                          <Text style={styles.statusName}>
+                            Reached at Drop Point
+                          </Text>
+                          <CheckBox
+                            disabled={false}
+                            value={toggleCheckBoxOne}
+                            onValueChange={() => {
+                              updtateStatus(
+                                '4',
+                                item.customer_name,
+                                item.order_id,
+                                item.partnerUserToken,
+                                item.CustomerUserToken,
+                              );
+                            }}
+                            style={styles.statusOne}
+                            lineWidth={2}
+                            hideBox={false}
+                            boxType={'circle'}
+                            tintColors={'#9E663C'}
+                            onCheckColor={'#6F763F'}
+                            onFillColor={'#4DABEC'}
+                            onTintColor={'#F4DCF8'}
+                          />
+                        </View>
+                      ) : null}
+                    </>
                   ) : null}
                 </View>
               </>
