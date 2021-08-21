@@ -363,7 +363,7 @@ const HomeScreen = ({navigation}) => {
         return response.json();
       })
       .then(function (result) {
-        console.log('OrderCountToday: ' + JSON.stringify(result.todayOrder));
+        // console.log('OrderCountToday: ' + JSON.stringify(result.todayOrder));
         if (result.error == 0) {
           setOrderCountFtd(result.todayOrder);
         }
@@ -392,7 +392,7 @@ const HomeScreen = ({navigation}) => {
         return response.json();
       })
       .then(function (result) {
-        console.log('Total Orders: ' + JSON.stringify(result));
+        // console.log('Total Orders: ' + JSON.stringify(result));
         if (result.error == 0) {
           setTotalOrdersLtd(result.todayOrder);
         }
