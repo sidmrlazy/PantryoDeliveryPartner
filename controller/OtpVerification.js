@@ -210,7 +210,7 @@ const OtpVerification = ({navigation, route}) => {
   ) => {
     setLoading(true);
     fetch(
-      'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/paymentdetails.php',
+      'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/paymentdetails.php?flag=delivery_transaction',
       {
         method: 'POST',
         headers: {
