@@ -595,6 +595,43 @@ const NewOrders = ({route, navigation}) => {
               </>
             )}
           />
+          ) : (
+            <ScrollView
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }> <FlatList
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: '100%',
+                paddingTop: 20,
+              }}>
+              <LottieView
+                source={require('../../../assets/lottie/nodata.json')}
+                autoPlay
+                loop
+                style={{
+                  width: 200,
+                  height: 200,
+                }}
+              />
+              <Text
+                style={{
+                  fontFamily: 'OpenSans-Regular',
+                  fontSize: 20,
+                  textAlign: 'center',
+                  color: '#777',
+                }}>
+                Waiting for customer orders. You will receive a notification as
+                soon as a customer places their order
+              </Text>
+            </View>
+          )}
         </View>
       )}
     </>
