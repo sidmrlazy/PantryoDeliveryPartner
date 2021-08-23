@@ -4,37 +4,32 @@ import {
   Text,
   StyleSheet,
   FlatList,
-  Pressable,
   Platform,
   Linking,
   TouchableOpacity,
+  RefreshControl,
+  ScrollView,
 } from 'react-native';
 
 // Libraries
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CheckBox from '@react-native-community/checkbox';
-
+import LottieView from 'lottie-react-native';
 import Loader from '../../../controller/LoaderScreen';
+
+// Timer for Refreshing
+const wait = timeout => {
+  return new Promise(resolve => setTimeout(resolve, timeout));
+};
 
 const NewOrders = ({route, navigation}) => {
   const [userId, setUserId] = React.useState('');
-  const [customerToken, setCustomerToken] = React.useState('');
-  const [partnerToken, setPartnerToken] = React.useState('');
-  const [orderId, setOrderId] = React.useState('');
-  const [status, setStatus] = React.useState('1');
-  const [customerName, setCustomerName] = React.useState('');
-  const [customerMobile, setCustomerMobile] = React.useState('');
-  const [partnerPinCode, setPartnerPincode] = React.useState('');
-  const [shopName, setShopName] = React.useState('');
-  const [productQty, setProductQty] = React.useState('');
-  const [productUnit, setProductUnit] = React.useState('');
-  const [itemQty, setItemQty] = React.useState('');
-  const [productName, setProductName] = React.useState('');
-  const [allData, setAllData] = React.useState('');
   const [Data, setData] = React.useState('');
   const [isLoading, setLoading] = React.useState(true);
   const [mounted, setmounted] = React.useState(true);
+  const [refreshing, setRefreshing] = React.useState(false);
   const [toggleCheckBoxOne, setToggleCheckBoxOne] = React.useState(false);
+  const [toggleCheckBoxTwo, setToggleCheckBoxTwo] = React.useState(false);
 
   const customer_firebase_key =
     'AAAAIIoSzdk:APA91bFqAg9Vu4T-_LYX5EPz9UVtqZTp0bRWOpkJLgm6GqIf4QAJtrW6RISmqWHZl6T-ykQrNLpo39kbRHLBsfGmqyz5JP8hxNCUzrfw8ECkcOItsO173OGeIrPf01_jiTLGjJsgwr33';
@@ -66,18 +61,19 @@ const NewOrders = ({route, navigation}) => {
         return response.json();
       })
       .then(function (result) {
-        // console.log(result);
         if (mounted) {
           if (result.error == 0) {
             setData(result.allorder);
           }
         }
-        getOrderData();
       })
       .catch(error => {
         console.error(error);
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+        getOrderData();
+      });
   };
 
   // Accept Order or Cancel
@@ -146,7 +142,6 @@ const NewOrders = ({route, navigation}) => {
       'Content-Type': 'application/json',
       Authorization: 'key=' + CUSTOMER_FIREBASE_API_KEY,
     });
-    // https://fcm.googleapis.com/fcm/send
     let response = await fetch('https://fcm.googleapis.com/fcm/send', {
       method: 'POST',
       headers,
@@ -186,7 +181,6 @@ const NewOrders = ({route, navigation}) => {
       'Content-Type': 'application/json',
       Authorization: 'key=' + CUSTOMER_FIREBASE_API_KEY,
     });
-    // https://fcm.googleapis.com/fcm/send
     let response = await fetch('https://fcm.googleapis.com/fcm/send', {
       method: 'POST',
       headers,
@@ -227,7 +221,6 @@ const NewOrders = ({route, navigation}) => {
       'Content-Type': 'application/json',
       Authorization: 'key=' + FIREBASE_API_KEY,
     });
-    // https://fcm.googleapis.com/fcm/send
     let response = await fetch('https://fcm.googleapis.com/fcm/send', {
       method: 'POST',
       headers,
@@ -274,7 +267,6 @@ const NewOrders = ({route, navigation}) => {
       'Content-Type': 'application/json',
       Authorization: 'key=' + FIREBASE_API_KEY,
     });
-    // https://fcm.googleapis.com/fcm/send
     let response = await fetch('https://fcm.googleapis.com/fcm/send', {
       method: 'POST',
       headers,
@@ -332,7 +324,6 @@ const NewOrders = ({route, navigation}) => {
         return response.json();
       })
       .then(function (result) {
-        // console.log(result);
         if (result.error == 0) {
           notificationToPartnerDeliveryBoyReach(partnerToken, customername);
         }
@@ -348,6 +339,13 @@ const NewOrders = ({route, navigation}) => {
       });
   };
 
+  // OnRefresh
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    getOrderData();
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
+
   useEffect(() => {
     getOrderData();
     userProfileData();
@@ -362,154 +360,149 @@ const NewOrders = ({route, navigation}) => {
         <Loader />
       ) : (
         <View style={styles.container}>
-          <FlatList
-            style={{width: '100%'}}
-            data={Data}
-            keyExtractor={item => item.confirm_order_id}
-            renderItem={({item}) => (
-              <>
-                <View style={styles.container}>
-                  <View style={styles.card}>
-                    <Text style={styles.cardHeading}>New Order Received!</Text>
-
-                    <View style={styles.orderDetailRow}>
-                      <View style={styles.div}>
-                        <Text style={styles.divLabel}>Order ID</Text>
-                        <Text style={styles.orderResponse}>
-                          {item.order_id}
-                        </Text>
-                      </View>
-                      <View style={styles.div}>
-                        <Text style={styles.divLabel}>Pickup from</Text>
-                        <Text style={styles.orderResponse}>
-                          {item.shopName}
-                        </Text>
-                      </View>
-                    </View>
-
-                    <View style={styles.itemDetailsSection}>
-                      <Text style={styles.caption}>
-                        Total products to pick up:{' '}
-                        <Text style={styles.innerCaption}>
-                          {item.numberOfProduct}
-                        </Text>
+          {Data !== '' ? (
+            <FlatList
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
+              style={{width: '100%'}}
+              data={Data}
+              keyExtractor={item => item.confirm_order_id}
+              renderItem={({item}) => (
+                <>
+                  <View style={styles.container}>
+                    <View style={styles.card}>
+                      <Text style={styles.cardHeading}>
+                        New Order Received!
                       </Text>
-                      <View style={styles.itemRow}>
-                        <Text style={styles.itemName}>{item.productName}</Text>
-                        <Text style={styles.Qty}>
-                          {item.productQty}
-                          {item.productUnit}
-                        </Text>
+
+                      <View style={styles.orderDetailRow}>
+                        <View style={styles.div}>
+                          <Text style={styles.divLabel}>Order ID</Text>
+                          <Text style={styles.orderResponse}>
+                            {item.order_id}
+                          </Text>
+                        </View>
+                        <View style={styles.div}>
+                          <Text style={styles.divLabel}>Pickup from</Text>
+                          <Text style={styles.orderResponse}>
+                            {item.shopName}
+                          </Text>
+                        </View>
                       </View>
 
-                      {item.orderStatus !== '4' ? (
+                      <View style={styles.itemDetailsSection}>
+                        <Text style={styles.caption}>
+                          Total products to pick up:{' '}
+                          <Text style={styles.innerCaption}>
+                            {item.numberOfProduct}
+                          </Text>
+                        </Text>
+                        <Text style={styles.caption}>
+                          Your Earning:{' '}
+                          <Text style={styles.innerCaption}>
+                            {item.deliveryBoyEarn}
+                          </Text>
+                        </Text>
+                        {/* <View style={styles.itemRow}>
+                          <Text style={styles.itemName}>
+                            {item.productName}
+                          </Text>
+                          <Text style={styles.Qty}>
+                            {item.productQty}
+                            {item.productUnit}
+                          </Text>
+                        </View> */}
+
+                        {item.orderStatus !== '4' ? (
+                          <>
+                            {item.delivery_otp !== '' ? (
+                              <View style={{marginTop: 15}}>
+                                <Text
+                                  style={{
+                                    fontFamily: 'OpenSans-SemiBold',
+                                    fontSize: 16,
+                                  }}>
+                                  Your Secret Code is :
+                                </Text>
+                                <Text
+                                  style={{
+                                    fontFamily: 'OpenSans-Bold',
+                                    fontSize: 16,
+                                    color: '#000',
+                                  }}>
+                                  {item.delivery_otp}
+                                </Text>
+                              </View>
+                            ) : null}
+                          </>
+                        ) : null}
+                      </View>
+
+                      {/* ======== Status 0 Start ======== */}
+                      {item.delivery_status == '0' ? (
                         <>
-                          {item.delivery_otp !== '' ? (
-                            <View style={{marginTop: 15}}>
-                              <Text
-                                style={{
-                                  fontFamily: 'OpenSans-SemiBold',
-                                  fontSize: 16,
-                                }}>
-                                Your Secret Code is :
-                              </Text>
-                              <Text
-                                style={{
-                                  fontFamily: 'OpenSans-Bold',
-                                  fontSize: 16,
-                                  color: '#000',
-                                }}>
-                                {item.delivery_otp}
-                              </Text>
+                          <View style={styles.btnRow}>
+                            <TouchableOpacity
+                              onPress={() => {
+                                AcceptCancel(
+                                  '1',
+                                  item.order_id,
+                                  item.CustomerUserToken,
+                                  item.partnerUserToken,
+                                );
+                              }}
+                              style={styles.btn}>
+                              <Text style={styles.btnTxt}>Accept Order</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                              onPress={() => {
+                                AcceptCancel(
+                                  '2',
+                                  item.order_id,
+                                  item.CustomerUserToken,
+                                  item.partnerUserToken,
+                                );
+                              }}
+                              style={[
+                                styles.btn,
+                                {backgroundColor: '#a83d36'},
+                              ]}>
+                              <Text style={styles.btnTxt}>Cancel</Text>
+                            </TouchableOpacity>
+                          </View>
+                        </>
+                      ) : null}
+                      {/* ======== Status 0 End ======== */}
+
+                      {/* ======== Status 1 Start ======== */}
+                      {item.delivery_status == '1' ? (
+                        <>
+                          {item.orderStatus == '2' ? (
+                            <View style={styles.btnRow}>
+                              <View style={styles.btn}>
+                                <Text style={styles.btnTxt}>
+                                  Open Partner's Location
+                                </Text>
+                              </View>
+                            </View>
+                          ) : item.orderStatus == '3' ? (
+                            <View style={styles.btnRow}>
+                              <View style={styles.btn}>
+                                <Text style={styles.btnTxt}>
+                                  Open Customer Location
+                                </Text>
+                              </View>
                             </View>
                           ) : null}
                         </>
                       ) : null}
-                    </View>
+                      {/* ======== Status 1 End ======== */}
 
-                    {/* ======== Status 0 Start ======== */}
-                    {item.delivery_status == '0' ? (
-                      <>
-                        <View style={styles.btnRow}>
-                          <TouchableOpacity
-                            onPress={() => {
-                              AcceptCancel(
-                                '1',
-                                item.order_id,
-                                item.CustomerUserToken,
-                                item.partnerUserToken,
-                              );
-                            }}
-                            style={styles.btn}>
-                            <Text style={styles.btnTxt}>Accept Order</Text>
-                          </TouchableOpacity>
-
-                          <TouchableOpacity
-                            onPress={() => {
-                              AcceptCancel(
-                                '2',
-                                item.order_id,
-                                item.CustomerUserToken,
-                                item.partnerUserToken,
-                              );
-                            }}
-                            style={[styles.btn, {backgroundColor: '#a83d36'}]}>
-                            <Text style={styles.btnTxt}>Cancel</Text>
-                          </TouchableOpacity>
-                        </View>
-                      </>
-                    ) : null}
-                    {/* ======== Status 0 End ======== */}
-
-                    {/* ======== Status 1 Start ======== */}
-                    {item.delivery_status == '1' ? (
-                      <>
-                        {item.orderStatus == '2' ? (
-                          <View style={styles.btnRow}>
-                            <View style={styles.btn}>
-                              <Text style={styles.btnTxt}>
-                                Open Partner's Location
-                              </Text>
-                            </View>
-                          </View>
-                        ) : item.orderStatus == '3' ? (
-                          <View style={styles.btnRow}>
-                            <View style={styles.btn}>
-                              <Text style={styles.btnTxt}>
-                                Open Customer Location
-                              </Text>
-                            </View>
-                          </View>
-                        ) : null}
-                      </>
-                    ) : null}
-                    {/* ======== Status 1 End ======== */}
-
-                    {/* ======== Status 2 Start ======== */}
-                    {item.delivery_status == '2' ? (
-                      <>
-                        <View style={{marginTop: 15}}>
-                          <Text
-                            style={{
-                              fontFamily: 'OpenSans-SemiBold',
-                              fontSize: 16,
-                            }}>
-                            Status
-                          </Text>
-                          <Text
-                            style={{
-                              fontFamily: 'OpenSans-Bold',
-                              fontSize: 18,
-                              color: '#a83d36',
-                            }}>
-                            Cancelled by you
-                          </Text>
-                        </View>
-                      </>
-                    ) : null}
-                    {item.orderStatus == '4' ? (
-                      <>
-                        {item.delivery_status == '1' ? (
+                      {/* ======== Status 2 Start ======== */}
+                      {item.delivery_status == '2' ? (
+                        <>
                           <View style={{marginTop: 15}}>
                             <Text
                               style={{
@@ -522,115 +515,140 @@ const NewOrders = ({route, navigation}) => {
                               style={{
                                 fontFamily: 'OpenSans-Bold',
                                 fontSize: 18,
-                                color: 'green',
+                                color: '#a83d36',
                               }}>
-                              Item Delivered
+                              Cancelled by you
                             </Text>
+                          </View>
+                        </>
+                      ) : null}
+                      {item.orderStatus == '4' ? (
+                        <>
+                          {item.delivery_status == '1' ? (
+                            <View style={{marginTop: 15}}>
+                              <Text
+                                style={{
+                                  fontFamily: 'OpenSans-SemiBold',
+                                  fontSize: 16,
+                                }}>
+                                Status
+                              </Text>
+                              <Text
+                                style={{
+                                  fontFamily: 'OpenSans-Bold',
+                                  fontSize: 18,
+                                  color: 'green',
+                                }}>
+                                Item Delivered
+                              </Text>
+                            </View>
+                          ) : null}
+                        </>
+                      ) : null}
+                      {/* ======== Status 2 End ======== */}
+                    </View>
+                    {item.delivery_status == '1' ? (
+                      <>
+                        {item.orderStatus == '2' ? (
+                          <View style={styles.tabRow}>
+                            <Text style={styles.statusName}>
+                              Reached at Pickup Destination
+                            </Text>
+                            <CheckBox
+                              disabled={false}
+                              value={toggleCheckBoxOne}
+                              onValueChange={() => {
+                                updtateStatus(
+                                  '3',
+                                  item.customer_name,
+                                  item.order_id,
+                                  item.partnerUserToken,
+                                  item.CustomerUserToken,
+                                );
+                              }}
+                              style={styles.statusOne}
+                              lineWidth={2}
+                              hideBox={false}
+                              boxType={'circle'}
+                              tintColors={'#9E663C'}
+                              onCheckColor={'#6F763F'}
+                              onFillColor={'#4DABEC'}
+                              onTintColor={'#F4DCF8'}
+                            />
+                          </View>
+                        ) : item.orderStatus == '3' ? (
+                          <View style={styles.tabRow}>
+                            <Text style={styles.statusName}>
+                              Reached at Drop Point
+                            </Text>
+                            <CheckBox
+                              disabled={false}
+                              value={toggleCheckBoxTwo}
+                              onValueChange={() => {
+                                updtateStatus(
+                                  '4',
+                                  item.customer_name,
+                                  item.order_id,
+                                  item.partnerUserToken,
+                                  item.CustomerUserToken,
+                                );
+                              }}
+                              style={styles.statusOne}
+                              lineWidth={2}
+                              hideBox={false}
+                              boxType={'circle'}
+                              tintColors={'#9E663C'}
+                              onCheckColor={'#6F763F'}
+                              onFillColor={'#4DABEC'}
+                              onTintColor={'#F4DCF8'}
+                            />
                           </View>
                         ) : null}
                       </>
                     ) : null}
-                    {/* ======== Status 2 End ======== */}
                   </View>
-                  {item.delivery_status == '1' ? (
-                    <>
-                      {item.orderStatus == '2' ? (
-                        <View style={styles.tabRow}>
-                          <Text style={styles.statusName}>
-                            Reached at Pickup Destination
-                          </Text>
-                          <CheckBox
-                            disabled={false}
-                            value={toggleCheckBoxOne}
-                            onValueChange={() => {
-                              updtateStatus(
-                                '3',
-                                item.customer_name,
-                                item.order_id,
-                                item.partnerUserToken,
-                                item.CustomerUserToken,
-                              );
-                            }}
-                            style={styles.statusOne}
-                            lineWidth={2}
-                            hideBox={false}
-                            boxType={'circle'}
-                            tintColors={'#9E663C'}
-                            onCheckColor={'#6F763F'}
-                            onFillColor={'#4DABEC'}
-                            onTintColor={'#F4DCF8'}
-                          />
-                        </View>
-                      ) : item.orderStatus == '3' ? (
-                        <View style={styles.tabRow}>
-                          <Text style={styles.statusName}>
-                            Reached at Drop Point
-                          </Text>
-                          <CheckBox
-                            disabled={false}
-                            value={toggleCheckBoxOne}
-                            onValueChange={() => {
-                              updtateStatus(
-                                '4',
-                                item.customer_name,
-                                item.order_id,
-                                item.partnerUserToken,
-                                item.CustomerUserToken,
-                              );
-                            }}
-                            style={styles.statusOne}
-                            lineWidth={2}
-                            hideBox={false}
-                            boxType={'circle'}
-                            tintColors={'#9E663C'}
-                            onCheckColor={'#6F763F'}
-                            onFillColor={'#4DABEC'}
-                            onTintColor={'#F4DCF8'}
-                          />
-                        </View>
-                      ) : null}
-                    </>
-                  ) : null}
-                </View>
-              </>
-            )}
-          />
+                </>
+              )}
+            />
           ) : (
             <ScrollView
-              refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-              }> <FlatList
-              refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-              }
-            <View
               style={{
                 flex: 1,
-                justifyContent: 'center',
-                alignItems: 'center',
                 width: '100%',
-                paddingTop: 20,
-              }}>
-              <LottieView
-                source={require('../../../assets/lottie/nodata.json')}
-                autoPlay
-                loop
+                paddingTop: '25%',
+              }}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }>
+              <View
                 style={{
-                  width: 200,
-                  height: 200,
-                }}
-              />
-              <Text
-                style={{
-                  fontFamily: 'OpenSans-Regular',
-                  fontSize: 20,
-                  textAlign: 'center',
-                  color: '#777',
+                  flex: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width: '100%',
+                  paddingTop: 20,
                 }}>
-                Waiting for customer orders. You will receive a notification as
-                soon as a customer places their order
-              </Text>
-            </View>
+                <LottieView
+                  source={require('../../../assets/lottie/nodata.json')}
+                  autoPlay
+                  loop
+                  style={{
+                    width: 200,
+                    height: 200,
+                  }}
+                />
+                <Text
+                  style={{
+                    fontFamily: 'OpenSans-Regular',
+                    fontSize: 20,
+                    textAlign: 'center',
+                    color: '#777',
+                  }}>
+                  Waiting for customer orders. You will receive a notification
+                  as soon as a customer places their order
+                </Text>
+              </View>
+            </ScrollView>
           )}
         </View>
       )}
