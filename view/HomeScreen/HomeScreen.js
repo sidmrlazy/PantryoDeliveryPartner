@@ -441,7 +441,7 @@ const HomeScreen = ({navigation}) => {
     orderCountToday();
     totalOrders();
     totalEarningFtd();
-    // updateUserLocation();
+    updateUserLocation();
   }, []);
 
   return (
