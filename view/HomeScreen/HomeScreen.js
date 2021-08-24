@@ -17,7 +17,6 @@ import {
 
 // Libraries
 import {createStackNavigator} from '@react-navigation/stack';
-// import {sendNotification, testNotification} from '../../model/notification';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icons from 'react-native-vector-icons/Ionicons';
 import LottieView from 'lottie-react-native';
@@ -48,7 +47,6 @@ const HomeScreen = ({navigation}) => {
   const [newOrder, setNewOrder] = React.useState('');
   const [loading, setLoading] = React.useState(true);
   const [refreshing, setRefreshing] = React.useState(false);
-  const [Data, setData] = React.useState('');
 
   // Order Variables
   const [customerToken, setCustomerToken] = React.useState('');
@@ -184,7 +182,6 @@ const HomeScreen = ({navigation}) => {
           getOneTimeLocation();
         } else {
           showToast('Permission Denied');
-          requestLocationPermission();
         }
       } catch (err) {
         console.warn(err);
@@ -212,8 +209,6 @@ const HomeScreen = ({navigation}) => {
           latitude: fromLoc.latitude,
           longitude: fromLoc.longitude,
         };
-        // console.log(coordinate.latitude);
-        // console.log(coordinate.longitude);
         setLat(coordinate.latitude);
         setLong(coordinate.longitude);
         setCurrentLocation(coordinate);
@@ -234,7 +229,6 @@ const HomeScreen = ({navigation}) => {
   // Function to continuously track user and update his Lat/Long in Database
   const updateUserLocation = async () => {
     let user_id = await AsyncStorage.getItem('user_id');
-
     await fetch(
       'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=DeliveryPartnerLocationUpdate',
       {
@@ -253,16 +247,7 @@ const HomeScreen = ({navigation}) => {
       .then(function (response) {
         return response.json();
       })
-      .then(function (result) {
-        if (result.error == 0) {
-          // console.log(result.status);
-          // showToast(
-          //   'Your GPS Location has been updated to receive orders from this location',
-          // );
-        } else {
-          // console.log('Error 401' + ' ' + result.msg);
-        }
-      })
+      .then(function (result) {})
       .catch(error => {
         console.error(error);
       });
@@ -288,17 +273,17 @@ const HomeScreen = ({navigation}) => {
         return response.json();
       })
       .then(function (result) {
-        // console.log(result);
         if (result.error == 0) {
           setNewOrder(result.allorder);
-          // setModalVisible(true);
         }
-        getOrderData();
       })
       .catch(error => {
         console.error(error);
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+        getOrderData();
+      });
   };
 
   // Accept Orders
@@ -322,25 +307,9 @@ const HomeScreen = ({navigation}) => {
         return response.json();
       })
       .then(function (result) {
-        // console.log(result);
         sendNotificationToPartner();
         sendNotificationToCustomer();
         setModalVisible(false);
-        // navigation.navigate('NewOrders', {
-        //   order_id: orderId,
-        //   delivery_id: userId,
-        //   delivery_status: status,
-        //   customerName: customerName,
-        //   customerMobile: customerMobile,
-        //   itemQty: itemQty,
-        //   partnerPinCode: partnerPinCode,
-        //   shopName: shopName,
-        //   productName: productName,
-        //   productQty: productQty,
-        //   productUnit: productUnit,
-        //   customerToken: customerToken,
-        //   partnerToken: partnerToken,
-        // });
       });
   };
 
@@ -363,7 +332,6 @@ const HomeScreen = ({navigation}) => {
         return response.json();
       })
       .then(function (result) {
-        console.log('OrderCountToday: ' + JSON.stringify(result.todayOrder));
         if (result.error == 0) {
           setOrderCountFtd(result.todayOrder);
         }
@@ -392,7 +360,6 @@ const HomeScreen = ({navigation}) => {
         return response.json();
       })
       .then(function (result) {
-        console.log('Total Orders: ' + JSON.stringify(result));
         if (result.error == 0) {
           setTotalOrdersLtd(result.todayOrder);
         }
@@ -421,7 +388,6 @@ const HomeScreen = ({navigation}) => {
         return response.json();
       })
       .then(function (result) {
-        console.log('Total Earnings FTD: ' + JSON.stringify(result));
         if (result.error == 0) {
           setEarnings(result.todayearn);
         }
@@ -441,7 +407,6 @@ const HomeScreen = ({navigation}) => {
     orderCountToday();
     totalOrders();
     totalEarningFtd();
-    updateUserLocation();
   }, []);
 
   return (

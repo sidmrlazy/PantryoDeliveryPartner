@@ -14,6 +14,7 @@ import java.util.List;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.airbnb.android.react.lottie.LottiePackage;
 import com.airbnb.android.react.maps.MapsPackage;
+import com.razorpay.rn.RazorpayPackage;
 
 
 public class MainApplication extends Application implements ReactApplication {

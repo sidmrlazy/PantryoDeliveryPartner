@@ -172,19 +172,6 @@ const Register = ({navigation}) => {
       showToast('Upload your Bike Pollution paper it`s Required');
       return;
     } else {
-      // const data = new FormData();
-      // data.append('profileImg', profileImg);
-      // data.append('fullname', name);
-      // data.append('contactNumber', contactNumber);
-      // data.append('address', address);
-      // data.append('pincode', pincode);
-      // data.append('bikeRegistrationNumber', bikeNumber);
-      // data.append('idProofImage', idImg);
-      // data.append('drivingLicenseImage', drivingLicense);
-      // data.append('bikeRegistrationPaperImage', bikeRegImg);
-      // data.append('bikeInsurancepaperImage', bikeInsuranceImg);
-      // data.append('pollutionPaperImage', bikePollImg);
-      // data.append('userToken', FCMToken);
       setLoading(true);
       fetch(
         'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=DeliveryPartnerRegister',

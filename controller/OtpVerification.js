@@ -6,7 +6,6 @@ import {
   StyleSheet,
   Pressable,
   TextInput,
-  Alert,
   ToastAndroid,
   LogBox,
 } from 'react-native';
@@ -15,6 +14,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import LoaderScreen from './LoaderScreen';
+import RazorpayCheckout from 'react-native-razorpay';
 import {AuthContext} from './Utils';
 
 const OtpVerification = ({navigation, route}) => {
@@ -112,8 +112,6 @@ const OtpVerification = ({navigation, route}) => {
       data.append('pollutionPaperImage', bikePollImg);
       data.append('userToken', FCMToken);
       setLoading(true);
-      // console.log(data);
-      // return;
       fetch(
         'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/PantryoDeliveryPartnerRegistration.php',
         {
@@ -129,7 +127,6 @@ const OtpVerification = ({navigation, route}) => {
           return response.json();
         })
         .then(function (result) {
-          // console.log(result);
           if (result.error == 0) {
             let delivery_id = result.delivery_id;
             let contactNumber = result.contactNumber;
@@ -137,14 +134,15 @@ const OtpVerification = ({navigation, route}) => {
             let userName = result.fullname;
             let profileImage = result.profileImage;
             let bikeRegistrationNumber = result.bikeRegistrationNumber;
-            signIn({
+
+            RazorpayFunction(
               delivery_id,
               contactNumber,
               userToken,
               userName,
               bikeRegistrationNumber,
               profileImage,
-            });
+            );
           } else {
             showToast(result.msg);
           }
@@ -154,6 +152,99 @@ const OtpVerification = ({navigation, route}) => {
         })
         .finally(() => setLoading(false));
     }
+  };
+
+  // RazorpayFunction Payment APi
+  const RazorpayFunction = async (
+    delivery_id,
+    contactNumber,
+    userToken,
+    userName,
+    bikeRegistrationNumber,
+    profileImage,
+  ) => {
+    var options = {
+      description: '',
+      image: 'https://gizmmoalchemy.com/api/pantryo/Logo/PantryoLogo.png',
+      currency: 'INR',
+      key: 'rzp_test_Q7747Ni4ezPrgO',
+      amount: '100',
+      name: 'Pantryo',
+      prefill: {
+        email: 'support@pantryo.com',
+        contact: contactNumber,
+        name: userName,
+      },
+      theme: {color: '#6a3091'},
+    };
+
+    RazorpayCheckout.open(options)
+      .then(data => {
+        let payment_id = `${data.razorpay_payment_id}`;
+        getPaymentStatus(
+          payment_id,
+          delivery_id,
+          contactNumber,
+          userToken,
+          userName,
+          bikeRegistrationNumber,
+          profileImage,
+        );
+      })
+      .catch(error => {
+        console.log(
+          'Error: ' + JSON.stringify(`${error.code} | ${error.description}`),
+        );
+      });
+  };
+
+  // Check Payment Status
+  const getPaymentStatus = async (
+    payment_id,
+    delivery_id,
+    contactNumber,
+    userToken,
+    userName,
+    bikeRegistrationNumber,
+    profileImage,
+  ) => {
+    setLoading(true);
+    fetch(
+      'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/paymentdetails.php?flag=delivery_transaction',
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          payment_id: payment_id,
+          delivery_id: delivery_id,
+        }),
+      },
+    )
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (result) {
+        setLoading(false);
+        if (result.payment_status === 'authorized') {
+          signIn({
+            delivery_id,
+            contactNumber,
+            userToken,
+            userName,
+            bikeRegistrationNumber,
+            profileImage,
+          });
+        } else {
+          showToast('Status of Payment' + ' ' + JSON.stringify(result));
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      })
+      .finally(() => setLoading(false));
   };
 
   // FCM Token
@@ -182,7 +273,6 @@ const OtpVerification = ({navigation, route}) => {
     setOTP(route.params.generatedOtp);
     setContactNumber(route.params.contactNumber);
     setProfileImg(route.params.profileImg);
-    console.log(route.params.profileImg);
     setName(route.params.fullname);
     setAddress(route.params.address);
     setPincode(route.params.pincode);
