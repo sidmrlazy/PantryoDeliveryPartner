@@ -8,6 +8,7 @@ import {
   TextInput,
   ToastAndroid,
   LogBox,
+  TouchableOpacity,
 } from 'react-native';
 
 // Library
@@ -112,7 +113,7 @@ const OtpVerification = ({navigation, route}) => {
       data.append('pollutionPaperImage', bikePollImg);
       data.append('userToken', FCMToken);
       setLoading(true);
-      fetch(
+      await fetch(
         'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/PantryoDeliveryPartnerRegistration.php',
         {
           method: 'POST',
@@ -209,7 +210,7 @@ const OtpVerification = ({navigation, route}) => {
     profileImage,
   ) => {
     setLoading(true);
-    fetch(
+    await fetch(
       'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/paymentdetails.php?flag=delivery_transaction',
       {
         method: 'POST',
@@ -256,19 +257,20 @@ const OtpVerification = ({navigation, route}) => {
       });
   };
 
-  const textInputFocus = () => {
-    textInput.focus();
-  };
+  // const textInputFocus = () => {
+  //   textInput.focus();
+  // };
 
-  const onChangeText = val => {
-    setInternalVal(val);
-  };
+  // const onChangeText = val => {
+  //   setInternalVal(val);
+  // };
 
   useEffect(() => {
     LogBox.ignoreAllLogs();
     LogBox.ignoreLogs(['Warning: ...']);
     LogBox.ignoreLogs(['VirtualizedLists should never be nested...']);
-    textInputFocus();
+
+    // textInputFocus();
     getDeviceToken();
     setOTP(route.params.generatedOtp);
     setContactNumber(route.params.contactNumber);
@@ -287,7 +289,67 @@ const OtpVerification = ({navigation, route}) => {
   return (
     <>
       {isLoading == true ? <LoaderScreen /> : null}
-      <View style={styles.container}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'flex-start',
+          alignItems: 'flex-start',
+          backgroundColor: '#fff',
+          paddingHorizontal: 10,
+          paddingVertical: 20,
+        }}>
+        <Text
+          style={{
+            fontFamily: 'OpenSans-SemiBold',
+            fontSize: 16,
+            marginTop: 20,
+          }}>
+          Enter your 6 Digit OTP sent via SMS
+        </Text>
+        <View
+          style={{
+            width: '100%',
+            marginTop: 20,
+            borderBottomWidth: 1.5,
+            paddingVertical: 5,
+            borderBottomColor: '#c7c7c7c7',
+          }}>
+          <TextInput
+            placeholder=""
+            style={{
+              width: '100%',
+              fontFamily: 'OpenSans-Regular',
+              letterSpacing: 15,
+              fontSize: 20,
+              color: '#777',
+            }}
+            value={internalVal}
+            onChangeText={setInternalVal}
+            keyboardType="numeric"
+          />
+        </View>
+
+        <TouchableOpacity
+          style={{
+            width: '100%',
+            marginTop: 20,
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingVertical: 18,
+            backgroundColor: '#5E3360',
+          }}
+          onPress={otpMatch}>
+          <Text
+            style={{
+              fontFamily: 'OpenSans-Bold',
+              fontSize: 18,
+              color: '#fff',
+            }}>
+            SUBMIT
+          </Text>
+        </TouchableOpacity>
+      </View>
+      {/* <View style={styles.container}>
         <KeyboardAvoidingView
           keyboardVerticalOffset={50}
           behavior="padding"
@@ -322,28 +384,14 @@ const OtpVerification = ({navigation, route}) => {
                   </View>
                 ))}
             </View>
-            {/* <Pressable
-              onPress={resentOTP}
-              style={{justifyContent: 'flex-end', alignItems: 'flex-end'}}>
-              <Text
-                style={{
-                  fontFamily: 'OpenSans-Medium',
-                  color: 'blue',
-                  fontSize: 16,
-                  marginTop: 20,
-                }}>
-                Resend OTP?
-              </Text>
-            </Pressable> */}
           </View>
-          <Pressable
-            // onPress={() => navigation.navigate('RegistrationForm')}
+          <Pressable            
             onPress={() => otpMatch()}
             style={styles.btn}>
             <Text style={styles.btnTxt}>SUBMIT</Text>
           </Pressable>
         </KeyboardAvoidingView>
-      </View>
+      </View> */}
     </>
   );
 };

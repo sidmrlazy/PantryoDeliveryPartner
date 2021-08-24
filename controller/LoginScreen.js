@@ -200,7 +200,7 @@ const LoginScreenContainer = () => {
         options={{
           title: 'OTP Verification',
           headerStyle: {
-            backgroundColor: '#FEF9E5',
+            backgroundColor: '#fff',
           },
           headerTintColor: '#000',
           headerTitleStyle: {

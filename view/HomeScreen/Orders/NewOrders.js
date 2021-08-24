@@ -551,7 +551,7 @@ const NewOrders = ({route, navigation}) => {
                       <>
                         {item.orderStatus == '2' ? (
                           <View style={styles.tabRow}>
-                            <Text style={styles.statusName}>
+                            <Text style={[styles.statusName, {flex: 1}]}>
                               Reached at Pickup Destination
                             </Text>
                             <CheckBox

@@ -13,6 +13,7 @@ import {
   RefreshControl,
   ScrollView,
   LogBox,
+  Platform,
 } from 'react-native';
 
 // Libraries
@@ -39,14 +40,16 @@ const HomeScreen = ({navigation}) => {
   const [profileImg, setProfileImg] = React.useState('');
   const [isEnabled, setIsEnabled] = React.useState(false);
   const [currentLocation, setCurrentLocation] = React.useState(null);
-  const [lat, setLat] = React.useState('');
-  const [long, setLong] = React.useState('');
+
   const [userId, setUserId] = React.useState('');
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
   const [modalVisible, setModalVisible] = React.useState(false);
   const [newOrder, setNewOrder] = React.useState('');
   const [loading, setLoading] = React.useState(true);
   const [refreshing, setRefreshing] = React.useState(false);
+
+  const [lat, setLat] = React.useState('');
+  const [long, setLong] = React.useState('');
 
   // Order Variables
   const [customerToken, setCustomerToken] = React.useState('');
@@ -84,10 +87,22 @@ const HomeScreen = ({navigation}) => {
 
   // OnRefresh
   const onRefresh = React.useCallback(() => {
+    updateUserLocation();
     setRefreshing(true);
     getOrderData();
     wait(2000).then(() => setRefreshing(false));
   }, []);
+
+  // ======= Show Toast ========== //
+  const showToast = msg => {
+    ToastAndroid.showWithGravityAndOffset(
+      msg,
+      ToastAndroid.SHORT,
+      ToastAndroid.BOTTOM,
+      25,
+      50,
+    );
+  };
 
   const CustomerServerKey =
     'AAAAIIoSzdk:APA91bFqAg9Vu4T-_LYX5EPz9UVtqZTp0bRWOpkJLgm6GqIf4QAJtrW6RISmqWHZl6T-ykQrNLpo39kbRHLBsfGmqyz5JP8hxNCUzrfw8ECkcOItsO173OGeIrPf01_jiTLGjJsgwr33';
@@ -169,6 +184,7 @@ const HomeScreen = ({navigation}) => {
   const requestLocationPermission = async () => {
     if (Platform.OS === 'ios') {
       getOneTimeLocation();
+      updateUserLocation();
     } else {
       try {
         const granted = await PermissionsAndroid.request(
@@ -180,6 +196,7 @@ const HomeScreen = ({navigation}) => {
         );
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
           getOneTimeLocation();
+          updateUserLocation();
         } else {
           showToast('Permission Denied');
         }
@@ -189,33 +206,21 @@ const HomeScreen = ({navigation}) => {
     }
   };
 
-  // ======= Show Toast ========== //
-  const showToast = msg => {
-    ToastAndroid.showWithGravityAndOffset(
-      msg,
-      ToastAndroid.SHORT,
-      ToastAndroid.BOTTOM,
-      25,
-      50,
-    );
-  };
-
   // ====== Get Longitude and Latitude========== //
   const getOneTimeLocation = async () => {
-    navigator.geolocation.getCurrentPosition(
+    setLoading(true);
+    await navigator.geolocation.getCurrentPosition(
       position => {
-        let fromLoc = position.coords;
-        let coordinate = {
-          latitude: fromLoc.latitude,
-          longitude: fromLoc.longitude,
-        };
-        setLat(coordinate.latitude);
-        setLong(coordinate.longitude);
-        setCurrentLocation(coordinate);
+        const currentLongitude = JSON.stringify(position.coords.longitude);
+        const currentLatitude = JSON.stringify(position.coords.latitude);
+        setLat(currentLatitude);
+        setLong(currentLongitude);
+        setLoading(false);
+        console.log(lat + ', ' + long);
       },
       error => {
         if (error.code === NO_LOCATION_PROVIDER_AVAILABLE) {
-          showToast('Please on your Location');
+          showToast('Please grant permission to access your location');
         }
       },
       {
@@ -228,7 +233,7 @@ const HomeScreen = ({navigation}) => {
 
   // Function to continuously track user and update his Lat/Long in Database
   const updateUserLocation = async () => {
-    let user_id = await AsyncStorage.getItem('user_id');
+    setLoading(true);
     await fetch(
       'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=DeliveryPartnerLocationUpdate',
       {
@@ -238,7 +243,7 @@ const HomeScreen = ({navigation}) => {
           'Content-Type': 'application/JSON',
         },
         body: JSON.stringify({
-          delivery_id: user_id,
+          delivery_id: userId,
           delivery_partner_latitude: lat,
           delivery_partner_longitude: long,
         }),
@@ -247,9 +252,18 @@ const HomeScreen = ({navigation}) => {
       .then(function (response) {
         return response.json();
       })
-      .then(function (result) {})
+      .then(function (result) {
+        if (result.error == 0) {
+          updateUserLocation();
+        } else if (result.error == 1) {
+          console.log(result);
+        }
+      })
       .catch(error => {
         console.error(error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -283,33 +297,6 @@ const HomeScreen = ({navigation}) => {
       .finally(() => {
         setLoading(false);
         getOrderData();
-      });
-  };
-
-  // Accept Orders
-  const changeOrderStatus = async () => {
-    await fetch(
-      'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=deliveryPartnerStatus',
-      {
-        method: 'POST',
-        headers: {
-          Accept: 'application/JSON',
-          'Content-Type': 'application/JSON',
-        },
-        body: JSON.stringify({
-          order_id: orderId,
-          delivery_id: userId,
-          delivery_status: status,
-        }),
-      },
-    )
-      .then(function (response) {
-        return response.json();
-      })
-      .then(function (result) {
-        sendNotificationToPartner();
-        sendNotificationToCustomer();
-        setModalVisible(false);
       });
   };
 
@@ -398,11 +385,11 @@ const HomeScreen = ({navigation}) => {
   };
 
   useEffect(() => {
-    getOrderData();
     LogBox.ignoreAllLogs(true);
     LogBox.ignoreLogs(['Warning: ...']);
     LogBox.ignoreLogs(['VirtualizedLists should never be nested...']);
     requestLocationPermission();
+    getOrderData();
     userProfileData();
     orderCountToday();
     totalOrders();
@@ -522,7 +509,7 @@ const HomeScreen = ({navigation}) => {
                   ₹{earnings ? earnings : '0'}{' '}
                   <Text
                     style={{
-                      fontFamily: 'OpenSans-Regular',
+                      fontFamily: 'OpenSans-SemiBold',
                       fontSize: 16,
                     }}>
                     today

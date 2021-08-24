@@ -17,6 +17,7 @@ import {
 import Icons from 'react-native-vector-icons/Ionicons';
 import * as ImagePicker from 'react-native-image-picker';
 import * as launchCamera from 'react-native-image-picker';
+navigator.geolocation = require('@react-native-community/geolocation');
 
 // Loader Screeen
 import LoaderScreen from '../controller/LoaderScreen';
@@ -42,6 +43,9 @@ const Register = ({navigation}) => {
   const [bikePollImg, setBikePollImg] = useState('');
   const [bikePollImgPath, setBikePollImgPath] = useState('');
   const [isMounted, setIsMounted] = useState(true);
+
+  const [lat, setLat] = useState('');
+  const [long, setLong] = useState('');
 
   // Request Gallery Permission and then open Gallery if granted
   const requestGalleryPermission = async selectForImage => {
@@ -136,7 +140,7 @@ const Register = ({navigation}) => {
   // Registeration Function
   const registrationApi = async () => {
     if (!profileImg) {
-      showToast('Upload Profile Image it`s Required');
+      showToast('Profile Image is required');
       return;
     } else if (!name) {
       showToast('Enter your Full Name');
