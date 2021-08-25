@@ -216,7 +216,6 @@ const HomeScreen = ({navigation}) => {
         setLat(currentLatitude);
         setLong(currentLongitude);
         setLoading(false);
-        console.log(lat + ', ' + long);
       },
       error => {
         if (error.code === NO_LOCATION_PROVIDER_AVAILABLE) {
@@ -388,6 +387,9 @@ const HomeScreen = ({navigation}) => {
     LogBox.ignoreAllLogs(true);
     LogBox.ignoreLogs(['Warning: ...']);
     LogBox.ignoreLogs(['VirtualizedLists should never be nested...']);
+
+    console.log(lat + ', ' + long);
+
     requestLocationPermission();
     getOrderData();
     userProfileData();
