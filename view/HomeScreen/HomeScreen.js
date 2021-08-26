@@ -87,7 +87,6 @@ const HomeScreen = ({navigation}) => {
 
   // OnRefresh
   const onRefresh = React.useCallback(() => {
-    updateUserLocation();
     setRefreshing(true);
     getOrderData();
     wait(2000).then(() => setRefreshing(false));
@@ -184,7 +183,6 @@ const HomeScreen = ({navigation}) => {
   const requestLocationPermission = async () => {
     if (Platform.OS === 'ios') {
       getOneTimeLocation();
-      updateUserLocation();
     } else {
       try {
         const granted = await PermissionsAndroid.request(
@@ -196,7 +194,6 @@ const HomeScreen = ({navigation}) => {
         );
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
           getOneTimeLocation();
-          updateUserLocation();
         } else {
           showToast('Permission Denied');
         }
@@ -230,43 +227,6 @@ const HomeScreen = ({navigation}) => {
     );
   };
 
-  // Function to continuously track user and update his Lat/Long in Database
-  const updateUserLocation = async () => {
-    setLoading(true);
-    await fetch(
-      'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=DeliveryPartnerLocationUpdate',
-      {
-        method: 'POST',
-        headers: {
-          Accept: 'application/JSON',
-          'Content-Type': 'application/JSON',
-        },
-        body: JSON.stringify({
-          delivery_id: userId,
-          delivery_partner_latitude: lat,
-          delivery_partner_longitude: long,
-        }),
-      },
-    )
-      .then(function (response) {
-        return response.json();
-      })
-      .then(function (result) {
-        if (result.error == 0) {
-          updateUserLocation();
-        } else if (result.error == 1) {
-          console.log(result);
-        }
-      })
-      .catch(error => {
-        console.error(error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
-
-  // Receive Orders and Show Order details
   const getOrderData = async () => {
     let userId = await AsyncStorage.getItem('user_id');
     await fetch(
@@ -390,9 +350,7 @@ const HomeScreen = ({navigation}) => {
     LogBox.ignoreAllLogs(true);
     LogBox.ignoreLogs(['Warning: ...']);
     LogBox.ignoreLogs(['VirtualizedLists should never be nested...']);
-
-    console.log(lat + ', ' + long);
-
+    /////////////////////////////////////////////
     requestLocationPermission();
     getOrderData();
     userProfileData();
