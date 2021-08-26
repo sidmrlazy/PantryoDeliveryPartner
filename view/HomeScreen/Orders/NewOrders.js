@@ -423,7 +423,8 @@ const NewOrders = ({route, navigation}) => {
                                     fontFamily: 'OpenSans-SemiBold',
                                     fontSize: 16,
                                   }}>
-                                  Your Secret Code is :
+                                  Share code with Shop keeper to get Customer
+                                  Location
                                 </Text>
                                 <Text
                                   style={{
