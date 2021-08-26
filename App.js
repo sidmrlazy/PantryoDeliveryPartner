@@ -1,5 +1,5 @@
 import React, {useRef, useState, useEffect, useMemo, useReducer} from 'react';
-import {ToastAndroid, View, Text} from 'react-native';
+import {ToastAndroid, View, Text, Alert} from 'react-native';
 
 // ===== Libraries ===== //
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -111,7 +111,7 @@ const App = () => {
   useEffect(() => {
     requestUserPermission();
     const unsubscribe = messaging().onMessage(async remoteMessage => {
-      alert(
+      Alert.alert(
         JSON.stringify(
           remoteMessage.notification.title +
             ' ' +
