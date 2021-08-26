@@ -601,9 +601,9 @@ const HomeScreen = ({navigation}) => {
                           </Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.rejectBtn}>
+                        {/* <TouchableOpacity style={styles.rejectBtn}>
                           <Text style={styles.rejectBtnTxt}>Reject</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                       </>
                     )}
                   />
