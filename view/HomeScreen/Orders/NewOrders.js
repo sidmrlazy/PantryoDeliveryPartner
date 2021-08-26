@@ -547,65 +547,7 @@ const NewOrders = ({route, navigation}) => {
                       ) : null}
                       {/* ======== Status 2 End ======== */}
                     </View>
-                    {item.delivery_status == '1' ? (
-                      <>
-                        {item.orderStatus == '2' ? (
-                          <View style={styles.tabRow}>
-                            <Text style={[styles.statusName, {flex: 1}]}>
-                              Reached at Pickup Destination
-                            </Text>
-                            <CheckBox
-                              disabled={false}
-                              value={toggleCheckBoxOne}
-                              onValueChange={() => {
-                                updtateStatus(
-                                  '3',
-                                  item.customer_name,
-                                  item.order_id,
-                                  item.partnerUserToken,
-                                  item.CustomerUserToken,
-                                );
-                              }}
-                              style={styles.statusOne}
-                              lineWidth={2}
-                              hideBox={false}
-                              boxType={'circle'}
-                              tintColors={'#9E663C'}
-                              onCheckColor={'#6F763F'}
-                              onFillColor={'#4DABEC'}
-                              onTintColor={'#F4DCF8'}
-                            />
-                          </View>
-                        ) : item.orderStatus == '3' ? (
-                          <View style={styles.tabRow}>
-                            <Text style={styles.statusName}>
-                              Reached at Drop Point
-                            </Text>
-                            <CheckBox
-                              disabled={false}
-                              value={toggleCheckBoxTwo}
-                              onValueChange={() => {
-                                updtateStatus(
-                                  '4',
-                                  item.customer_name,
-                                  item.order_id,
-                                  item.partnerUserToken,
-                                  item.CustomerUserToken,
-                                );
-                              }}
-                              style={styles.statusOne}
-                              lineWidth={2}
-                              hideBox={false}
-                              boxType={'circle'}
-                              tintColors={'#9E663C'}
-                              onCheckColor={'#6F763F'}
-                              onFillColor={'#4DABEC'}
-                              onTintColor={'#F4DCF8'}
-                            />
-                          </View>
-                        ) : null}
-                      </>
-                    ) : null}
+                    
                   </View>
                 </>
               )}

@@ -300,7 +300,8 @@ const HomeScreen = ({navigation}) => {
   };
 
   // Order Count Today
-  const orderCountToday = () => {
+  const orderCountToday = async () => {
+    let userId = await AsyncStorage.getItem('user_id');
     fetch(
       'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartnerCount.php?flag=todayOrdercount',
       {
@@ -328,7 +329,8 @@ const HomeScreen = ({navigation}) => {
   };
 
   // Total Orders Life To Date
-  const totalOrders = () => {
+  const totalOrders = async () => {
+    let userId = await AsyncStorage.getItem('user_id');
     fetch(
       'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartnerCount.php?flag=allOrdercount',
       {
@@ -356,7 +358,8 @@ const HomeScreen = ({navigation}) => {
   };
 
   // Total Earnings for the day
-  const totalEarningFtd = () => {
+  const totalEarningFtd = async () => {
+    let userId = await AsyncStorage.getItem('user_id');
     fetch(
       'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartnerCount.php?flag=todayearning',
       {
