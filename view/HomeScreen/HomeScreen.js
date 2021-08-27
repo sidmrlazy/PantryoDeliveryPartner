@@ -282,6 +282,7 @@ const HomeScreen = ({navigation}) => {
         if (result.error == 0) {
           setOrderCountFtd(result.todayOrder);
         }
+        orderCountToday();
       })
       .catch(error => {
         console.log(error);
@@ -311,6 +312,7 @@ const HomeScreen = ({navigation}) => {
         if (result.error == 0) {
           setTotalOrdersLtd(result.todayOrder);
         }
+        totalOrders();
       })
       .catch(error => {
         console.log(error);
