@@ -293,6 +293,41 @@ const NewOrders = ({route, navigation}) => {
     console.log(response);
   };
 
+  /////////////////notificationToCustomerDeliveryOnWay
+  const notificationToCustomerDeliveryOnWay = async customerToken => {
+    let deliveryPartner = await AsyncStorage.getItem('userName');
+    console.log('Call');
+    const CUSTOMER_FIREBASE_API_KEY = customer_firebase_key;
+    const message = {
+      to: customerToken,
+      notification: {
+        title: deliveryPartner + ' ' + 'En-Route',
+        body: 'Your order is en-route and will be reaching to you shortly',
+        vibrate: 1,
+        sound: 1,
+        show_in_foreground: true,
+        priority: 'high',
+        content_available: true,
+      },
+      data: {
+        title: deliveryPartner + ' ' + 'En-Route',
+        body: 'Your order is en-route and will be reaching to you shortly',
+      },
+    };
+
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      Authorization: 'key=' + CUSTOMER_FIREBASE_API_KEY,
+    });
+    let response = await fetch('https://fcm.googleapis.com/fcm/send', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(message),
+    });
+    response = await response.json();
+    console.log(response);
+  };
+
   ///////////////////notificationToCustomerDeliveryAtLocation
   const notificationToCustomerDeliveryAtLocation = async customerToken => {
     let deliveryPartner = await AsyncStorage.getItem('userName');
