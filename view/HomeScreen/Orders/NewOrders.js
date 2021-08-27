@@ -131,8 +131,8 @@ const NewOrders = ({route, navigation}) => {
     const message = {
       to: customerToken,
       notification: {
-        title: 'Order Confirmation',
-        body: deliveryPartner + ' ' + 'has been assigned to your order',
+        title: 'Delivery Partner Found',
+        body: deliveryPartner + ' ' + 'has been assigned to deliver your order',
         vibrate: 1,
         sound: 1,
         show_in_foreground: true,
@@ -140,47 +140,9 @@ const NewOrders = ({route, navigation}) => {
         content_available: true,
       },
       data: {
-        title: 'Order Confirmation',
-        body: deliveryPartner + ' ' + ' has been assigned to your order',
-      },
-    };
-
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      Authorization: 'key=' + CUSTOMER_FIREBASE_API_KEY,
-    });
-    let response = await fetch('https://fcm.googleapis.com/fcm/send', {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(message),
-    });
-    response = await response.json();
-    console.log(response);
-  };
-
-  const notificationToCustomerDeliveryBoyReach = async customerToken => {
-    let deliveryPartner = await AsyncStorage.getItem('userName');
-    const CUSTOMER_FIREBASE_API_KEY = customer_firebase_key;
-    const message = {
-      to: customerToken,
-      notification: {
-        title: 'Order Reached',
+        title: 'Delivery Partner Found',
         body:
-          deliveryPartner +
-          ' ' +
-          'has reached at your location. Thank you for ordering from Pantryo',
-        vibrate: 1,
-        sound: 1,
-        show_in_foreground: true,
-        priority: 'high',
-        content_available: true,
-      },
-      data: {
-        title: 'Order Reached',
-        body:
-          deliveryPartner +
-          ' ' +
-          ' has reached at your location. Thank you for ordering from Pantryo',
+          deliveryPartner + ' ' + ' has been assigned to deliver your order',
       },
     };
 
@@ -204,7 +166,7 @@ const NewOrders = ({route, navigation}) => {
     const message = {
       to: partnerToken,
       notification: {
-        title: 'Order Confirmation',
+        title: 'Delivery Partner En-Route',
         body:
           deliveryPartner +
           ' ' +
@@ -218,7 +180,7 @@ const NewOrders = ({route, navigation}) => {
         content_available: true,
       },
       data: {
-        title: 'Order Confirmation',
+        title: 'Delivery Partner En-Route',
         body:
           deliveryPartner +
           ' ' +
@@ -307,6 +269,39 @@ const NewOrders = ({route, navigation}) => {
           Linking.openURL(`maps://?q=${latitude},${longitude}`);
         }
       });
+  };
+
+  const notificationToCustomerDeliveryBoyReach = async customerToken => {
+    let deliveryPartner = await AsyncStorage.getItem('userName');
+    const CUSTOMER_FIREBASE_API_KEY = customer_firebase_key;
+    const message = {
+      to: customerToken,
+      notification: {
+        title: 'Order Reached',
+        body: deliveryPartner + ' ' + 'has reached at your location.',
+        vibrate: 1,
+        sound: 1,
+        show_in_foreground: true,
+        priority: 'high',
+        content_available: true,
+      },
+      data: {
+        title: 'Order Reached',
+        body: deliveryPartner + ' ' + ' has reached at your location.',
+      },
+    };
+
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      Authorization: 'key=' + CUSTOMER_FIREBASE_API_KEY,
+    });
+    let response = await fetch('https://fcm.googleapis.com/fcm/send', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(message),
+    });
+    response = await response.json();
+    console.log(response);
   };
 
   // status update
