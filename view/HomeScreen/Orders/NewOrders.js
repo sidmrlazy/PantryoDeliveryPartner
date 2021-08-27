@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   RefreshControl,
   ScrollView,
+  Pressable,
 } from 'react-native';
 
 // Libraries
