@@ -113,8 +113,8 @@ const NewOrders = ({route, navigation}) => {
       .then(function (result) {
         if (result.error == 0) {
           if (activitytype == '1') {
-            notificationToCustomer(customerToken);
-            notificationToPartner(partnerToken, orderId);
+            notificationToCustomerDeliveryAcceptOrder(customerToken);
+            notificationToPartnerDeliveryAcceptOrder(partnerToken, orderId);
           }
         }
       })
@@ -124,8 +124,10 @@ const NewOrders = ({route, navigation}) => {
       .finally(() => getOrderData());
   };
 
-  // Send Notification to customer
-  const notificationToCustomer = async customerToken => {
+  //////////////////////////Notification Section Start
+
+  /////notificationToCustomerDeliveryAcceptOrder
+  const notificationToCustomerDeliveryAcceptOrder = async customerToken => {
     let deliveryPartner = await AsyncStorage.getItem('userName');
     const CUSTOMER_FIREBASE_API_KEY = customer_firebase_key;
     const message = {
@@ -159,126 +161,15 @@ const NewOrders = ({route, navigation}) => {
     console.log(response);
   };
 
-  // Send Notification to Partner
-  const notificationToPartner = async (partnerToken, orderId) => {
-    let deliveryPartner = await AsyncStorage.getItem('userName');
-    const FIREBASE_API_KEY = delivery_partner_firebase_key;
-    const message = {
-      to: partnerToken,
-      notification: {
-        title: 'Delivery Partner En-Route',
-        body:
-          deliveryPartner +
-          ' ' +
-          'is on his way to pickup ORDER ID: ' +
-          ' ' +
-          orderId,
-        vibrate: 1,
-        sound: 1,
-        show_in_foreground: true,
-        priority: 'high',
-        content_available: true,
-      },
-      data: {
-        title: 'Delivery Partner En-Route',
-        body:
-          deliveryPartner +
-          ' ' +
-          'is on his way to pickup ORDER ID: ' +
-          ' ' +
-          orderId,
-      },
-    };
-
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      Authorization: 'key=' + FIREBASE_API_KEY,
-    });
-    let response = await fetch('https://fcm.googleapis.com/fcm/send', {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(message),
-    });
-    response = await response.json();
-    console.log(response);
-  };
-
-  const notificationToPartnerDeliveryBoyReach = async (
-    partnerToken,
-    customername,
-  ) => {
-    let deliveryPartner = await AsyncStorage.getItem('userName');
-    const FIREBASE_API_KEY = delivery_partner_firebase_key;
-    const message = {
-      to: partnerToken,
-      notification: {
-        title: 'Order Confirmation',
-        body:
-          deliveryPartner +
-          ' ' +
-          ' has arrived at your location to pickup the order for ' +
-          ' ' +
-          customername,
-        vibrate: 1,
-        sound: 1,
-        show_in_foreground: true,
-        priority: 'high',
-        content_available: true,
-      },
-      data: {
-        title: 'Order Confirmation',
-        body:
-          deliveryPartner +
-          ' ' +
-          ' has arrived at your location to pickup the order for ' +
-          ' ' +
-          customername,
-      },
-    };
-
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      Authorization: 'key=' + FIREBASE_API_KEY,
-    });
-    let response = await fetch('https://fcm.googleapis.com/fcm/send', {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(message),
-    });
-    response = await response.json();
-    console.log(response);
-  };
-
-  const openMapDirection = async (latitude, longitude) => {
-    const url = Platform.select({
-      ios: `comgooglemaps://?center=${latitude},${longitude}&q=${latitude},${longitude}&zoom=14&views=traffic"`,
-      android: `geo://?q=${latitude},${longitude}`,
-    });
-    Linking.canOpenURL(url)
-      .then(supported => {
-        if (supported) {
-          return Linking.openURL(url);
-        } else {
-          const browser_url = `https://www.google.de/maps/@${latitude},${longitude}`;
-
-          return Linking.openURL(browser_url);
-        }
-      })
-      .catch(() => {
-        if (Platform.OS === 'ios') {
-          Linking.openURL(`maps://?q=${latitude},${longitude}`);
-        }
-      });
-  };
-
-  const notificationToCustomerDeliveryBoyReach = async customerToken => {
+  /////////////////notificationToCustomerDeliveryOnWay
+  const notificationToCustomerDeliveryOnWay = async customerToken => {
     let deliveryPartner = await AsyncStorage.getItem('userName');
     const CUSTOMER_FIREBASE_API_KEY = customer_firebase_key;
     const message = {
       to: customerToken,
       notification: {
-        title: 'Order Reached',
-        body: deliveryPartner + ' ' + 'has reached at your location.',
+        title: deliveryPartner + ' ' + 'En-Route',
+        body: 'Your order is en-route and will be reaching to you shortly',
         vibrate: 1,
         sound: 1,
         show_in_foreground: true,
@@ -286,8 +177,8 @@ const NewOrders = ({route, navigation}) => {
         content_available: true,
       },
       data: {
-        title: 'Order Reached',
-        body: deliveryPartner + ' ' + ' has reached at your location.',
+        title: deliveryPartner + ' ' + 'En-Route',
+        body: 'Your order is en-route and will be reaching to you shortly',
       },
     };
 
@@ -303,6 +194,173 @@ const NewOrders = ({route, navigation}) => {
     response = await response.json();
     console.log(response);
   };
+
+  //////notificationToPartnerDeliveryAcceptOrder
+  const notificationToPartnerDeliveryAcceptOrder = async (
+    partnerToken,
+    orderId,
+  ) => {
+    let deliveryPartner = await AsyncStorage.getItem('userName');
+    const FIREBASE_API_KEY = delivery_partner_firebase_key;
+    const message = {
+      to: partnerToken,
+      notification: {
+        title: 'Delivery Partner En-Route',
+        body:
+          deliveryPartner +
+          ' ' +
+          'is on his way to pickup ORDER ID: ' +
+          ' ' +
+          orderId,
+        vibrate: 1,
+        sound: 1,
+        show_in_foreground: true,
+        priority: 'high',
+        content_available: true,
+      },
+      data: {
+        title: 'Delivery Partner En-Route',
+        body:
+          deliveryPartner +
+          ' ' +
+          'is on his way to pickup ORDER ID: ' +
+          ' ' +
+          orderId,
+      },
+    };
+
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      Authorization: 'key=' + FIREBASE_API_KEY,
+    });
+    let response = await fetch('https://fcm.googleapis.com/fcm/send', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(message),
+    });
+    response = await response.json();
+    console.log(response);
+  };
+
+  //////////////////////notificationToPartnerDeliveryBoyReachAtPartnerLocation
+  const notificationToPartnerDeliveryBoyReachAtPartnerLocation = async (
+    partnerToken,
+    customername,
+  ) => {
+    let deliveryPartner = await AsyncStorage.getItem('userName');
+    const FIREBASE_API_KEY = delivery_partner_firebase_key;
+    const message = {
+      to: partnerToken,
+      notification: {
+        title: deliveryPartner + ' ' + 'is at your location',
+        body:
+          'Please enter the 6-digit OTP provided by ' +
+          ' ' +
+          deliveryPartner +
+          ' ' +
+          'to close Order No: ' +
+          ' ' +
+          orderId,
+        vibrate: 1,
+        sound: 1,
+        show_in_foreground: true,
+        priority: 'high',
+        content_available: true,
+      },
+      data: {
+        title: deliveryPartner + ' ' + 'is at your location',
+        body:
+          'Please enter the 6-digit OTP provided by ' +
+          ' ' +
+          deliveryPartner +
+          ' ' +
+          'to close Order No: ' +
+          ' ' +
+          orderId,
+      },
+    };
+
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      Authorization: 'key=' + FIREBASE_API_KEY,
+    });
+    let response = await fetch('https://fcm.googleapis.com/fcm/send', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(message),
+    });
+    response = await response.json();
+    console.log(response);
+  };
+
+  ///////////////////notificationToCustomerDeliveryAtLocation
+  const notificationToCustomerDeliveryAtLocation = async customerToken => {
+    let deliveryPartner = await AsyncStorage.getItem('userName');
+    const CUSTOMER_FIREBASE_API_KEY = customer_firebase_key;
+    const message = {
+      to: customerToken,
+      notification: {
+        title: deliveryPartner + ' ' + 'has reached',
+        body: 'Your order has arrived.',
+        vibrate: 1,
+        sound: 1,
+        show_in_foreground: true,
+        priority: 'high',
+        content_available: true,
+      },
+      data: {
+        title: deliveryPartner + ' ' + 'has reached',
+        body: 'Your order has arrived.',
+      },
+    };
+
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      Authorization: 'key=' + CUSTOMER_FIREBASE_API_KEY,
+    });
+    let response = await fetch('https://fcm.googleapis.com/fcm/send', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(message),
+    });
+    response = await response.json();
+    console.log(response);
+  };
+
+  ////////////////////notificationToCustomerWhenOrderPickedUp
+  const notificationToCustomerWhenOrderPickedUp = async customerToken => {
+    const CUSTOMER_FIREBASE_API_KEY = customer_firebase_key;
+    const message = {
+      to: customerToken,
+      notification: {
+        title: 'Thank you',
+        body: 'Thank you for shopping with us.',
+        vibrate: 1,
+        sound: 1,
+        show_in_foreground: true,
+        priority: 'high',
+        content_available: true,
+      },
+      data: {
+        title: 'Thank you',
+        body: 'Thank you for shopping with us.',
+      },
+    };
+
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      Authorization: 'key=' + CUSTOMER_FIREBASE_API_KEY,
+    });
+    let response = await fetch('https://fcm.googleapis.com/fcm/send', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(message),
+    });
+    response = await response.json();
+    console.log(response);
+  };
+
+  //////////////////////////Notification Section End
 
   // status update
   const updtateStatus = async (
@@ -331,39 +389,53 @@ const NewOrders = ({route, navigation}) => {
       })
       .then(function (result) {
         if (result.error == 0) {
-          notificationToPartnerDeliveryBoyReach(partnerToken, customername);
-          setToggleCheckBoxOne(true);
-          setToggleCheckBoxTwo(false);
-          setToggleCheckBoxThree(false);
-          setToggleCheckBoxFour(false);
+          notificationToPartnerDeliveryBoyReachAtPartnerLocation(
+            partnerToken,
+            customername,
+          );
         }
         if (result.error == 11) {
-          notificationToPartnerDeliveryBoyReach(partnerToken, customername);
-          setToggleCheckBoxOne(false);
-          setToggleCheckBoxTwo(true);
-          setToggleCheckBoxThree(true);
-          setToggleCheckBoxFour(false);
+          notificationToCustomerDeliveryOnWay(customerToken);
         }
         if (result.error == 22) {
-          notificationToPartnerDeliveryBoyReach(partnerToken, customername);
-          setToggleCheckBoxOne(false);
-          setToggleCheckBoxTwo(false);
-          setToggleCheckBoxThree(true);
-          setToggleCheckBoxFour(false);
+          notificationToCustomerDeliveryAtLocation(customerToken);
         }
         if (result.error == 33) {
-          notificationToCustomerDeliveryBoyReach(customerToken);
-          setToggleCheckBoxOne(true);
-          setToggleCheckBoxTwo(false);
-          setToggleCheckBoxThree(false);
-          setToggleCheckBoxFour(true);
+          notificationToCustomerWhenOrderPickedUp(customerToken);
         }
+        setToggleCheckBoxOne(false);
+        setToggleCheckBoxTwo(false);
+        setToggleCheckBoxThree(false);
+        setToggleCheckBoxFour(false);
       })
       .catch(error => {
         console.error(error);
       })
       .finally(() => {
         getOrderData();
+      });
+  };
+
+  ///////////////Open Direaction on Map Customer and Partner
+  const openMapDirection = async (latitude, longitude) => {
+    const url = Platform.select({
+      ios: `comgooglemaps://?center=${latitude},${longitude}&q=${latitude},${longitude}&zoom=14&views=traffic"`,
+      android: `geo://?q=${latitude},${longitude}`,
+    });
+    Linking.canOpenURL(url)
+      .then(supported => {
+        if (supported) {
+          return Linking.openURL(url);
+        } else {
+          const browser_url = `https://www.google.de/maps/@${latitude},${longitude}`;
+
+          return Linking.openURL(browser_url);
+        }
+      })
+      .catch(() => {
+        if (Platform.OS === 'ios') {
+          Linking.openURL(`maps://?q=${latitude},${longitude}`);
+        }
       });
   };
 
