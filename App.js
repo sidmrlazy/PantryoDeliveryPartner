@@ -104,21 +104,21 @@ const App = () => {
       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
     if (enabled) {
-      console.log('Authorization status:', authStatus);
+      // console.log('Authorization status:', authStatus);
     }
   };
 
   useEffect(() => {
     requestUserPermission();
+
     const unsubscribe = messaging().onMessage(async remoteMessage => {
-      Alert.alert(
+      console.log(
         JSON.stringify(
           remoteMessage.notification.title +
             ' ' +
             remoteMessage.notification.body,
         ),
       );
-      // alert('App.js' + ' ' + JSON.stringify(remoteMessage.notification));
     });
 
     setTimeout(() => {

@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   RefreshControl,
   ScrollView,
+  Pressable,
 } from 'react-native';
 
 // Libraries
@@ -32,10 +33,6 @@ const NewOrders = ({route, navigation}) => {
   const [toggleCheckBoxTwo, setToggleCheckBoxTwo] = React.useState(false);
   const [toggleCheckBoxThree, setToggleCheckBoxThree] = React.useState(false);
   const [toggleCheckBoxFour, setToggleCheckBoxFour] = React.useState(false);
-  const [toggleCheckBoxFive, setToggleCheckBoxFive] = React.useState(false);
-  const [toggleCheckBoxSix, setToggleCheckBoxSix] = React.useState(false);
-  const [toggleCheckBoxSeven, setToggleCheckBoxSeven] = React.useState(false);
-  const [toggleCheckBoxEight, setToggleCheckBoxEight] = React.useState(false);
 
   const customer_firebase_key =
     'AAAAIIoSzdk:APA91bFqAg9Vu4T-_LYX5EPz9UVtqZTp0bRWOpkJLgm6GqIf4QAJtrW6RISmqWHZl6T-ykQrNLpo39kbRHLBsfGmqyz5JP8hxNCUzrfw8ECkcOItsO173OGeIrPf01_jiTLGjJsgwr33';
@@ -124,9 +121,7 @@ const NewOrders = ({route, navigation}) => {
       .finally(() => getOrderData());
   };
 
-  //////////////////////////Notification Section Start
-
-  /////notificationToCustomerDeliveryAcceptOrder
+  // notificationToCustomerDeliveryAcceptOrder
   const notificationToCustomerDeliveryAcceptOrder = async customerToken => {
     let deliveryPartner = await AsyncStorage.getItem('userName');
     const CUSTOMER_FIREBASE_API_KEY = customer_firebase_key;
@@ -328,7 +323,7 @@ const NewOrders = ({route, navigation}) => {
     console.log(response);
   };
 
-  ////////////////////notificationToCustomerWhenOrderPickedUp
+  // notificationToCustomerWhenOrderPickedUp
   const notificationToCustomerWhenOrderPickedUp = async customerToken => {
     const CUSTOMER_FIREBASE_API_KEY = customer_firebase_key;
     const message = {
@@ -360,8 +355,6 @@ const NewOrders = ({route, navigation}) => {
     response = await response.json();
     console.log(response);
   };
-
-  //////////////////////////Notification Section End
 
   // status update
   const updtateStatus = async (
@@ -411,7 +404,7 @@ const NewOrders = ({route, navigation}) => {
       });
   };
 
-  ///////////////Open Direaction on Map Customer and Partner
+  // Open Direction on Google Map to Customer and Partners Location
   const openMapDirection = async (latitude, longitude) => {
     const url = Platform.select({
       ios: `comgooglemaps://?center=${latitude},${longitude}&q=${latitude},${longitude}&zoom=14&views=traffic"`,
