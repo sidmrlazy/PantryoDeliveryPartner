@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   RefreshControl,
   ScrollView,
+  Pressable,
 } from 'react-native';
 
 // Libraries
@@ -32,10 +33,6 @@ const NewOrders = ({route, navigation}) => {
   const [toggleCheckBoxTwo, setToggleCheckBoxTwo] = React.useState(false);
   const [toggleCheckBoxThree, setToggleCheckBoxThree] = React.useState(false);
   const [toggleCheckBoxFour, setToggleCheckBoxFour] = React.useState(false);
-  const [toggleCheckBoxFive, setToggleCheckBoxFive] = React.useState(false);
-  const [toggleCheckBoxSix, setToggleCheckBoxSix] = React.useState(false);
-  const [toggleCheckBoxSeven, setToggleCheckBoxSeven] = React.useState(false);
-  const [toggleCheckBoxEight, setToggleCheckBoxEight] = React.useState(false);
 
   const customer_firebase_key =
     'AAAAIIoSzdk:APA91bFqAg9Vu4T-_LYX5EPz9UVtqZTp0bRWOpkJLgm6GqIf4QAJtrW6RISmqWHZl6T-ykQrNLpo39kbRHLBsfGmqyz5JP8hxNCUzrfw8ECkcOItsO173OGeIrPf01_jiTLGjJsgwr33';
@@ -124,9 +121,7 @@ const NewOrders = ({route, navigation}) => {
       .finally(() => getOrderData());
   };
 
-  //////////////////////////Notification Section Start
-
-  /////notificationToCustomerDeliveryAcceptOrder
+  // notificationToCustomerDeliveryAcceptOrder
   const notificationToCustomerDeliveryAcceptOrder = async customerToken => {
     let deliveryPartner = await AsyncStorage.getItem('userName');
     const CUSTOMER_FIREBASE_API_KEY = customer_firebase_key;
@@ -145,40 +140,6 @@ const NewOrders = ({route, navigation}) => {
         title: 'Delivery Partner Found',
         body:
           deliveryPartner + ' ' + ' has been assigned to deliver your order',
-      },
-    };
-
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      Authorization: 'key=' + CUSTOMER_FIREBASE_API_KEY,
-    });
-    let response = await fetch('https://fcm.googleapis.com/fcm/send', {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(message),
-    });
-    response = await response.json();
-    console.log(response);
-  };
-
-  /////////////////notificationToCustomerDeliveryOnWay
-  const notificationToCustomerDeliveryOnWay = async customerToken => {
-    let deliveryPartner = await AsyncStorage.getItem('userName');
-    const CUSTOMER_FIREBASE_API_KEY = customer_firebase_key;
-    const message = {
-      to: customerToken,
-      notification: {
-        title: deliveryPartner + ' ' + 'En-Route',
-        body: 'Your order is en-route and will be reaching to you shortly',
-        vibrate: 1,
-        sound: 1,
-        show_in_foreground: true,
-        priority: 'high',
-        content_available: true,
-      },
-      data: {
-        title: deliveryPartner + ' ' + 'En-Route',
-        body: 'Your order is en-route and will be reaching to you shortly',
       },
     };
 
@@ -242,8 +203,8 @@ const NewOrders = ({route, navigation}) => {
     console.log(response);
   };
 
-  //////////////////////notificationToPartnerDeliveryBoyReachAtPartnerLocation
-  const notificationToPartnerDeliveryBoyReachAtPartnerLocation = async (
+  //////////////////////notificationToPartnerDeliveryBoyAtLocation
+  const notificationToPartnerDeliveryBoyAtLocation = async (
     partnerToken,
     customername,
   ) => {
@@ -293,6 +254,41 @@ const NewOrders = ({route, navigation}) => {
     console.log(response);
   };
 
+  /////////////////notificationToCustomerDeliveryOnWay
+  const notificationToCustomerDeliveryOnWay = async customerToken => {
+    let deliveryPartner = await AsyncStorage.getItem('userName');
+    console.log('Call');
+    const CUSTOMER_FIREBASE_API_KEY = customer_firebase_key;
+    const message = {
+      to: customerToken,
+      notification: {
+        title: deliveryPartner + ' ' + 'En-Route',
+        body: 'Your order is en-route and will be reaching to you shortly',
+        vibrate: 1,
+        sound: 1,
+        show_in_foreground: true,
+        priority: 'high',
+        content_available: true,
+      },
+      data: {
+        title: deliveryPartner + ' ' + 'En-Route',
+        body: 'Your order is en-route and will be reaching to you shortly',
+      },
+    };
+
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      Authorization: 'key=' + CUSTOMER_FIREBASE_API_KEY,
+    });
+    let response = await fetch('https://fcm.googleapis.com/fcm/send', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(message),
+    });
+    response = await response.json();
+    console.log(response);
+  };
+
   ///////////////////notificationToCustomerDeliveryAtLocation
   const notificationToCustomerDeliveryAtLocation = async customerToken => {
     let deliveryPartner = await AsyncStorage.getItem('userName');
@@ -327,7 +323,7 @@ const NewOrders = ({route, navigation}) => {
     console.log(response);
   };
 
-  ////////////////////notificationToCustomerWhenOrderPickedUp
+  // notificationToCustomerWhenOrderPickedUp
   const notificationToCustomerWhenOrderPickedUp = async customerToken => {
     const CUSTOMER_FIREBASE_API_KEY = customer_firebase_key;
     const message = {
@@ -360,8 +356,6 @@ const NewOrders = ({route, navigation}) => {
     console.log(response);
   };
 
-  //////////////////////////Notification Section End
-
   // status update
   const updtateStatus = async (
     status,
@@ -370,7 +364,7 @@ const NewOrders = ({route, navigation}) => {
     partnerToken,
     customerToken,
   ) => {
-    await fetch(
+    fetch(
       'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=deliveryStatusAndOtp',
       {
         method: 'POST',
@@ -388,35 +382,28 @@ const NewOrders = ({route, navigation}) => {
         return response.json();
       })
       .then(function (result) {
+        console.log('Status: ' + status);
+        console.log(result);
         if (result.error == 0) {
-          notificationToPartnerDeliveryBoyReachAtPartnerLocation(
+          notificationToPartnerDeliveryBoyAtLocation(
             partnerToken,
             customername,
           );
-        }
-        if (result.error == 11) {
+        } else if (result.error == 11) {
           notificationToCustomerDeliveryOnWay(customerToken);
-        }
-        if (result.error == 22) {
+        } else if (result.error == 22) {
           notificationToCustomerDeliveryAtLocation(customerToken);
-        }
-        if (result.error == 33) {
+        } else if (result.error == 33) {
           notificationToCustomerWhenOrderPickedUp(customerToken);
         }
-        setToggleCheckBoxOne(false);
-        setToggleCheckBoxTwo(false);
-        setToggleCheckBoxThree(false);
-        setToggleCheckBoxFour(false);
+        getOrderData();
       })
       .catch(error => {
         console.error(error);
-      })
-      .finally(() => {
-        getOrderData();
       });
   };
 
-  ///////////////Open Direaction on Map Customer and Partner
+  // Open Direction on Google Map to Customer and Partners Location
   const openMapDirection = async (latitude, longitude) => {
     const url = Platform.select({
       ios: `comgooglemaps://?center=${latitude},${longitude}&q=${latitude},${longitude}&zoom=14&views=traffic"`,
@@ -543,17 +530,8 @@ const NewOrders = ({route, navigation}) => {
                           <>
                             {item.orderStatus == '3' ? (
                               <View style={styles.tabRow}>
-                                <Text
-                                  style={[
-                                    styles.statusName,
-                                    {flex: 1, fontSize: 22},
-                                  ]}>
-                                  Reached at Pickup Destination
-                                </Text>
-                                <CheckBox
-                                  disabled={false}
-                                  value={toggleCheckBoxOne}
-                                  onValueChange={() => {
+                                <TouchableOpacity
+                                  onPress={() => {
                                     updtateStatus(
                                       '4',
                                       item.customer_name,
@@ -562,29 +540,17 @@ const NewOrders = ({route, navigation}) => {
                                       item.CustomerUserToken,
                                     );
                                   }}
-                                  style={styles.statusOne}
-                                  lineWidth={2}
-                                  hideBox={false}
-                                  boxType={'circle'}
-                                  tintColors={'#9E663C'}
-                                  onCheckColor={'#6F763F'}
-                                  onFillColor={'#4DABEC'}
-                                  onTintColor={'#F4DCF8'}
-                                />
+                                  style={[styles.btn1, {borderColor: 'blue'}]}>
+                                  <Text
+                                    style={[styles.btn1Txt, {color: 'blue'}]}>
+                                    Reached at Pickup Destination
+                                  </Text>
+                                </TouchableOpacity>
                               </View>
                             ) : item.orderStatus == '5' ? (
                               <View style={styles.tabRow}>
-                                <Text
-                                  style={[
-                                    styles.statusName,
-                                    {flex: 1, fontSize: 22},
-                                  ]}>
-                                  Get Customer Location
-                                </Text>
-                                <CheckBox
-                                  disabled={false}
-                                  value={toggleCheckBoxTwo}
-                                  onValueChange={() => {
+                                <TouchableOpacity
+                                  onPress={() => {
                                     updtateStatus(
                                       '6',
                                       item.customer_name,
@@ -593,29 +559,16 @@ const NewOrders = ({route, navigation}) => {
                                       item.CustomerUserToken,
                                     );
                                   }}
-                                  style={styles.statusOne}
-                                  lineWidth={2}
-                                  hideBox={false}
-                                  boxType={'circle'}
-                                  tintColors={'#9E663C'}
-                                  onCheckColor={'#6F763F'}
-                                  onFillColor={'#4DABEC'}
-                                  onTintColor={'#F4DCF8'}
-                                />
+                                  style={styles.btn1}>
+                                  <Text style={styles.btn1Txt}>
+                                    Get Customer Location
+                                  </Text>
+                                </TouchableOpacity>
                               </View>
                             ) : item.orderStatus == '6' ? (
                               <View style={styles.tabRow}>
-                                <Text
-                                  style={[
-                                    styles.statusName,
-                                    {flex: 1, fontSize: 22},
-                                  ]}>
-                                  Reached at Drop Point
-                                </Text>
-                                <CheckBox
-                                  disabled={false}
-                                  value={toggleCheckBoxThree}
-                                  onValueChange={() => {
+                                <TouchableOpacity
+                                  onPress={() => {
                                     updtateStatus(
                                       '7',
                                       item.customer_name,
@@ -624,29 +577,16 @@ const NewOrders = ({route, navigation}) => {
                                       item.CustomerUserToken,
                                     );
                                   }}
-                                  style={styles.statusOne}
-                                  lineWidth={2}
-                                  hideBox={false}
-                                  boxType={'circle'}
-                                  tintColors={'#9E663C'}
-                                  onCheckColor={'#6F763F'}
-                                  onFillColor={'#4DABEC'}
-                                  onTintColor={'#F4DCF8'}
-                                />
+                                  style={styles.btn1}>
+                                  <Text style={styles.btn1Txt}>
+                                    Reached at Drop Point
+                                  </Text>
+                                </TouchableOpacity>
                               </View>
                             ) : item.orderStatus == '7' ? (
                               <View style={styles.tabRow}>
-                                <Text
-                                  style={[
-                                    styles.statusName,
-                                    {flex: 1, fontSize: 22},
-                                  ]}>
-                                  Order Delivered
-                                </Text>
-                                <CheckBox
-                                  disabled={false}
-                                  value={toggleCheckBoxFour}
-                                  onValueChange={() => {
+                                <TouchableOpacity
+                                  onPress={() => {
                                     updtateStatus(
                                       '8',
                                       item.customer_name,
@@ -655,15 +595,12 @@ const NewOrders = ({route, navigation}) => {
                                       item.CustomerUserToken,
                                     );
                                   }}
-                                  style={styles.statusOne}
-                                  lineWidth={2}
-                                  hideBox={false}
-                                  boxType={'circle'}
-                                  tintColors={'#9E663C'}
-                                  onCheckColor={'#6F763F'}
-                                  onFillColor={'#4DABEC'}
-                                  onTintColor={'#F4DCF8'}
-                                />
+                                  style={[styles.btn1, {borderColor: 'green'}]}>
+                                  <Text
+                                    style={[styles.btn1Txt, {color: 'green'}]}>
+                                    Order Delivered
+                                  </Text>
+                                </TouchableOpacity>
                               </View>
                             ) : null}
                           </>
@@ -943,5 +880,20 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans-Bold',
     fontSize: 20,
     color: '#fff',
+  },
+  btn1: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10,
+    paddingVertical: 10,
+    borderWidth: 1.5,
+    borderColor: '#9E663C',
+    borderRadius: 5,
+  },
+  btn1Txt: {
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 18,
+    color: '#9E663C',
   },
 });
