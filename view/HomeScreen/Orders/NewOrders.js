@@ -131,7 +131,7 @@ const NewOrders = ({route, navigation}) => {
         title: 'Delivery Partner Found',
         body: deliveryPartner + ' ' + 'has been assigned to deliver your order',
         vibrate: 1,
-        sound: 1,
+        sound: 'default',
         show_in_foreground: true,
         priority: 'high',
         content_available: true,
@@ -174,7 +174,7 @@ const NewOrders = ({route, navigation}) => {
           ' ' +
           orderId,
         vibrate: 1,
-        sound: 1,
+        sound: 'default',
         show_in_foreground: true,
         priority: 'high',
         content_available: true,
@@ -223,7 +223,7 @@ const NewOrders = ({route, navigation}) => {
           ' ' +
           orderId,
         vibrate: 1,
-        sound: 1,
+        sound: 'default',
         show_in_foreground: true,
         priority: 'high',
         content_available: true,
@@ -257,7 +257,7 @@ const NewOrders = ({route, navigation}) => {
   /////////////////notificationToCustomerDeliveryOnWay
   const notificationToCustomerDeliveryOnWay = async customerToken => {
     let deliveryPartner = await AsyncStorage.getItem('userName');
-    console.log('Call');
+    // console.log('Call');
     const CUSTOMER_FIREBASE_API_KEY = customer_firebase_key;
     const message = {
       to: customerToken,
@@ -265,7 +265,7 @@ const NewOrders = ({route, navigation}) => {
         title: deliveryPartner + ' ' + 'En-Route',
         body: 'Your order is en-route and will be reaching to you shortly',
         vibrate: 1,
-        sound: 1,
+        sound: 'default',
         show_in_foreground: true,
         priority: 'high',
         content_available: true,
@@ -299,7 +299,7 @@ const NewOrders = ({route, navigation}) => {
         title: deliveryPartner + ' ' + 'has reached',
         body: 'Your order has arrived.',
         vibrate: 1,
-        sound: 1,
+        sound: 'default',
         show_in_foreground: true,
         priority: 'high',
         content_available: true,
@@ -332,7 +332,7 @@ const NewOrders = ({route, navigation}) => {
         title: 'Thank you',
         body: 'Thank you for shopping with us.',
         vibrate: 1,
-        sound: 1,
+        sound: 'default',
         show_in_foreground: true,
         priority: 'high',
         content_available: true,
