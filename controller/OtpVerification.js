@@ -133,6 +133,7 @@ const OtpVerification = ({navigation, route}) => {
             let contactNumber = result.contactNumber;
             let userToken = result.userToken;
             let userName = result.fullname;
+            let userStatus = result.userStatus;
             let profileImage = result.profileImage;
             let bikeRegistrationNumber = result.bikeRegistrationNumber;
 
@@ -141,6 +142,7 @@ const OtpVerification = ({navigation, route}) => {
               contactNumber,
               userToken,
               userName,
+              userStatus,
               bikeRegistrationNumber,
               profileImage,
             );
@@ -161,6 +163,7 @@ const OtpVerification = ({navigation, route}) => {
     contactNumber,
     userToken,
     userName,
+    userStatus,
     bikeRegistrationNumber,
     profileImage,
   ) => {
@@ -188,6 +191,7 @@ const OtpVerification = ({navigation, route}) => {
           contactNumber,
           userToken,
           userName,
+          userStatus,
           bikeRegistrationNumber,
           profileImage,
         );
@@ -206,6 +210,7 @@ const OtpVerification = ({navigation, route}) => {
     contactNumber,
     userToken,
     userName,
+    userStatus,
     bikeRegistrationNumber,
     profileImage,
   ) => {
@@ -234,6 +239,7 @@ const OtpVerification = ({navigation, route}) => {
             delivery_id,
             contactNumber,
             userToken,
+            userStatus,
             userName,
             bikeRegistrationNumber,
             profileImage,

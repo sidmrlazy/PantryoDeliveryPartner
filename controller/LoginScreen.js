@@ -97,7 +97,7 @@ const LoginScreen = ({navigation}) => {
     } else {
       setLoading(true);
       fetch(
-        'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=DeliveryPartnerLogin',
+        'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartnerLogin.php',
         {
           method: 'POST',
           headers: {
@@ -120,6 +120,7 @@ const LoginScreen = ({navigation}) => {
             let contactNumber = result.contactNumber;
             let userToken = result.userToken;
             let userName = result.fullname;
+            let userStatus = result.userStatus;
             let profileImage = result.profileImage;
             let bikeRegistrationNumber = result.bikeRegistrationNumber;
             signIn({
@@ -127,6 +128,7 @@ const LoginScreen = ({navigation}) => {
               contactNumber,
               userToken,
               userName,
+              userStatus,
               bikeRegistrationNumber,
               profileImage,
             });

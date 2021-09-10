@@ -26,6 +26,7 @@ navigator.geolocation = require('@react-native-community/geolocation');
 // Screens
 import FeatureTest from './Component/FeaturesTest';
 import NewOrders from './Orders/NewOrders';
+import {setEnabled} from 'react-native/Libraries/Performance/Systrace';
 
 // Timer for Refreshing
 const wait = timeout => {
@@ -55,7 +56,7 @@ const HomeScreen = ({navigation}) => {
   const [customerToken, setCustomerToken] = React.useState('');
   const [partnerToken, setPartnerToken] = React.useState('');
   const [orderId, setOrderId] = React.useState('');
-  const [status, setStatus] = React.useState('1');
+  const [status, setStatus] = React.useState('');
   const [customerName, setCustomerName] = React.useState('');
   const [customerMobile, setCustomerMobile] = React.useState('');
   const [partnerPinCode, setPartnerPincode] = React.useState('');
@@ -77,13 +78,20 @@ const HomeScreen = ({navigation}) => {
     'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=deliveryPartnerStatus';
 
   // User Profile
-  const userProfileData = async () => {
+  async function userProfileData() {
     setUserId(await AsyncStorage.getItem('user_id'));
     setName(await AsyncStorage.getItem('userName'));
+    let workingstatus = await AsyncStorage.getItem('userStatus');
+    if (workingstatus == '1') {
+      setIsEnabled(true);
+    } else {
+      setIsEnabled(false);
+    }
+    setStatus(await AsyncStorage.getItem('userStatus'));
     setMobile(await AsyncStorage.getItem('contactNumber'));
     setBikeNo(await AsyncStorage.getItem('bikeRegistrationNumber'));
     setProfileImg(await AsyncStorage.getItem('profileImage'));
-  };
+  }
 
   // OnRefresh
   const onRefresh = React.useCallback(() => {
@@ -93,7 +101,7 @@ const HomeScreen = ({navigation}) => {
   }, []);
 
   // ======= Show Toast ========== //
-  const showToast = msg => {
+  function showToast(msg) {
     ToastAndroid.showWithGravityAndOffset(
       msg,
       ToastAndroid.SHORT,
@@ -101,7 +109,7 @@ const HomeScreen = ({navigation}) => {
       25,
       50,
     );
-  };
+  }
 
   const CustomerServerKey =
     'AAAAIIoSzdk:APA91bFqAg9Vu4T-_LYX5EPz9UVtqZTp0bRWOpkJLgm6GqIf4QAJtrW6RISmqWHZl6T-ykQrNLpo39kbRHLBsfGmqyz5JP8hxNCUzrfw8ECkcOItsO173OGeIrPf01_jiTLGjJsgwr33';
@@ -109,7 +117,7 @@ const HomeScreen = ({navigation}) => {
     'AAAALC3Ugt8:APA91bFdhqYhHLlDedpHpuCBX7puDR5x1qsrmc6k3gh-pXIBaUoxTJ3t91pVuBwV51GdrSnYLb9McgZYbGnkVR6-A8BnqsUL8nQKN8Bg3qwwH9puZ01uCt4tnGU7w0qNXL0S-x8Ofnaf';
 
   // Notification to Partner
-  const sendNotificationToPartner = async () => {
+  async function sendNotificationToPartner() {
     const userToken = partnerToken;
     const DELIVERY_PARTNER_FIREBASE_API_KEY = PartnerServerKey;
     const message = {
@@ -140,10 +148,10 @@ const HomeScreen = ({navigation}) => {
     });
     response = await response.json();
     console.log(response);
-  };
+  }
 
   // Notification to Customer
-  const sendNotificationToCustomer = async () => {
+  async function sendNotificationToCustomer() {
     const userToken = customerToken;
     const DELIVERY_PARTNER_FIREBASE_API_KEY = CustomerServerKey;
     const message = {
@@ -178,9 +186,9 @@ const HomeScreen = ({navigation}) => {
     });
     response = await response.json();
     console.log(response);
-  };
+  }
 
-  const requestLocationPermission = async () => {
+  async function requestLocationPermission() {
     if (Platform.OS === 'ios') {
       getOneTimeLocation();
     } else {
@@ -201,10 +209,10 @@ const HomeScreen = ({navigation}) => {
         console.warn(err);
       }
     }
-  };
+  }
 
   // ====== Get Longitude and Latitude========== //
-  const getOneTimeLocation = async () => {
+  async function getOneTimeLocation() {
     setLoading(true);
     await navigator.geolocation.getCurrentPosition(
       position => {
@@ -225,9 +233,9 @@ const HomeScreen = ({navigation}) => {
         maximumAge: 2000,
       },
     );
-  };
+  }
 
-  const getOrderData = async () => {
+  async function getOrderData() {
     let userId = await AsyncStorage.getItem('user_id');
     await fetch(
       'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=showOrderDeliveryPartner',
@@ -257,10 +265,10 @@ const HomeScreen = ({navigation}) => {
         setLoading(false);
         getOrderData();
       });
-  };
+  }
 
   // Order Count Today
-  const orderCountToday = async () => {
+  async function orderCountToday() {
     let userId = await AsyncStorage.getItem('user_id');
     fetch(
       'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartnerCount.php?flag=todayOrdercount',
@@ -286,10 +294,10 @@ const HomeScreen = ({navigation}) => {
       .catch(error => {
         console.log(error);
       });
-  };
+  }
 
   // Total Orders Life To Date
-  const totalOrders = async () => {
+  async function totalOrders() {
     let userId = await AsyncStorage.getItem('user_id');
     fetch(
       'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartnerCount.php?flag=allOrdercount',
@@ -315,10 +323,10 @@ const HomeScreen = ({navigation}) => {
       .catch(error => {
         console.log(error);
       });
-  };
+  }
 
   // Total Earnings for the day
-  const totalEarningFtd = async () => {
+  async function totalEarningFtd() {
     let userId = await AsyncStorage.getItem('user_id');
     fetch(
       'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartnerCount.php?flag=todayearning',
@@ -344,7 +352,44 @@ const HomeScreen = ({navigation}) => {
       .catch(error => {
         console.log(error);
       });
-  };
+  }
+
+  ///////////////Update Working Status
+  async function updateWorkingStatus(workstatus) {
+    let userId = await AsyncStorage.getItem('user_id');
+    fetch(
+      'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/UpdateDeliveryPartnerWorkingStatus.php',
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/JSON',
+          'Content-Type': 'application/JSON',
+        },
+        body: JSON.stringify({
+          delivery_id: userId,
+          userStatus: workstatus,
+        }),
+      },
+    )
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (result) {
+        if (result.error == 0) {
+          let userStatus = result.userStatus;
+          if (userStatus == '1') {
+            setIsEnabled(true);
+          } else {
+            setIsEnabled(false);
+          }
+          setStatus(userStatus);
+          AsyncStorage.setItem('userStatus', userStatus);
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
 
   useEffect(() => {
     LogBox.ignoreAllLogs(true);
@@ -397,7 +442,10 @@ const HomeScreen = ({navigation}) => {
                     trackColor={{false: '#767577', true: '#a5a2a8'}}
                     thumbColor={isEnabled ? '#4d8751' : '#f4f3f4'}
                     ios_backgroundColor="#3e3e3e"
-                    onValueChange={toggleSwitch}
+                    onValueChange={() => {
+                      updateWorkingStatus('2');
+                      // toggleSwitch();
+                    }}
                     value={isEnabled}
                   />
                 </>
@@ -408,7 +456,10 @@ const HomeScreen = ({navigation}) => {
                     trackColor={{false: '#767577', true: '#a5a2a8'}}
                     thumbColor={isEnabled ? '#4d8751' : '#f4f3f4'}
                     ios_backgroundColor="#3e3e3e"
-                    onValueChange={toggleSwitch}
+                    onValueChange={() => {
+                      updateWorkingStatus('1');
+                      // toggleSwitch();
+                    }}
                     value={isEnabled}
                   />
                 </>
