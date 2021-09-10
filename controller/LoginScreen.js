@@ -15,6 +15,7 @@ import {
   ToastAndroid,
   FlatList,
   ImageBackground,
+  useWindowDimensions,
 } from 'react-native';
 
 // Libraries
@@ -37,6 +38,8 @@ const LoginScreen = ({navigation}) => {
   const {signIn} = React.useContext(AuthContext);
   const [banner, setBanner] = useState('');
   const [refreshing, setRefreshing] = useState(false);
+
+  const window = useWindowDimensions();
 
   // FCM Token
   const getDeviceToken = async () => {
@@ -158,8 +161,7 @@ const LoginScreen = ({navigation}) => {
         <View style={{flex: 1, backgroundColor: '#fff'}}>
           <FlatList
             style={{
-              maxWidth: '100%',
-              maxHeight: '100%',
+              flex: 1,
             }}
             showsHorizontalScrollIndicator={false}
             horizontal={true}
@@ -175,7 +177,10 @@ const LoginScreen = ({navigation}) => {
                   style={styles.imgcontainer}>
                   <ImageBackground
                     source={{uri: item.imageName}}
-                    style={styles.img}
+                    style={{
+                      width: window.width,
+                      height: window.height - 300,
+                    }}
                   />
                 </Pressable>
               </>
@@ -269,7 +274,6 @@ const styles = StyleSheet.create({
   imgcontainer: {
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
-    paddingHorizontal: 3,
     backgroundColor: '#fff',
   },
   img: {
