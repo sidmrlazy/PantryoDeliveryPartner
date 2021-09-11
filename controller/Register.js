@@ -45,6 +45,8 @@ const Register = ({navigation}) => {
   const [bikePollImgPath, setBikePollImgPath] = useState('');
   const [isMounted, setIsMounted] = useState(true);
 
+  const [vehicleType, setVehicleType] = useState('');
+
   const [lat, setLat] = useState('');
   const [long, setLong] = useState('');
 
@@ -346,6 +348,22 @@ const Register = ({navigation}) => {
             </View>
           </View>
 
+          <View style={styles.bankTypeSection}>
+            <Text style={styles.label}>Gender</Text>
+            <View style={styles.bankTypeContainer}>
+              <Picker
+                selectedValue={vehicleType}
+                style={{height: 50, width: '100%'}}
+                onValueChange={(itemValue, itemIndex) =>
+                  setVehicleType(itemValue)
+                }>
+                <Picker.Item label="Male" value="Male" color="#000" />
+                <Picker.Item label="Female" value="Female" color="#000" />
+                <Picker.Item label="Other" value="Other" color="#000" />
+              </Picker>
+            </View>
+          </View>
+
           <View style={styles.divider} />
 
           <View style={styles.bottomSection}>
@@ -353,6 +371,35 @@ const Register = ({navigation}) => {
             <Text style={styles.bottomCaption}>
               Please upload ID, Address Proof & other documents for veirfication
             </Text>
+
+            <View style={styles.bankTypeSection}>
+              <Text style={styles.label}>Select Vehicle Type</Text>
+              <View style={styles.bankTypeContainer}>
+                <Picker
+                  selectedValue={vehicleType}
+                  style={{height: 50, width: '100%'}}
+                  onValueChange={(itemValue, itemIndex) =>
+                    setVehicleType(itemValue)
+                  }>
+                  <Picker.Item
+                    label="Motorcycle"
+                    value="Motorcycle"
+                    color="#000"
+                  />
+                  <Picker.Item label="Bicycle" value="Bicycle" color="#000" />
+                  <Picker.Item
+                    label="3 Wheeler"
+                    value="3 Wheeler"
+                    color="#000"
+                  />
+                  <Picker.Item
+                    label="Mini truck"
+                    value="Mini truck"
+                    color="#000"
+                  />
+                </Picker>
+              </View>
+            </View>
 
             <View style={styles.section}>
               <TextInput
