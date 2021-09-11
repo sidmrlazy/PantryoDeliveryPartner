@@ -555,7 +555,7 @@ const HomeScreen = ({navigation}) => {
             <View style={styles.switchTab}>
               {isEnabled ? (
                 <>
-                  <Text style={styles.switchTxt}>End Day</Text>
+                  <Text style={styles.switchTxt}>You are online</Text>
                   <Switch
                     trackColor={{false: '#767577', true: '#a5a2a8'}}
                     thumbColor={isEnabled ? '#4d8751' : '#f4f3f4'}
@@ -569,7 +569,7 @@ const HomeScreen = ({navigation}) => {
                 </>
               ) : (
                 <>
-                  <Text style={styles.switchTxt}>Start Delivering</Text>
+                  <Text style={styles.switchTxt}>You are offline</Text>
                   <Switch
                     trackColor={{false: '#767577', true: '#a5a2a8'}}
                     thumbColor={isEnabled ? '#4d8751' : '#f4f3f4'}
@@ -842,8 +842,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 10,
-    marginTop: 20,
-    paddingBottom: 20,
+    marginTop: 10,
+    paddingBottom: 5,
   },
   tab: {
     flex: 1,
