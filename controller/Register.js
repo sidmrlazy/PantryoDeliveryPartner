@@ -31,6 +31,7 @@ const Register = ({navigation}) => {
   const [address, setAddress] = useState('');
   const [pincode, setPincode] = useState('');
   const [bankAccountNumber, setBankAccountNumber] = useState('');
+  const [bankIFSCCode, setBankIFSCCode] = useState('');
   const [bankAccountType, setBankAccountType] = useState('');
   const [bikeNumber, setBikeNumber] = useState('');
   const [idImg, setIdImg] = useState('');
@@ -44,7 +45,7 @@ const Register = ({navigation}) => {
   const [bikePollImg, setBikePollImg] = useState('');
   const [bikePollImgPath, setBikePollImgPath] = useState('');
   const [isMounted, setIsMounted] = useState(true);
-
+  const [genderType, setGenderType] = useState('');
   const [vehicleType, setVehicleType] = useState('');
 
   const [lat, setLat] = useState('');
@@ -172,6 +173,15 @@ const Register = ({navigation}) => {
     } else if (!bankAccountType) {
       showToast('Please Choose Your  Bank Account Type');
       return;
+    } else if (!bankIFSCCode) {
+      showToast('Please Enter Your  Bank IFSC Code');
+      return;
+    } else if (!genderType) {
+      showToast('Please Choose Your  Gender');
+      return;
+    } else if (!vehicleType) {
+      showToast('Please Choose Your  Vechile Type');
+      return;
     } else if (!drivingLicense) {
       showToast('Upload your Driving License it`s Required');
       return;
@@ -213,6 +223,9 @@ const Register = ({navigation}) => {
               pincode: pincode,
               bankAccountNumber: bankAccountNumber,
               bankAccountType: bankAccountType,
+              bankIFSCCode: bankIFSCCode,
+              deliveryPartnerGender: genderType,
+              deliveryPartnerVechileType: vehicleType,
               bikeRegistrationNumber: bikeNumber,
               idProofImage: idImg,
               drivingLicenseImage: drivingLicense,
@@ -258,7 +271,6 @@ const Register = ({navigation}) => {
                   }}
                 />
               ) : (
-                // <Icons name="checkbox-outline" size={30} color="green" />
                 <Icons name="camera-outline" size={30} color="#fff" />
               )}
             </Pressable>
@@ -328,6 +340,17 @@ const Register = ({navigation}) => {
             />
           </View>
 
+          <View style={styles.section}>
+            <TextInput
+              placeholder="Bank IFSC Code"
+              placeholderTextColor="#777"
+              keyboardType="default"
+              autoCapitalize="characters"
+              style={styles.input}
+              onChangeText={text => setBankIFSCCode(text)}
+            />
+          </View>
+
           <View style={styles.bankTypeSection}>
             <Text style={styles.label}>Bank Account Type</Text>
             <View style={styles.bankTypeContainer}>
@@ -352,11 +375,12 @@ const Register = ({navigation}) => {
             <Text style={styles.label}>Gender</Text>
             <View style={styles.bankTypeContainer}>
               <Picker
-                selectedValue={vehicleType}
+                selectedValue={genderType}
                 style={{height: 50, width: '100%'}}
                 onValueChange={(itemValue, itemIndex) =>
-                  setVehicleType(itemValue)
+                  setGenderType(itemValue)
                 }>
+                <Picker.Item label="Choose Gender" value="" color="#000" />
                 <Picker.Item label="Male" value="Male" color="#000" />
                 <Picker.Item label="Female" value="Female" color="#000" />
                 <Picker.Item label="Other" value="Other" color="#000" />
@@ -381,6 +405,11 @@ const Register = ({navigation}) => {
                   onValueChange={(itemValue, itemIndex) =>
                     setVehicleType(itemValue)
                   }>
+                  <Picker.Item
+                    label="Choose Vechile Type"
+                    value=""
+                    color="#000"
+                  />
                   <Picker.Item
                     label="Motorcycle"
                     value="Motorcycle"

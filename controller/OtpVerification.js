@@ -33,12 +33,15 @@ const OtpVerification = ({navigation, route}) => {
   const [pincode, setPincode] = useState('');
   const [bankAccountNumber, setBankAccountNumber] = useState('');
   const [bankAccountType, setBankAccountType] = useState('');
+  const [bankIFSCCode, setBankIFSCCode] = useState('');
   const [bikeNumber, setBikeNumber] = useState('');
   const [idImg, setIdImg] = useState('');
   const [drivingLicense, setDrivingLicense] = useState('');
   const [bikeRegImg, setBikeRegImg] = useState('');
   const [bikeInsuranceImg, setBikeInsuranceImg] = useState('');
   const [bikePollImg, setBikePollImg] = useState('');
+  const [genderType, setGenderType] = useState('');
+  const [vehicleType, setVehicleType] = useState('');
 
   // Show Toast
   const showToast = msg => {
@@ -92,6 +95,15 @@ const OtpVerification = ({navigation, route}) => {
     } else if (!bankAccountType) {
       showToast('Please Choose Your  Bank Account Type');
       return;
+    } else if (!bankIFSCCode) {
+      showToast('Please Enter Your  Bank IFSC Code');
+      return;
+    } else if (!genderType) {
+      showToast('Please Choose Your  Gender');
+      return;
+    } else if (!vehicleType) {
+      showToast('Please Choose Your  Vechile Type');
+      return;
     } else if (!drivingLicense) {
       showToast('Upload your Driving License it`s Required');
       return;
@@ -115,6 +127,9 @@ const OtpVerification = ({navigation, route}) => {
       data.append('pincode', pincode);
       data.append('bankAccountNumber', bankAccountNumber);
       data.append('bankAccountType', bankAccountType);
+      data.append('bankIFSCCode', bankIFSCCode);
+      data.append('deliveryPartnerGender', genderType);
+      data.append('deliveryPartnerVechileType', vehicleType);
       data.append('bikeRegistrationNumber', bikeNumber);
       data.append('idProofImage', idImg);
       data.append('drivingLicenseImage', drivingLicense);
@@ -300,6 +315,9 @@ const OtpVerification = ({navigation, route}) => {
     setAddress(route.params.address);
     setPincode(route.params.pincode);
     setBankAccountNumber(route.params.bankAccountNumber);
+    setBankIFSCCode(route.params.bankIFSCCode);
+    setGenderType(route.params.deliveryPartnerGender);
+    setVehicleType(route.params.deliveryPartnerVechileType);
     setBankAccountType(route.params.bankAccountType);
     setBikeNumber(route.params.bikeRegistrationNumber);
     setIdImg(route.params.idProofImage);
