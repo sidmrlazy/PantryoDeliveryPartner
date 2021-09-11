@@ -22,6 +22,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icons from 'react-native-vector-icons/Ionicons';
 import LottieView from 'lottie-react-native';
 navigator.geolocation = require('@react-native-community/geolocation');
+import StarRating from 'react-native-star-rating';
 
 // Screens
 import FeatureTest from './Component/FeaturesTest';
@@ -71,6 +72,9 @@ const HomeScreen = ({navigation}) => {
   const [orderCountFtd, setOrderCountFtd] = React.useState('');
   const [totalOrdersLtd, setTotalOrdersLtd] = React.useState('');
   const [earnings, setEarnings] = React.useState('');
+
+  //////////////Rating
+  const [rating, setRating] = React.useState(3.5);
 
   // API URL variables
   const ChangeOrderStatus =
@@ -395,6 +399,34 @@ const HomeScreen = ({navigation}) => {
       });
   }
 
+  // Partner Rating
+  async function getRatingPoint() {
+    let delivery_id = await AsyncStorage.getItem('user_id');
+    await fetch('https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        delivery_id: delivery_id,
+      }),
+    })
+      .then(response => {
+        return response.json();
+      })
+      .then(result => {
+        if (result.error == 0) {
+          setRating(result.rating);
+        }
+        return Promise.resolve();
+        // getStatus();
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+
   ///////////////Update Working Status
   async function updateWorkingStatus(workstatus) {
     let userId = await AsyncStorage.getItem('user_id');
@@ -495,7 +527,17 @@ const HomeScreen = ({navigation}) => {
           <View style={styles.textContainer}>
             <Text style={styles.userName}>{name}</Text>
             <Text style={styles.mobile}>{mobile}</Text>
-            <Text style={styles.bike}>{bikeNo}</Text>
+            {/* <Text style={styles.bike}>{bikeNo}</Text> */}
+            <Text style={styles.bike}>
+              <StarRating
+                disabled={true}
+                halfStarEnabled={true}
+                maxStars={5}
+                rating={rating}
+                fullStarColor={'#fff'}
+                starSize={17}
+              />
+            </Text>
           </View>
         </View>
         {/* ====== Header End ====== */}
