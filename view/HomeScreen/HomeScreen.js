@@ -437,7 +437,7 @@ const HomeScreen = ({navigation}) => {
             <View style={styles.switchTab}>
               {isEnabled ? (
                 <>
-                  <Text style={styles.switchTxt}>End Day</Text>
+                  <Text style={styles.switchTxt}>You are online</Text>
                   <Switch
                     trackColor={{false: '#767577', true: '#a5a2a8'}}
                     thumbColor={isEnabled ? '#4d8751' : '#f4f3f4'}
@@ -451,7 +451,7 @@ const HomeScreen = ({navigation}) => {
                 </>
               ) : (
                 <>
-                  <Text style={styles.switchTxt}>Start Delivering</Text>
+                  <Text style={styles.switchTxt}>You are offline</Text>
                   <Switch
                     trackColor={{false: '#767577', true: '#a5a2a8'}}
                     thumbColor={isEnabled ? '#4d8751' : '#f4f3f4'}
@@ -467,6 +467,20 @@ const HomeScreen = ({navigation}) => {
             </View>
           </View>
           {/* ====== Switch Section End ====== */}
+
+          {/* ====== Verification Status Start ====== */}
+          <View style={styles.row}>
+            <TouchableOpacity style={styles.notification}>
+              <Text style={styles.notificationHeading}>
+                Profile Under Verification
+              </Text>
+              <Text style={styles.notificationMain}>
+                Please wait while we look at your documents. You may receive a
+                call from our side to confirm the details provided by you.
+              </Text>
+            </TouchableOpacity>
+          </View>
+          {/* ====== Verification Status End ====== */}
 
           {/* ====== Tab Row Start ====== */}
           <View style={styles.row}>
@@ -708,8 +722,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 10,
-    marginTop: 20,
-    paddingBottom: 20,
+    marginTop: 10,
+    paddingBottom: 5,
   },
   tab: {
     flex: 1,
@@ -862,6 +876,34 @@ const styles = StyleSheet.create({
   rejectBtnTxt: {
     fontFamily: 'OpenSans-SemiBold',
     fontSize: 20,
+    color: '#fff',
+  },
+  notification: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    marginHorizontal: 5,
+    backgroundColor: '#5495d6',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.36,
+    shadowRadius: 6.68,
+    elevation: 11,
+    borderRadius: 5,
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+  },
+  notificationHeading: {
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 18,
+    color: '#fff',
+  },
+  notificationMain: {
+    fontFamily: 'OpenSans-Regular',
+    fontSize: 16,
     color: '#fff',
   },
 });
