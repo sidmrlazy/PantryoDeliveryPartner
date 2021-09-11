@@ -90,7 +90,9 @@ const WalletScreen = ({navigation}) => {
               <View style={styles.salesCard}>
                 <View style={{flex: 1}}>
                   <Text style={styles.salesCardHeading}>Total Collection</Text>
-                  <Text style={styles.totalSales}>₹ {totalAmount}</Text>
+                  <Text style={styles.totalSales}>
+                    ₹ {totalAmount ? totalAmount : '0'}
+                  </Text>
                 </View>
                 {/* <Icons name="add-circle" size={30} color="#5E3360" /> */}
               </View>
@@ -122,10 +124,8 @@ const WalletScreen = ({navigation}) => {
                   )}
                 />
               ) : (
-                <View style={styles.transaction}>
-                  <View style={styles.div}>
-                    <Text>No Payment Found!</Text>
-                  </View>
+                <View style={styles.noDataDiv}>
+                  <Text style={styles.noDataTxt}>No Payment Found!</Text>
                 </View>
               )}
             </View>
@@ -152,7 +152,7 @@ export default WalletScreenHolder;
 
 const styles = StyleSheet.create({
   topContainer: {
-    backgroundColor: '#5E3360',
+    backgroundColor: '#662a73',
     flex: 1,
     justifyContent: 'center',
     alignItems: 'flex-start',
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
   screenName: {
     fontFamily: 'OpenSans-SemiBold',
     fontSize: 24,
-    color: '#C6B5C7',
+    color: '#dac3db',
   },
   salesCard: {
     backgroundColor: '#ffffff',
@@ -226,6 +226,7 @@ const styles = StyleSheet.create({
   transactionLabel: {
     fontFamily: 'OpenSans-Bold',
     fontSize: 20,
+    color: '#000',
   },
   date: {
     fontFamily: 'OpenSans-Regular',
@@ -236,5 +237,20 @@ const styles = StyleSheet.create({
     color: 'green',
     fontSize: 24,
     marginRight: 10,
+    color: '#000',
+  },
+  noDataDiv: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 100,
+  },
+  noDataTxt: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 24,
+    color: '#731b85',
   },
 });
