@@ -208,13 +208,14 @@ const HomeScreen = ({navigation}) => {
         } else {
           showToast('Permission Denied');
         }
+        return Promise.resolve();
       } catch (err) {
         console.warn(err);
       }
     }
   }
 
-  // ====== Get Longitude and Latitude========== //
+  // Get Longitude and Latitude
   async function getOneTimeLocation() {
     setLoading(true);
     await navigator.geolocation.getCurrentPosition(
@@ -267,6 +268,7 @@ const HomeScreen = ({navigation}) => {
       .finally(() => {
         setLoading(false);
         getOrderData();
+        return Promise.resolve();
       });
   }
 
@@ -293,6 +295,7 @@ const HomeScreen = ({navigation}) => {
         if (result.error == 0) {
           setOrderCountFtd(result.todayOrder);
         }
+        return Promise.resolve();
       })
       .catch(error => {
         console.log(error);
@@ -322,6 +325,7 @@ const HomeScreen = ({navigation}) => {
         if (result.error == 0) {
           setTotalOrdersLtd(result.todayOrder);
         }
+        return Promise.resolve();
       })
       .catch(error => {
         console.log(error);
@@ -351,6 +355,7 @@ const HomeScreen = ({navigation}) => {
         if (result.error == 0) {
           setEarnings(result.todayearn);
         }
+        return Promise.resolve();
       })
       .catch(error => {
         console.log(error);
@@ -384,8 +389,10 @@ const HomeScreen = ({navigation}) => {
           } else {
             setIsEnabled(false);
           }
+
           setStatus(userStatus);
           AsyncStorage.setItem('userStatus', userStatus);
+          return Promise.resolve();
         }
         return Promise.resolve();
         // getStatus();
@@ -395,7 +402,7 @@ const HomeScreen = ({navigation}) => {
       });
   }
 
-  ///////////////Update Working Status
+  // Update Working Status
   async function updateWorkingStatus(workstatus) {
     let userId = await AsyncStorage.getItem('user_id');
     fetch(
@@ -426,6 +433,7 @@ const HomeScreen = ({navigation}) => {
           setStatus(userStatus);
           AsyncStorage.setItem('userStatus', userStatus);
         }
+        return Promise.resolve();
       })
       .catch(error => {
         console.log(error);
@@ -433,7 +441,7 @@ const HomeScreen = ({navigation}) => {
   }
 
   // Check Verification Status
-  async function getDeliveryPartnerVarificationStatus() {
+  async function getDeliveryPartnerVerificationStatus() {
     let delivery_id = await AsyncStorage.getItem('user_id');
     fetch(
       'https://gizmmoalchemy.com/api/pantryo/PartnerAppApi/checkVerificationStatus.php',
@@ -457,7 +465,7 @@ const HomeScreen = ({navigation}) => {
           AsyncStorage.setItem('verificationStatus', verificationStatus);
           userProfileData();
         }
-        getDeliveryPartnerVarificationStatus();
+        getDeliveryPartnerVerificationStatus();
         return Promise.resolve();
       })
       .catch(error => {
@@ -469,14 +477,14 @@ const HomeScreen = ({navigation}) => {
     LogBox.ignoreAllLogs(true);
     LogBox.ignoreLogs(['Warning: ...']);
     LogBox.ignoreLogs(['VirtualizedLists should never be nested...']);
-    /////////////////////////////////////////////
+
     requestLocationPermission();
     getOrderData();
     getStatus();
     userProfileData();
     orderCountToday();
     totalOrders();
-    getDeliveryPartnerVarificationStatus();
+    getDeliveryPartnerVerificationStatus();
     totalEarningFtd();
   }, []);
 
@@ -958,14 +966,14 @@ const styles = StyleSheet.create({
   },
 
   notificationBtn: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 15,
     width: '100%',
-    marginBottom: 10,
+    marginBottom: 5,
     marginTop: 10,
   },
   notificationTab: {
     width: '100%',
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
     backgroundColor: '#ed7b7b',
     paddingVertical: 20,
     borderRadius: 5,
