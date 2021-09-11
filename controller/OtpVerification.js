@@ -31,6 +31,8 @@ const OtpVerification = ({navigation, route}) => {
   const [contactNumber, setContactNumber] = useState('');
   const [address, setAddress] = useState('');
   const [pincode, setPincode] = useState('');
+  const [bankAccountNumber, setBankAccountNumber] = useState('');
+  const [bankAccountType, setBankAccountType] = useState('');
   const [bikeNumber, setBikeNumber] = useState('');
   const [idImg, setIdImg] = useState('');
   const [drivingLicense, setDrivingLicense] = useState('');
@@ -84,6 +86,12 @@ const OtpVerification = ({navigation, route}) => {
     } else if (!pincode) {
       showToast('Please Enter Your  Pincode');
       return;
+    } else if (!bankAccountNumber) {
+      showToast('Please Enter Your  Bank Account Number');
+      return;
+    } else if (!bankAccountType) {
+      showToast('Please Choose Your  Bank Account Type');
+      return;
     } else if (!drivingLicense) {
       showToast('Upload your Driving License it`s Required');
       return;
@@ -105,6 +113,8 @@ const OtpVerification = ({navigation, route}) => {
       data.append('contactNumber', contactNumber);
       data.append('address', address);
       data.append('pincode', pincode);
+      data.append('bankAccountNumber', bankAccountNumber);
+      data.append('bankAccountType', bankAccountType);
       data.append('bikeRegistrationNumber', bikeNumber);
       data.append('idProofImage', idImg);
       data.append('drivingLicenseImage', drivingLicense);
@@ -134,6 +144,7 @@ const OtpVerification = ({navigation, route}) => {
             let userToken = result.userToken;
             let userName = result.fullname;
             let userStatus = result.userStatus;
+            let verificationStatus = result.verificationStatus;
             let profileImage = result.profileImage;
             let bikeRegistrationNumber = result.bikeRegistrationNumber;
 
@@ -143,6 +154,7 @@ const OtpVerification = ({navigation, route}) => {
               userToken,
               userName,
               userStatus,
+              verificationStatus,
               bikeRegistrationNumber,
               profileImage,
             );
@@ -164,6 +176,7 @@ const OtpVerification = ({navigation, route}) => {
     userToken,
     userName,
     userStatus,
+    verificationStatus,
     bikeRegistrationNumber,
     profileImage,
   ) => {
@@ -192,6 +205,7 @@ const OtpVerification = ({navigation, route}) => {
           userToken,
           userName,
           userStatus,
+          verificationStatus,
           bikeRegistrationNumber,
           profileImage,
         );
@@ -211,6 +225,7 @@ const OtpVerification = ({navigation, route}) => {
     userToken,
     userName,
     userStatus,
+    verificationStatus,
     bikeRegistrationNumber,
     profileImage,
   ) => {
@@ -233,13 +248,13 @@ const OtpVerification = ({navigation, route}) => {
         return response.json();
       })
       .then(function (result) {
-        setLoading(false);
         if (result.payment_status === 'authorized') {
           signIn({
             delivery_id,
             contactNumber,
             userToken,
             userStatus,
+            verificationStatus,
             userName,
             bikeRegistrationNumber,
             profileImage,
@@ -284,6 +299,8 @@ const OtpVerification = ({navigation, route}) => {
     setName(route.params.fullname);
     setAddress(route.params.address);
     setPincode(route.params.pincode);
+    setBankAccountNumber(route.params.bankAccountNumber);
+    setBankAccountType(route.params.bankAccountType);
     setBikeNumber(route.params.bikeRegistrationNumber);
     setIdImg(route.params.idProofImage);
     setDrivingLicense(route.params.drivingLicenseImage);
