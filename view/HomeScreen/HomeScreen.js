@@ -57,6 +57,7 @@ const HomeScreen = ({navigation}) => {
   const [partnerToken, setPartnerToken] = React.useState('');
   const [orderId, setOrderId] = React.useState('');
   const [status, setStatus] = React.useState('');
+  const [verificationStatus, setVerificationStatus] = React.useState('');
   const [customerName, setCustomerName] = React.useState('');
   const [customerMobile, setCustomerMobile] = React.useState('');
   const [partnerPinCode, setPartnerPincode] = React.useState('');
@@ -81,16 +82,18 @@ const HomeScreen = ({navigation}) => {
   async function userProfileData() {
     setUserId(await AsyncStorage.getItem('user_id'));
     setName(await AsyncStorage.getItem('userName'));
-    let workingstatus = await AsyncStorage.getItem('userStatus');
-    if (workingstatus == '1') {
-      setIsEnabled(true);
-    } else {
-      setIsEnabled(false);
-    }
-    setStatus(await AsyncStorage.getItem('userStatus'));
+    // let workingstatus = await AsyncStorage.getItem('userStatus');
+    // if (workingstatus == '1') {
+    //   setIsEnabled(true);
+    // } else {
+    //   setIsEnabled(false);
+    // }
+    setVerificationStatus(await AsyncStorage.getItem('verificationStatus'));
+    // setStatus(await AsyncStorage.getItem('userStatus'));
     setMobile(await AsyncStorage.getItem('contactNumber'));
     setBikeNo(await AsyncStorage.getItem('bikeRegistrationNumber'));
     setProfileImg(await AsyncStorage.getItem('profileImage'));
+    userProfileData();
   }
 
   // OnRefresh
@@ -354,6 +357,44 @@ const HomeScreen = ({navigation}) => {
       });
   }
 
+  // Partner Status
+  async function getStatus() {
+    let delivery_id = await AsyncStorage.getItem('user_id');
+    await fetch(
+      'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/checkpartnerStatus.php',
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          delivery_id: delivery_id,
+        }),
+      },
+    )
+      .then(response => {
+        return response.json();
+      })
+      .then(result => {
+        if (result.error == 0) {
+          let userStatus = result.userStatus;
+          if (userStatus == '1') {
+            setIsEnabled(true);
+          } else {
+            setIsEnabled(false);
+          }
+          setStatus(userStatus);
+          AsyncStorage.setItem('userStatus', userStatus);
+        }
+        return Promise.resolve();
+        // getStatus();
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+
   ///////////////Update Working Status
   async function updateWorkingStatus(workstatus) {
     let userId = await AsyncStorage.getItem('user_id');
@@ -391,6 +432,39 @@ const HomeScreen = ({navigation}) => {
       });
   }
 
+  // Check Verification Status
+  async function getDeliveryPartnerVarificationStatus() {
+    let delivery_id = await AsyncStorage.getItem('user_id');
+    fetch(
+      'https://gizmmoalchemy.com/api/pantryo/PartnerAppApi/checkVerificationStatus.php',
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          delivery_id: delivery_id,
+        }),
+      },
+    )
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (result) {
+        if (result.error == 0) {
+          let verificationStatus = result.verificationStatus;
+          AsyncStorage.setItem('verificationStatus', verificationStatus);
+          userProfileData();
+        }
+        getDeliveryPartnerVarificationStatus();
+        return Promise.resolve();
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
+
   useEffect(() => {
     LogBox.ignoreAllLogs(true);
     LogBox.ignoreLogs(['Warning: ...']);
@@ -398,9 +472,11 @@ const HomeScreen = ({navigation}) => {
     /////////////////////////////////////////////
     requestLocationPermission();
     getOrderData();
+    getStatus();
     userProfileData();
     orderCountToday();
     totalOrders();
+    getDeliveryPartnerVarificationStatus();
     totalEarningFtd();
   }, []);
 
@@ -467,6 +543,22 @@ const HomeScreen = ({navigation}) => {
             </View>
           </View>
           {/* ====== Switch Section End ====== */}
+
+          {/* ========== Verification Notification Start ========== */}
+          {verificationStatus == '1' ? (
+            <TouchableOpacity style={styles.notificationBtn}>
+              <View style={styles.notificationTab}>
+                <Text style={styles.notifHeading}>
+                  Profile Under Verification!
+                </Text>
+                <Text style={styles.notifTxt}>
+                  Please wait while we look at your documents. You may receive a
+                  call from our side to confirm the details provided by you.
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ) : null}
+          {/* ========== Verification Notification End ========== */}
 
           {/* ====== Tab Row Start ====== */}
           <View style={styles.row}>
@@ -863,5 +955,29 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans-SemiBold',
     fontSize: 20,
     color: '#fff',
+  },
+
+  notificationBtn: {
+    paddingHorizontal: 20,
+    width: '100%',
+    marginBottom: 10,
+    marginTop: 10,
+  },
+  notificationTab: {
+    width: '100%',
+    paddingHorizontal: 10,
+    backgroundColor: '#ed7b7b',
+    paddingVertical: 20,
+    borderRadius: 5,
+  },
+  notifHeading: {
+    color: '#fff',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 24,
+  },
+  notifTxt: {
+    color: '#fff',
+    fontFamily: 'OpenSans-Regular',
+    fontSize: 18,
   },
 });

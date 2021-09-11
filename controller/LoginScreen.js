@@ -124,6 +124,7 @@ const LoginScreen = ({navigation}) => {
             let userToken = result.userToken;
             let userName = result.fullname;
             let userStatus = result.userStatus;
+            let verificationStatus = result.verificationStatus;
             let profileImage = result.profileImage;
             let bikeRegistrationNumber = result.bikeRegistrationNumber;
             signIn({
@@ -132,6 +133,7 @@ const LoginScreen = ({navigation}) => {
               userToken,
               userName,
               userStatus,
+              verificationStatus,
               bikeRegistrationNumber,
               profileImage,
             });

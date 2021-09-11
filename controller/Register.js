@@ -15,8 +15,8 @@ import {
 
 // Library
 import Icons from 'react-native-vector-icons/Ionicons';
+import {Picker} from '@react-native-picker/picker';
 import * as ImagePicker from 'react-native-image-picker';
-import * as launchCamera from 'react-native-image-picker';
 navigator.geolocation = require('@react-native-community/geolocation');
 
 // Loader Screeen
@@ -24,13 +24,14 @@ import LoaderScreen from '../controller/LoaderScreen';
 
 const Register = ({navigation}) => {
   const [isLoading, setLoading] = useState(false);
-  const [FCMToken, setFCMToken] = useState('');
   const [profileImg, setProfileImg] = useState('');
   const [profileImgPath, setProfileImgPath] = useState('');
   const [name, setName] = useState('');
   const [contactNumber, setContactNumber] = useState('');
   const [address, setAddress] = useState('');
   const [pincode, setPincode] = useState('');
+  const [bankAccountNumber, setBankAccountNumber] = useState('');
+  const [bankAccountType, setBankAccountType] = useState('');
   const [bikeNumber, setBikeNumber] = useState('');
   const [idImg, setIdImg] = useState('');
   const [idImgPath, setIdImgPath] = useState('');
@@ -163,6 +164,12 @@ const Register = ({navigation}) => {
     } else if (!pincode) {
       showToast('Please Enter Your  Pincode');
       return;
+    } else if (!bankAccountNumber) {
+      showToast('Please Enter Your  Bank Account Number');
+      return;
+    } else if (!bankAccountType) {
+      showToast('Please Choose Your  Bank Account Type');
+      return;
     } else if (!drivingLicense) {
       showToast('Upload your Driving License it`s Required');
       return;
@@ -202,6 +209,8 @@ const Register = ({navigation}) => {
               contactNumber: contactNumber,
               address: address,
               pincode: pincode,
+              bankAccountNumber: bankAccountNumber,
+              bankAccountType: bankAccountType,
               bikeRegistrationNumber: bikeNumber,
               idProofImage: idImg,
               drivingLicenseImage: drivingLicense,
@@ -305,6 +314,36 @@ const Register = ({navigation}) => {
               style={styles.input}
               onChangeText={text => setPincode(text)}
             />
+          </View>
+
+          <View style={styles.section}>
+            <TextInput
+              placeholder="Bank account number"
+              placeholderTextColor="#777"
+              keyboardType="number-pad"
+              style={styles.input}
+              onChangeText={text => setBankAccountNumber(text)}
+            />
+          </View>
+
+          <View style={styles.bankTypeSection}>
+            <Text style={styles.label}>Bank Account Type</Text>
+            <View style={styles.bankTypeContainer}>
+              <Picker
+                selectedValue={bankAccountType}
+                style={{height: 50, width: '100%'}}
+                onValueChange={(itemValue, itemIndex) =>
+                  setBankAccountType(itemValue)
+                }>
+                <Picker.Item
+                  label="Choose Bank Account Type?"
+                  value=""
+                  color="#000"
+                />
+                <Picker.Item label="Current" value="Current" color="#000" />
+                <Picker.Item label="Savings" value="Savings" color="#000" />
+              </Picker>
+            </View>
           </View>
 
           <View style={styles.divider} />
@@ -526,6 +565,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderColor: '#5E3360',
     paddingVertical: 5,
+  },
+  bankTypeSection: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    marginTop: 30,
+  },
+  bankTypeContainer: {
+    width: '100%',
+    borderWidth: 1.5,
+    marginTop: 10,
+    borderRadius: 5,
+    paddingVertical: 5,
+    borderColor: '#5E3360',
+    paddingHorizontal: 10,
   },
   input: {
     fontFamily: 'OpenSans-Regular',

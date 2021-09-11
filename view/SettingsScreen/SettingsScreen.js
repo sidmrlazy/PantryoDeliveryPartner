@@ -14,6 +14,9 @@ import Icons from 'react-native-vector-icons/Ionicons';
 import {createStackNavigator} from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+//////////Screen
+import Payments from './Component/WalletScreen';
+
 const Settings = ({navigation}) => {
   const {signOut} = React.useContext(AuthContext);
   const [mounted, setmounted] = React.useState(true);
@@ -60,7 +63,9 @@ const Settings = ({navigation}) => {
             </View>
           </View>
         </View>
-        <Pressable style={styles.btn}>
+        <Pressable
+          onPress={() => navigation.navigate('Payments')}
+          style={styles.btn}>
           <Icons name="wallet-outline" size={25} color="#5E3360" />
           <Text style={styles.btnTxt}>Payments</Text>
         </Pressable>
@@ -93,6 +98,13 @@ function SettingScreen() {
         component={Settings}
         options={{
           headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Payments"
+        component={Payments}
+        options={{
+          headerShown: true,
         }}
       />
     </Stack.Navigator>

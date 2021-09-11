@@ -1221,6 +1221,11 @@
   "resolved" "https://registry.npmjs.org/@react-native-firebase/messaging/-/messaging-12.3.0.tgz"
   "version" "12.3.0"
 
+"@react-native-picker/picker@^2.0.0":
+  "integrity" "sha512-Z5HN7pmA6HGBHNaBDWMPh3ViD0kEHBy8FQNeUnqi9bzk4sH4FyurT6qFgBSnD0mPLi1IREZKGr5evGTXDdLUjA=="
+  "resolved" "https://registry.npmjs.org/@react-native-picker/picker/-/picker-2.0.0.tgz"
+  "version" "2.0.0"
+
 "@react-native/assets@1.0.0":
   "integrity" "sha512-KrwSpS1tKI70wuKl68DwJZYEvXktDHdZMG0k2AXD/rJVSlB23/X2CB2cutVR0HwNMJIal9HOUOBB2rVfa6UGtQ=="
   "resolved" "https://registry.npmjs.org/@react-native/assets/-/assets-1.0.0.tgz"
