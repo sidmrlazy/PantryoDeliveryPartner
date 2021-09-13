@@ -429,17 +429,192 @@ const Register = ({navigation}) => {
                 </Picker>
               </View>
             </View>
+            {vehicleType == 'Motorcycle' ? (
+              <>
+                <View style={styles.section}>
+                  <TextInput
+                    placeholder="Bike Registration Number"
+                    placeholderTextColor="#777"
+                    keyboardType="default"
+                    autoCapitalize="characters"
+                    style={styles.input}
+                    onChangeText={text => setBikeNumber(text)}
+                  />
+                </View>
 
-            <View style={styles.section}>
-              <TextInput
-                placeholder="Bike Registration Number"
-                placeholderTextColor="#777"
-                keyboardType="default"
-                autoCapitalize="characters"
-                style={styles.input}
-                onChangeText={text => setBikeNumber(text)}
-              />
-            </View>
+                <View style={styles.actionSection}>
+                  <View style={styles.actionRow}>
+                    <Pressable
+                      style={styles.actionBox}
+                      onPress={() => requestGalleryPermission('RegBikePlate')}>
+                      {bikeRegImgPath == '' ? (
+                        <Icons name="image-outline" size={20} />
+                      ) : (
+                        <Image
+                          source={{uri: bikeRegImgPath}}
+                          style={{
+                            height: 95,
+                            width: 95,
+                            borderRadius: 5,
+                          }}
+                        />
+                        // <Icons name="checkbox-outline" size={30} color="green" />
+                      )}
+                    </Pressable>
+                    <View style={styles.actionDiv}>
+                      <Text style={styles.actionTxt}>
+                        Upload Bike's Registration Plate Image
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+
+                <View style={styles.actionSection}>
+                  <View style={styles.actionRow}>
+                    <Pressable
+                      style={styles.actionBox}
+                      onPress={() => requestGalleryPermission('bikeInsure')}>
+                      {bikeInsuranceImgPath == '' ? (
+                        <Icons name="image-outline" size={20} />
+                      ) : (
+                        <Image
+                          source={{uri: bikeInsuranceImgPath}}
+                          style={{
+                            height: 95,
+                            width: 95,
+                            borderRadius: 5,
+                          }}
+                        />
+                        // <Icons name="checkbox-outline" size={30} color="green" />
+                      )}
+                    </Pressable>
+                    <View style={styles.actionDiv}>
+                      <Text style={styles.actionTxt}>
+                        Upload Bike's Insurance papers
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+
+                <View style={styles.actionSection}>
+                  <View style={styles.actionRow}>
+                    <Pressable
+                      style={styles.actionBox}
+                      onPress={() => requestGalleryPermission('PollutionImg')}>
+                      {bikePollImgPath == '' ? (
+                        <Icons name="image-outline" size={20} />
+                      ) : (
+                        <Image
+                          source={{uri: bikePollImgPath}}
+                          style={{
+                            height: 95,
+                            width: 95,
+                            borderRadius: 5,
+                          }}
+                        />
+                        // <Icons name="checkbox-outline" size={30} color="green" />
+                      )}
+                    </Pressable>
+                    <View style={styles.actionDiv}>
+                      <Text style={styles.actionTxt}>
+                        Upload Pollution Papers Image
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              </>
+            ) : (
+              <>
+                <View style={styles.section}>
+                  <TextInput
+                    placeholder="Vechile Registration Number"
+                    placeholderTextColor="#777"
+                    keyboardType="default"
+                    autoCapitalize="characters"
+                    style={styles.input}
+                    onChangeText={text => setBikeNumber(text)}
+                  />
+                </View>
+                <View style={styles.actionSection}>
+                  <View style={styles.actionRow}>
+                    <Pressable
+                      style={styles.actionBox}
+                      onPress={() => requestGalleryPermission('RegBikePlate')}>
+                      {bikeRegImgPath == '' ? (
+                        <Icons name="image-outline" size={20} />
+                      ) : (
+                        <Image
+                          source={{uri: bikeRegImgPath}}
+                          style={{
+                            height: 95,
+                            width: 95,
+                            borderRadius: 5,
+                          }}
+                        />
+                        // <Icons name="checkbox-outline" size={30} color="green" />
+                      )}
+                    </Pressable>
+                    <View style={styles.actionDiv}>
+                      <Text style={styles.actionTxt}>
+                        Upload Vechile Registration Plate Image
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+                <View style={styles.actionSection}>
+                  <View style={styles.actionRow}>
+                    <Pressable
+                      style={styles.actionBox}
+                      onPress={() => requestGalleryPermission('bikeInsure')}>
+                      {bikeInsuranceImgPath == '' ? (
+                        <Icons name="image-outline" size={20} />
+                      ) : (
+                        <Image
+                          source={{uri: bikeInsuranceImgPath}}
+                          style={{
+                            height: 95,
+                            width: 95,
+                            borderRadius: 5,
+                          }}
+                        />
+                        // <Icons name="checkbox-outline" size={30} color="green" />
+                      )}
+                    </Pressable>
+                    <View style={styles.actionDiv}>
+                      <Text style={styles.actionTxt}>
+                        Upload Vechile Insurance papers
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+                <View style={styles.actionSection}>
+                  <View style={styles.actionRow}>
+                    <Pressable
+                      style={styles.actionBox}
+                      onPress={() => requestGalleryPermission('PollutionImg')}>
+                      {bikePollImgPath == '' ? (
+                        <Icons name="image-outline" size={20} />
+                      ) : (
+                        <Image
+                          source={{uri: bikePollImgPath}}
+                          style={{
+                            height: 95,
+                            width: 95,
+                            borderRadius: 5,
+                          }}
+                        />
+                        // <Icons name="checkbox-outline" size={30} color="green" />
+                      )}
+                    </Pressable>
+                    <View style={styles.actionDiv}>
+                      <Text style={styles.actionTxt}>
+                        Upload Pollution Papers Image
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              </>
+            )}
 
             <View style={styles.actionSection}>
               <View style={styles.actionRow}>
@@ -472,7 +647,6 @@ const Register = ({navigation}) => {
                 </View>
               </View>
             </View>
-
             <View style={styles.actionSection}>
               <View style={styles.actionRow}>
                 <Pressable
@@ -489,93 +663,11 @@ const Register = ({navigation}) => {
                         borderRadius: 5,
                       }}
                     />
-                    // <Icons name="checkbox-outline" size={30} color="green" />
                   )}
                 </Pressable>
                 <View style={styles.actionDiv}>
                   <Text style={styles.actionTxt}>
                     Upload Driving License Image
-                  </Text>
-                </View>
-              </View>
-            </View>
-
-            <View style={styles.actionSection}>
-              <View style={styles.actionRow}>
-                <Pressable
-                  style={styles.actionBox}
-                  onPress={() => requestGalleryPermission('RegBikePlate')}>
-                  {bikeRegImgPath == '' ? (
-                    <Icons name="image-outline" size={20} />
-                  ) : (
-                    <Image
-                      source={{uri: bikeRegImgPath}}
-                      style={{
-                        height: 95,
-                        width: 95,
-                        borderRadius: 5,
-                      }}
-                    />
-                    // <Icons name="checkbox-outline" size={30} color="green" />
-                  )}
-                </Pressable>
-                <View style={styles.actionDiv}>
-                  <Text style={styles.actionTxt}>
-                    Upload Bike's Registration Plate Image
-                  </Text>
-                </View>
-              </View>
-            </View>
-
-            <View style={styles.actionSection}>
-              <View style={styles.actionRow}>
-                <Pressable
-                  style={styles.actionBox}
-                  onPress={() => requestGalleryPermission('bikeInsure')}>
-                  {bikeInsuranceImgPath == '' ? (
-                    <Icons name="image-outline" size={20} />
-                  ) : (
-                    <Image
-                      source={{uri: bikeInsuranceImgPath}}
-                      style={{
-                        height: 95,
-                        width: 95,
-                        borderRadius: 5,
-                      }}
-                    />
-                    // <Icons name="checkbox-outline" size={30} color="green" />
-                  )}
-                </Pressable>
-                <View style={styles.actionDiv}>
-                  <Text style={styles.actionTxt}>
-                    Upload Bike's Insurance papers
-                  </Text>
-                </View>
-              </View>
-            </View>
-
-            <View style={styles.actionSection}>
-              <View style={styles.actionRow}>
-                <Pressable
-                  style={styles.actionBox}
-                  onPress={() => requestGalleryPermission('PollutionImg')}>
-                  {bikePollImgPath == '' ? (
-                    <Icons name="image-outline" size={20} />
-                  ) : (
-                    <Image
-                      source={{uri: bikePollImgPath}}
-                      style={{
-                        height: 95,
-                        width: 95,
-                        borderRadius: 5,
-                      }}
-                    />
-                    // <Icons name="checkbox-outline" size={30} color="green" />
-                  )}
-                </Pressable>
-                <View style={styles.actionDiv}>
-                  <Text style={styles.actionTxt}>
-                    Upload Pollution Papers Image
                   </Text>
                 </View>
               </View>
