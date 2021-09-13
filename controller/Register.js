@@ -158,9 +158,6 @@ const Register = ({navigation}) => {
     } else if (!address) {
       showToast('Please Enter Your Address');
       return;
-    } else if (!bikeNumber) {
-      showToast('Please Enter Your Registered Bike Number');
-      return;
     } else if (!idImg) {
       showToast('Upload your Id Proof it`s Required');
       return;
@@ -181,6 +178,9 @@ const Register = ({navigation}) => {
       return;
     } else if (!vehicleType) {
       showToast('Please Choose Your  Vechile Type');
+      return;
+    } else if (!bikeNumber) {
+      showToast('Please Enter Your Registered Bike Number');
       return;
     } else if (!drivingLicense) {
       showToast('Upload your Driving License it`s Required');
@@ -429,6 +429,39 @@ const Register = ({navigation}) => {
                 </Picker>
               </View>
             </View>
+
+            <View style={styles.actionSection}>
+              <View style={styles.actionRow}>
+                <Pressable
+                  style={styles.actionBox}
+                  onPress={() => requestGalleryPermission('IdProof')}>
+                  {idImgPath == '' ? (
+                    <Icons name="image-outline" size={20} />
+                  ) : (
+                    <Image
+                      source={{uri: idImgPath}}
+                      style={{
+                        height: 95,
+                        width: 95,
+                        borderRadius: 5,
+                      }}
+                    />
+                    // <Icons name="checkbox-outline" size={30} color="green" />
+                  )}
+                </Pressable>
+                <View style={styles.actionDiv}>
+                  <Text style={styles.actionTxt}>Upload ID Proof Image</Text>
+                  <Text
+                    style={{
+                      fontFamily: 'OpenSans-Regular',
+                      marginTop: 5,
+                    }}>
+                    (Aadhaar Card, Pan Card, Voter ID, Ration Card)
+                  </Text>
+                </View>
+              </View>
+            </View>
+
             {vehicleType == 'Motorcycle' ? (
               <>
                 <View style={styles.section}>
@@ -464,6 +497,32 @@ const Register = ({navigation}) => {
                     <View style={styles.actionDiv}>
                       <Text style={styles.actionTxt}>
                         Upload Bike's Registration Plate Image
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+
+                <View style={styles.actionSection}>
+                  <View style={styles.actionRow}>
+                    <Pressable
+                      style={styles.actionBox}
+                      onPress={() => requestGalleryPermission('DL')}>
+                      {drivingLicensePath == '' ? (
+                        <Icons name="image-outline" size={20} />
+                      ) : (
+                        <Image
+                          source={{uri: drivingLicensePath}}
+                          style={{
+                            height: 95,
+                            width: 95,
+                            borderRadius: 5,
+                          }}
+                        />
+                      )}
+                    </Pressable>
+                    <View style={styles.actionDiv}>
+                      <Text style={styles.actionTxt}>
+                        Upload Driving License Image
                       </Text>
                     </View>
                   </View>
@@ -535,6 +594,33 @@ const Register = ({navigation}) => {
                     onChangeText={text => setBikeNumber(text)}
                   />
                 </View>
+
+                <View style={styles.actionSection}>
+                  <View style={styles.actionRow}>
+                    <Pressable
+                      style={styles.actionBox}
+                      onPress={() => requestGalleryPermission('DL')}>
+                      {drivingLicensePath == '' ? (
+                        <Icons name="image-outline" size={20} />
+                      ) : (
+                        <Image
+                          source={{uri: drivingLicensePath}}
+                          style={{
+                            height: 95,
+                            width: 95,
+                            borderRadius: 5,
+                          }}
+                        />
+                      )}
+                    </Pressable>
+                    <View style={styles.actionDiv}>
+                      <Text style={styles.actionTxt}>
+                        Upload Driving License Image
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+
                 <View style={styles.actionSection}>
                   <View style={styles.actionRow}>
                     <Pressable
@@ -561,6 +647,7 @@ const Register = ({navigation}) => {
                     </View>
                   </View>
                 </View>
+
                 <View style={styles.actionSection}>
                   <View style={styles.actionRow}>
                     <Pressable
@@ -587,6 +674,7 @@ const Register = ({navigation}) => {
                     </View>
                   </View>
                 </View>
+
                 <View style={styles.actionSection}>
                   <View style={styles.actionRow}>
                     <Pressable
@@ -615,63 +703,6 @@ const Register = ({navigation}) => {
                 </View>
               </>
             )}
-
-            <View style={styles.actionSection}>
-              <View style={styles.actionRow}>
-                <Pressable
-                  style={styles.actionBox}
-                  onPress={() => requestGalleryPermission('IdProof')}>
-                  {idImgPath == '' ? (
-                    <Icons name="image-outline" size={20} />
-                  ) : (
-                    <Image
-                      source={{uri: idImgPath}}
-                      style={{
-                        height: 95,
-                        width: 95,
-                        borderRadius: 5,
-                      }}
-                    />
-                    // <Icons name="checkbox-outline" size={30} color="green" />
-                  )}
-                </Pressable>
-                <View style={styles.actionDiv}>
-                  <Text style={styles.actionTxt}>Upload ID Proof Image</Text>
-                  <Text
-                    style={{
-                      fontFamily: 'OpenSans-Regular',
-                      marginTop: 5,
-                    }}>
-                    (Aadhaar Card, Pan Card, Voter ID, Ration Card)
-                  </Text>
-                </View>
-              </View>
-            </View>
-            <View style={styles.actionSection}>
-              <View style={styles.actionRow}>
-                <Pressable
-                  style={styles.actionBox}
-                  onPress={() => requestGalleryPermission('DL')}>
-                  {drivingLicensePath == '' ? (
-                    <Icons name="image-outline" size={20} />
-                  ) : (
-                    <Image
-                      source={{uri: drivingLicensePath}}
-                      style={{
-                        height: 95,
-                        width: 95,
-                        borderRadius: 5,
-                      }}
-                    />
-                  )}
-                </Pressable>
-                <View style={styles.actionDiv}>
-                  <Text style={styles.actionTxt}>
-                    Upload Driving License Image
-                  </Text>
-                </View>
-              </View>
-            </View>
 
             <Pressable
               onPress={() => registrationApi()}
