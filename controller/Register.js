@@ -281,6 +281,10 @@ const Register = ({navigation}) => {
             </Text>
           </View>
 
+          <View style={styles.labelHolder}>
+            <Text style={styles.labelName}>Your details</Text>
+          </View>
+
           <View style={styles.section}>
             <TextInput
               placeholder="Full Name"
@@ -328,6 +332,13 @@ const Register = ({navigation}) => {
               style={styles.input}
               onChangeText={text => setPincode(text)}
             />
+          </View>
+
+          <View style={[styles.labelHolder, {marginTop: 50}]}>
+            <Text style={styles.labelName}>Bank Details</Text>
+            <Text style={styles.labelDescription}>
+              Share your bank details for us to transfer your daily earnings
+            </Text>
           </View>
 
           <View style={styles.section}>
@@ -396,40 +407,6 @@ const Register = ({navigation}) => {
               Please upload ID, Address Proof & other documents for veirfication
             </Text>
 
-            <View style={styles.bankTypeSection}>
-              <Text style={styles.label}>Select Vehicle Type</Text>
-              <View style={styles.bankTypeContainer}>
-                <Picker
-                  selectedValue={vehicleType}
-                  style={{height: 50, width: '100%'}}
-                  onValueChange={(itemValue, itemIndex) =>
-                    setVehicleType(itemValue)
-                  }>
-                  <Picker.Item
-                    label="Choose Vechile Type"
-                    value=""
-                    color="#000"
-                  />
-                  <Picker.Item
-                    label="Motorcycle"
-                    value="Motorcycle"
-                    color="#000"
-                  />
-                  <Picker.Item label="Bicycle" value="Bicycle" color="#000" />
-                  <Picker.Item
-                    label="3 Wheeler"
-                    value="3 Wheeler"
-                    color="#000"
-                  />
-                  <Picker.Item
-                    label="Mini truck"
-                    value="Mini truck"
-                    color="#000"
-                  />
-                </Picker>
-              </View>
-            </View>
-
             <View style={styles.actionSection}>
               <View style={styles.actionRow}>
                 <Pressable
@@ -459,6 +436,40 @@ const Register = ({navigation}) => {
                     (Aadhaar Card, Pan Card, Voter ID, Ration Card)
                   </Text>
                 </View>
+              </View>
+            </View>
+
+            <View style={styles.bankTypeSection}>
+              <Text style={styles.label}>Select Vehicle Type</Text>
+              <View style={styles.bankTypeContainer}>
+                <Picker
+                  selectedValue={vehicleType}
+                  style={{height: 50, width: '100%'}}
+                  onValueChange={(itemValue, itemIndex) =>
+                    setVehicleType(itemValue)
+                  }>
+                  <Picker.Item
+                    label="Choose Vechile Type"
+                    value=""
+                    color="#000"
+                  />
+                  <Picker.Item
+                    label="Motorcycle"
+                    value="Motorcycle"
+                    color="#000"
+                  />
+                  <Picker.Item label="Bicycle" value="Bicycle" color="#000" />
+                  {/* <Picker.Item
+                    label="3 Wheeler"
+                    value="3 Wheeler"
+                    color="#000"
+                  />
+                  <Picker.Item
+                    label="Mini truck"
+                    value="Mini truck"
+                    color="#000"
+                  /> */}
+                </Picker>
               </View>
             </View>
 
@@ -555,7 +566,7 @@ const Register = ({navigation}) => {
                   </View>
                 </View>
 
-                <View style={styles.actionSection}>
+                {/* <View style={styles.actionSection}>
                   <View style={styles.actionRow}>
                     <Pressable
                       style={styles.actionBox}
@@ -570,8 +581,7 @@ const Register = ({navigation}) => {
                             width: 95,
                             borderRadius: 5,
                           }}
-                        />
-                        // <Icons name="checkbox-outline" size={30} color="green" />
+                        />                    
                       )}
                     </Pressable>
                     <View style={styles.actionDiv}>
@@ -580,129 +590,9 @@ const Register = ({navigation}) => {
                       </Text>
                     </View>
                   </View>
-                </View>
+                </View> */}
               </>
-            ) : (
-              <>
-                <View style={styles.section}>
-                  <TextInput
-                    placeholder="Vechile Registration Number"
-                    placeholderTextColor="#777"
-                    keyboardType="default"
-                    autoCapitalize="characters"
-                    style={styles.input}
-                    onChangeText={text => setBikeNumber(text)}
-                  />
-                </View>
-
-                <View style={styles.actionSection}>
-                  <View style={styles.actionRow}>
-                    <Pressable
-                      style={styles.actionBox}
-                      onPress={() => requestGalleryPermission('DL')}>
-                      {drivingLicensePath == '' ? (
-                        <Icons name="image-outline" size={20} />
-                      ) : (
-                        <Image
-                          source={{uri: drivingLicensePath}}
-                          style={{
-                            height: 95,
-                            width: 95,
-                            borderRadius: 5,
-                          }}
-                        />
-                      )}
-                    </Pressable>
-                    <View style={styles.actionDiv}>
-                      <Text style={styles.actionTxt}>
-                        Upload Driving License Image
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-
-                <View style={styles.actionSection}>
-                  <View style={styles.actionRow}>
-                    <Pressable
-                      style={styles.actionBox}
-                      onPress={() => requestGalleryPermission('RegBikePlate')}>
-                      {bikeRegImgPath == '' ? (
-                        <Icons name="image-outline" size={20} />
-                      ) : (
-                        <Image
-                          source={{uri: bikeRegImgPath}}
-                          style={{
-                            height: 95,
-                            width: 95,
-                            borderRadius: 5,
-                          }}
-                        />
-                        // <Icons name="checkbox-outline" size={30} color="green" />
-                      )}
-                    </Pressable>
-                    <View style={styles.actionDiv}>
-                      <Text style={styles.actionTxt}>
-                        Upload Vechile Registration Plate Image
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-
-                <View style={styles.actionSection}>
-                  <View style={styles.actionRow}>
-                    <Pressable
-                      style={styles.actionBox}
-                      onPress={() => requestGalleryPermission('bikeInsure')}>
-                      {bikeInsuranceImgPath == '' ? (
-                        <Icons name="image-outline" size={20} />
-                      ) : (
-                        <Image
-                          source={{uri: bikeInsuranceImgPath}}
-                          style={{
-                            height: 95,
-                            width: 95,
-                            borderRadius: 5,
-                          }}
-                        />
-                        // <Icons name="checkbox-outline" size={30} color="green" />
-                      )}
-                    </Pressable>
-                    <View style={styles.actionDiv}>
-                      <Text style={styles.actionTxt}>
-                        Upload Vechile Insurance papers
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-
-                <View style={styles.actionSection}>
-                  <View style={styles.actionRow}>
-                    <Pressable
-                      style={styles.actionBox}
-                      onPress={() => requestGalleryPermission('PollutionImg')}>
-                      {bikePollImgPath == '' ? (
-                        <Icons name="image-outline" size={20} />
-                      ) : (
-                        <Image
-                          source={{uri: bikePollImgPath}}
-                          style={{
-                            height: 95,
-                            width: 95,
-                            borderRadius: 5,
-                          }}
-                        />
-                        // <Icons name="checkbox-outline" size={30} color="green" />
-                      )}
-                    </Pressable>
-                    <View style={styles.actionDiv}>
-                      <Text style={styles.actionTxt}>
-                        Upload Pollution Papers Image
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              </>
-            )}
+            ) : null}
 
             <Pressable
               onPress={() => registrationApi()}
@@ -855,5 +745,20 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans-SemiBold',
     fontSize: 18,
     color: '#fff',
+  },
+  labelHolder: {
+    width: '100%',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    marginTop: 20,
+  },
+  labelName: {
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 20,
+  },
+  labelDescription: {
+    fontFamily: 'OpenSans-Regular',
+    fontSize: 16,
+    marginTop: 5,
   },
 });
