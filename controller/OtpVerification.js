@@ -43,7 +43,6 @@ const OtpVerification = ({navigation, route}) => {
   const [genderType, setGenderType] = useState('');
   const [vehicleType, setVehicleType] = useState('');
 
-  // Show Toast
   const showToast = msg => {
     ToastAndroid.showWithGravityAndOffset(
       msg,
@@ -54,7 +53,6 @@ const OtpVerification = ({navigation, route}) => {
     );
   };
 
-  // OTP Match
   const otpMatch = async () => {
     if (!profileImg) {
       showToast('Upload Profile Image it`s Required');

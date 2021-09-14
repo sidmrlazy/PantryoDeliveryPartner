@@ -179,7 +179,7 @@ const LoginScreen = ({navigation}) => {
                     source={{uri: item.imageName}}
                     style={{
                       width: window.width,
-                      height: window.height - 400,
+                      height: window.height - 370,
                     }}
                   />
                 </Pressable>
@@ -191,6 +191,7 @@ const LoginScreen = ({navigation}) => {
         <View
           style={{
             flex: 1,
+            backgroundColor: '#fff',
           }}>
           <View style={styles.loginContainer}>
             <Text style={styles.heading}>Login</Text>
@@ -319,6 +320,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     marginTop: 20,
     paddingHorizontal: 15,
+    backgroundColor: '#fff',
   },
   heading: {
     fontFamily: 'OpenSans-Bold',
