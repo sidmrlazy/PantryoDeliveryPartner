@@ -366,6 +366,7 @@ const Register = ({navigation}) => {
             <Text style={styles.label}>Bank Account Type</Text>
             <View style={styles.bankTypeContainer}>
               <Picker
+                mode="dropdown"
                 selectedValue={bankAccountType}
                 style={{height: 50, width: '100%'}}
                 onValueChange={(itemValue, itemIndex) =>
@@ -386,6 +387,7 @@ const Register = ({navigation}) => {
             <Text style={styles.label}>Gender</Text>
             <View style={styles.bankTypeContainer}>
               <Picker
+                mode="dropdown"
                 selectedValue={genderType}
                 style={{height: 50, width: '100%'}}
                 onValueChange={(itemValue, itemIndex) =>
@@ -443,6 +445,7 @@ const Register = ({navigation}) => {
               <Text style={styles.label}>Select Vehicle Type</Text>
               <View style={styles.bankTypeContainer}>
                 <Picker
+                  mode="dropdown"
                   selectedValue={vehicleType}
                   style={{height: 50, width: '100%'}}
                   onValueChange={(itemValue, itemIndex) =>

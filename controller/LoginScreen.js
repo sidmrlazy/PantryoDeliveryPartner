@@ -16,6 +16,7 @@ import {
   FlatList,
   ImageBackground,
   useWindowDimensions,
+  TouchableOpacity,
 } from 'react-native';
 
 // Libraries
@@ -162,9 +163,6 @@ const LoginScreen = ({navigation}) => {
       <ScrollView style={styles.scroll}>
         <View style={{flex: 1, backgroundColor: '#fff'}}>
           <FlatList
-            style={{
-              flex: 1,
-            }}
             showsHorizontalScrollIndicator={false}
             horizontal={true}
             data={banner}
@@ -181,7 +179,7 @@ const LoginScreen = ({navigation}) => {
                     source={{uri: item.imageName}}
                     style={{
                       width: window.width,
-                      height: window.height - 300,
+                      height: window.height - 400,
                     }}
                   />
                 </Pressable>
@@ -189,7 +187,11 @@ const LoginScreen = ({navigation}) => {
             )}
             keyExtractor={(item, imageName) => String(imageName)}
           />
-
+        </View>
+        <View
+          style={{
+            flex: 1,
+          }}>
           <View style={styles.loginContainer}>
             <Text style={styles.heading}>Login</Text>
             <Text style={styles.caption}>
@@ -208,15 +210,15 @@ const LoginScreen = ({navigation}) => {
                 maxLength={10}
               />
             </View>
-            <Pressable onPress={loginApi} style={styles.loginBtn}>
+            <TouchableOpacity onPress={loginApi} style={styles.loginBtn}>
               <Text style={styles.loginTxt}>LOGIN</Text>
-            </Pressable>
+            </TouchableOpacity>
 
-            <Pressable
+            <TouchableOpacity
               onPress={() => navigation.navigate('Register')}
               style={styles.registerBtn}>
               <Text style={styles.registerBtnTxt}>REGISTER</Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
