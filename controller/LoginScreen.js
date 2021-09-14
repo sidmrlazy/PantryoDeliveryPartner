@@ -1,4 +1,10 @@
-import React from 'react';
+import React, {
+  useEffect,
+  useMemo,
+  useState,
+  useCallback,
+  useContext,
+} from 'react';
 import {
   View,
   Text,
@@ -7,6 +13,10 @@ import {
   Pressable,
   ScrollView,
   ToastAndroid,
+  FlatList,
+  ImageBackground,
+  useWindowDimensions,
+  TouchableOpacity,
 } from 'react-native';
 
 // Libraries
@@ -27,6 +37,10 @@ const LoginScreen = ({navigation}) => {
   const [token, setToken] = React.useState('');
   const [loading, setLoading] = React.useState(false);
   const {signIn} = React.useContext(AuthContext);
+  const [banner, setBanner] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
+
+  const window = useWindowDimensions();
 
   // FCM Token
   const getDeviceToken = async () => {
@@ -48,6 +62,35 @@ const LoginScreen = ({navigation}) => {
     );
   };
 
+  // Function to get banner images from the server
+  async function getBanner() {
+    setLoading(true);
+    await fetch(
+      'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/getallsliderimages.php',
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      },
+    )
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (result) {
+        if (result.error == 0) {
+          setBanner(result.images);
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }
+
   const loginApi = async () => {
     if (!contactNumber) {
       showToast('Enter your Registered Mobile Number');
@@ -58,7 +101,7 @@ const LoginScreen = ({navigation}) => {
     } else {
       setLoading(true);
       fetch(
-        'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=DeliveryPartnerLogin',
+        'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartnerLogin.php',
         {
           method: 'POST',
           headers: {
@@ -81,6 +124,8 @@ const LoginScreen = ({navigation}) => {
             let contactNumber = result.contactNumber;
             let userToken = result.userToken;
             let userName = result.fullname;
+            let userStatus = result.userStatus;
+            let verificationStatus = result.verificationStatus;
             let profileImage = result.profileImage;
             let bikeRegistrationNumber = result.bikeRegistrationNumber;
             signIn({
@@ -88,6 +133,8 @@ const LoginScreen = ({navigation}) => {
               contactNumber,
               userToken,
               userName,
+              userStatus,
+              verificationStatus,
               bikeRegistrationNumber,
               profileImage,
             });
@@ -102,58 +149,78 @@ const LoginScreen = ({navigation}) => {
     }
   };
 
-  React.useEffect(() => {
+  useMemo(() => {
+    getBanner();
+  }, []);
+
+  useEffect(() => {
     getDeviceToken();
   }, []);
 
   return (
     <>
       {loading == true ? <LoaderScreen /> : null}
-      <View style={styles.topContainer}>
-        <View style={styles.topRow}>
-          <View style={styles.div}>
-            <Text style={styles.first}>Pantryo</Text>
-            <Text style={styles.second}>Delivery</Text>
-            <Text style={styles.third}>Partner</Text>
-          </View>
-          <LottieView
-            source={require('../assets/lottie/delivery.json')}
-            autoPlay
-            loop
-            style={styles.animation}
+      <ScrollView style={styles.scroll}>
+        <View style={{flex: 1, backgroundColor: '#fff'}}>
+          <FlatList
+            showsHorizontalScrollIndicator={false}
+            horizontal={true}
+            data={banner}
+            renderItem={({item}) => (
+              <>
+                <Pressable
+                  onPress={async () =>
+                    await analytics().logEvent('loginbanner', {
+                      item: item.imageName,
+                    })
+                  }
+                  style={styles.imgcontainer}>
+                  <ImageBackground
+                    source={{uri: item.imageName}}
+                    style={{
+                      width: window.width,
+                      height: window.height - 400,
+                    }}
+                  />
+                </Pressable>
+              </>
+            )}
+            keyExtractor={(item, imageName) => String(imageName)}
           />
         </View>
-      </View>
-      <ScrollView style={styles.scroll}>
-        <View style={styles.loginContainer}>
-          <Text style={styles.heading}>Login</Text>
-          <Text style={styles.caption}>
-            Enter your registered mobile number to login
-          </Text>
+        <View
+          style={{
+            flex: 1,
+          }}>
+          <View style={styles.loginContainer}>
+            <Text style={styles.heading}>Login</Text>
+            <Text style={styles.caption}>
+              Enter your registered mobile number to login
+            </Text>
 
-          <View style={styles.loginRow}>
-            <Icons name="phone-portrait-outline" size={20} color="#5E3360" />
-            <TextInput
-              placeholder="Mobile Number"
-              placeholderTextColor="#777"
-              keyboardType="phone-pad"
-              style={styles.txtInput}
-              onChangeText={text => setContactNumber(text)}
-              onSubmitEditing={loginApi}
-              maxLength={10}
-            />
+            <View style={styles.loginRow}>
+              <Icons name="phone-portrait-outline" size={20} color="#5E3360" />
+              <TextInput
+                placeholder="Mobile Number"
+                placeholderTextColor="#777"
+                keyboardType="phone-pad"
+                style={styles.txtInput}
+                onChangeText={text => setContactNumber(text)}
+                onSubmitEditing={loginApi}
+                maxLength={10}
+              />
+            </View>
+            <TouchableOpacity onPress={loginApi} style={styles.loginBtn}>
+              <Text style={styles.loginTxt}>LOGIN</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Register')}
+              style={styles.registerBtn}>
+              <Text style={styles.registerBtnTxt}>REGISTER</Text>
+            </TouchableOpacity>
           </View>
         </View>
-
-        <Pressable onPress={loginApi} style={styles.loginBtn}>
-          <Text style={styles.loginTxt}>LOGIN</Text>
-        </Pressable>
-
-        <Pressable
-          onPress={() => navigation.navigate('Register')}
-          style={styles.registerBtn}>
-          <Text style={styles.registerBtnTxt}>REGISTER</Text>
-        </Pressable>
       </ScrollView>
     </>
   );
@@ -166,15 +233,7 @@ const LoginScreenContainer = () => {
     <Stack.Navigator>
       <Stack.Screen
         options={{
-          title: '',
-          headerStyle: {
-            backgroundColor: '#FEF9E5',
-          },
-          headerTintColor: '#000',
-          headerTitleStyle: {
-            fontFamily: 'Nunito-Bold',
-            fontSize: 18,
-          },
+          headerShown: false,
         }}
         name="LoginScreen"
         component={LoginScreen}
@@ -216,23 +275,18 @@ const LoginScreenContainer = () => {
 export default LoginScreenContainer;
 
 const styles = StyleSheet.create({
-  scroll: {
-    paddingHorizontal: 20,
-    paddingVertical: 20,
+  imgcontainer: {
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
     backgroundColor: '#fff',
   },
-  topContainer: {
-    flex: 2,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    backgroundColor: '#FEF9E5',
-    paddingHorizontal: 20,
+  img: {
+    width: 500,
+    height: 580,
   },
-  topRow: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+  scroll: {
+    backgroundColor: '#fff',
+    marginBottom: 20,
   },
   div: {
     flex: 1,
@@ -264,6 +318,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-start',
     marginTop: 20,
+    paddingHorizontal: 15,
   },
   heading: {
     fontFamily: 'OpenSans-Bold',

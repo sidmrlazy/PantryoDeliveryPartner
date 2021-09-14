@@ -79,11 +79,15 @@ const App = () => {
           delivery_id,
           userToken,
           userName,
+          userStatus,
+          verificationStatus,
           bikeRegistrationNumber,
           profileImage,
         } = data;
         AsyncStorage.setItem('contactNumber', contactNumber);
         AsyncStorage.setItem('userName', userName);
+        AsyncStorage.setItem('userStatus', userStatus);
+        AsyncStorage.setItem('verificationStatus', verificationStatus);
         AsyncStorage.setItem('user_id', delivery_id);
         AsyncStorage.setItem('bikeRegistrationNumber', bikeRegistrationNumber);
         AsyncStorage.setItem('profileImage', profileImage);

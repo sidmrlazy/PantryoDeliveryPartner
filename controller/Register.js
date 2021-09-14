@@ -15,8 +15,8 @@ import {
 
 // Library
 import Icons from 'react-native-vector-icons/Ionicons';
+import {Picker} from '@react-native-picker/picker';
 import * as ImagePicker from 'react-native-image-picker';
-import * as launchCamera from 'react-native-image-picker';
 navigator.geolocation = require('@react-native-community/geolocation');
 
 // Loader Screeen
@@ -24,13 +24,15 @@ import LoaderScreen from '../controller/LoaderScreen';
 
 const Register = ({navigation}) => {
   const [isLoading, setLoading] = useState(false);
-  const [FCMToken, setFCMToken] = useState('');
   const [profileImg, setProfileImg] = useState('');
   const [profileImgPath, setProfileImgPath] = useState('');
   const [name, setName] = useState('');
   const [contactNumber, setContactNumber] = useState('');
   const [address, setAddress] = useState('');
   const [pincode, setPincode] = useState('');
+  const [bankAccountNumber, setBankAccountNumber] = useState('');
+  const [bankIFSCCode, setBankIFSCCode] = useState('');
+  const [bankAccountType, setBankAccountType] = useState('');
   const [bikeNumber, setBikeNumber] = useState('');
   const [idImg, setIdImg] = useState('');
   const [idImgPath, setIdImgPath] = useState('');
@@ -43,6 +45,8 @@ const Register = ({navigation}) => {
   const [bikePollImg, setBikePollImg] = useState('');
   const [bikePollImgPath, setBikePollImgPath] = useState('');
   const [isMounted, setIsMounted] = useState(true);
+  const [genderType, setGenderType] = useState('');
+  const [vehicleType, setVehicleType] = useState('');
 
   const [lat, setLat] = useState('');
   const [long, setLong] = useState('');
@@ -154,14 +158,29 @@ const Register = ({navigation}) => {
     } else if (!address) {
       showToast('Please Enter Your Address');
       return;
-    } else if (!bikeNumber) {
-      showToast('Please Enter Your Registered Bike Number');
-      return;
     } else if (!idImg) {
       showToast('Upload your Id Proof it`s Required');
       return;
     } else if (!pincode) {
       showToast('Please Enter Your  Pincode');
+      return;
+    } else if (!bankAccountNumber) {
+      showToast('Please Enter Your  Bank Account Number');
+      return;
+    } else if (!bankAccountType) {
+      showToast('Please Choose Your  Bank Account Type');
+      return;
+    } else if (!bankIFSCCode) {
+      showToast('Please Enter Your  Bank IFSC Code');
+      return;
+    } else if (!genderType) {
+      showToast('Please Choose Your  Gender');
+      return;
+    } else if (!vehicleType) {
+      showToast('Please Choose Your  Vechile Type');
+      return;
+    } else if (!bikeNumber) {
+      showToast('Please Enter Your Registered Bike Number');
       return;
     } else if (!drivingLicense) {
       showToast('Upload your Driving License it`s Required');
@@ -202,6 +221,11 @@ const Register = ({navigation}) => {
               contactNumber: contactNumber,
               address: address,
               pincode: pincode,
+              bankAccountNumber: bankAccountNumber,
+              bankAccountType: bankAccountType,
+              bankIFSCCode: bankIFSCCode,
+              deliveryPartnerGender: genderType,
+              deliveryPartnerVechileType: vehicleType,
               bikeRegistrationNumber: bikeNumber,
               idProofImage: idImg,
               drivingLicenseImage: drivingLicense,
@@ -247,7 +271,6 @@ const Register = ({navigation}) => {
                   }}
                 />
               ) : (
-                // <Icons name="checkbox-outline" size={30} color="green" />
                 <Icons name="camera-outline" size={30} color="#fff" />
               )}
             </Pressable>
@@ -256,6 +279,10 @@ const Register = ({navigation}) => {
               Customers will be able to see this image of your when you deliver
               their order
             </Text>
+          </View>
+
+          <View style={styles.labelHolder}>
+            <Text style={styles.labelName}>Your details</Text>
           </View>
 
           <View style={styles.section}>
@@ -307,6 +334,73 @@ const Register = ({navigation}) => {
             />
           </View>
 
+          <View style={[styles.labelHolder, {marginTop: 50}]}>
+            <Text style={styles.labelName}>Bank Details</Text>
+            <Text style={styles.labelDescription}>
+              Share your bank details for us to transfer your daily earnings
+            </Text>
+          </View>
+
+          <View style={styles.section}>
+            <TextInput
+              placeholder="Bank account number"
+              placeholderTextColor="#777"
+              keyboardType="number-pad"
+              style={styles.input}
+              onChangeText={text => setBankAccountNumber(text)}
+            />
+          </View>
+
+          <View style={styles.section}>
+            <TextInput
+              placeholder="Bank IFSC Code"
+              placeholderTextColor="#777"
+              keyboardType="default"
+              autoCapitalize="characters"
+              style={styles.input}
+              onChangeText={text => setBankIFSCCode(text)}
+            />
+          </View>
+
+          <View style={styles.bankTypeSection}>
+            <Text style={styles.label}>Bank Account Type</Text>
+            <View style={styles.bankTypeContainer}>
+              <Picker
+                mode="dropdown"
+                selectedValue={bankAccountType}
+                style={{height: 50, width: '100%'}}
+                onValueChange={(itemValue, itemIndex) =>
+                  setBankAccountType(itemValue)
+                }>
+                <Picker.Item
+                  label="Choose Bank Account Type?"
+                  value=""
+                  color="#000"
+                />
+                <Picker.Item label="Current" value="Current" color="#000" />
+                <Picker.Item label="Savings" value="Savings" color="#000" />
+              </Picker>
+            </View>
+          </View>
+
+          <View style={styles.bankTypeSection}>
+            <Text style={styles.label}>Gender</Text>
+            <View style={styles.bankTypeContainer}>
+              <Picker
+                mode="dropdown"
+                selectedValue={genderType}
+                style={{height: 50, width: '100%'}}
+                onValueChange={(itemValue, itemIndex) =>
+                  setGenderType(itemValue)
+                }>
+                <Picker.Item label="Choose Gender" value="" color="#000" />
+                <Picker.Item label="Male" value="Male" color="#000" />
+                <Picker.Item label="Female" value="Female" color="#000" />
+                <Picker.Item label="Other" value="Other" color="#000" />
+              </Picker>
+            </View>
+          </View>
+
           <View style={styles.divider} />
 
           <View style={styles.bottomSection}>
@@ -314,17 +408,6 @@ const Register = ({navigation}) => {
             <Text style={styles.bottomCaption}>
               Please upload ID, Address Proof & other documents for veirfication
             </Text>
-
-            <View style={styles.section}>
-              <TextInput
-                placeholder="Bike Registration Number"
-                placeholderTextColor="#777"
-                keyboardType="default"
-                autoCapitalize="characters"
-                style={styles.input}
-                onChangeText={text => setBikeNumber(text)}
-              />
-            </View>
 
             <View style={styles.actionSection}>
               <View style={styles.actionRow}>
@@ -358,113 +441,161 @@ const Register = ({navigation}) => {
               </View>
             </View>
 
-            <View style={styles.actionSection}>
-              <View style={styles.actionRow}>
-                <Pressable
-                  style={styles.actionBox}
-                  onPress={() => requestGalleryPermission('DL')}>
-                  {drivingLicensePath == '' ? (
-                    <Icons name="image-outline" size={20} />
-                  ) : (
-                    <Image
-                      source={{uri: drivingLicensePath}}
-                      style={{
-                        height: 95,
-                        width: 95,
-                        borderRadius: 5,
-                      }}
-                    />
-                    // <Icons name="checkbox-outline" size={30} color="green" />
-                  )}
-                </Pressable>
-                <View style={styles.actionDiv}>
-                  <Text style={styles.actionTxt}>
-                    Upload Driving License Image
-                  </Text>
-                </View>
+            <View style={styles.bankTypeSection}>
+              <Text style={styles.label}>Select Vehicle Type</Text>
+              <View style={styles.bankTypeContainer}>
+                <Picker
+                  mode="dropdown"
+                  selectedValue={vehicleType}
+                  style={{height: 50, width: '100%'}}
+                  onValueChange={(itemValue, itemIndex) =>
+                    setVehicleType(itemValue)
+                  }>
+                  <Picker.Item
+                    label="Choose Vechile Type"
+                    value=""
+                    color="#000"
+                  />
+                  <Picker.Item
+                    label="Motorcycle"
+                    value="Motorcycle"
+                    color="#000"
+                  />
+                  <Picker.Item label="Bicycle" value="Bicycle" color="#000" />
+                  {/* <Picker.Item
+                    label="3 Wheeler"
+                    value="3 Wheeler"
+                    color="#000"
+                  />
+                  <Picker.Item
+                    label="Mini truck"
+                    value="Mini truck"
+                    color="#000"
+                  /> */}
+                </Picker>
               </View>
             </View>
 
-            <View style={styles.actionSection}>
-              <View style={styles.actionRow}>
-                <Pressable
-                  style={styles.actionBox}
-                  onPress={() => requestGalleryPermission('RegBikePlate')}>
-                  {bikeRegImgPath == '' ? (
-                    <Icons name="image-outline" size={20} />
-                  ) : (
-                    <Image
-                      source={{uri: bikeRegImgPath}}
-                      style={{
-                        height: 95,
-                        width: 95,
-                        borderRadius: 5,
-                      }}
-                    />
-                    // <Icons name="checkbox-outline" size={30} color="green" />
-                  )}
-                </Pressable>
-                <View style={styles.actionDiv}>
-                  <Text style={styles.actionTxt}>
-                    Upload Bike's Registration Plate Image
-                  </Text>
+            {vehicleType == 'Motorcycle' ? (
+              <>
+                <View style={styles.section}>
+                  <TextInput
+                    placeholder="Bike Registration Number"
+                    placeholderTextColor="#777"
+                    keyboardType="default"
+                    autoCapitalize="characters"
+                    style={styles.input}
+                    onChangeText={text => setBikeNumber(text)}
+                  />
                 </View>
-              </View>
-            </View>
 
-            <View style={styles.actionSection}>
-              <View style={styles.actionRow}>
-                <Pressable
-                  style={styles.actionBox}
-                  onPress={() => requestGalleryPermission('bikeInsure')}>
-                  {bikeInsuranceImgPath == '' ? (
-                    <Icons name="image-outline" size={20} />
-                  ) : (
-                    <Image
-                      source={{uri: bikeInsuranceImgPath}}
-                      style={{
-                        height: 95,
-                        width: 95,
-                        borderRadius: 5,
-                      }}
-                    />
-                    // <Icons name="checkbox-outline" size={30} color="green" />
-                  )}
-                </Pressable>
-                <View style={styles.actionDiv}>
-                  <Text style={styles.actionTxt}>
-                    Upload Bike's Insurance papers
-                  </Text>
+                <View style={styles.actionSection}>
+                  <View style={styles.actionRow}>
+                    <Pressable
+                      style={styles.actionBox}
+                      onPress={() => requestGalleryPermission('RegBikePlate')}>
+                      {bikeRegImgPath == '' ? (
+                        <Icons name="image-outline" size={20} />
+                      ) : (
+                        <Image
+                          source={{uri: bikeRegImgPath}}
+                          style={{
+                            height: 95,
+                            width: 95,
+                            borderRadius: 5,
+                          }}
+                        />
+                        // <Icons name="checkbox-outline" size={30} color="green" />
+                      )}
+                    </Pressable>
+                    <View style={styles.actionDiv}>
+                      <Text style={styles.actionTxt}>
+                        Upload Bike's Registration Plate Image
+                      </Text>
+                    </View>
+                  </View>
                 </View>
-              </View>
-            </View>
 
-            <View style={styles.actionSection}>
-              <View style={styles.actionRow}>
-                <Pressable
-                  style={styles.actionBox}
-                  onPress={() => requestGalleryPermission('PollutionImg')}>
-                  {bikePollImgPath == '' ? (
-                    <Icons name="image-outline" size={20} />
-                  ) : (
-                    <Image
-                      source={{uri: bikePollImgPath}}
-                      style={{
-                        height: 95,
-                        width: 95,
-                        borderRadius: 5,
-                      }}
-                    />
-                    // <Icons name="checkbox-outline" size={30} color="green" />
-                  )}
-                </Pressable>
-                <View style={styles.actionDiv}>
-                  <Text style={styles.actionTxt}>
-                    Upload Pollution Papers Image
-                  </Text>
+                <View style={styles.actionSection}>
+                  <View style={styles.actionRow}>
+                    <Pressable
+                      style={styles.actionBox}
+                      onPress={() => requestGalleryPermission('DL')}>
+                      {drivingLicensePath == '' ? (
+                        <Icons name="image-outline" size={20} />
+                      ) : (
+                        <Image
+                          source={{uri: drivingLicensePath}}
+                          style={{
+                            height: 95,
+                            width: 95,
+                            borderRadius: 5,
+                          }}
+                        />
+                      )}
+                    </Pressable>
+                    <View style={styles.actionDiv}>
+                      <Text style={styles.actionTxt}>
+                        Upload Driving License Image
+                      </Text>
+                    </View>
+                  </View>
                 </View>
-              </View>
-            </View>
+
+                <View style={styles.actionSection}>
+                  <View style={styles.actionRow}>
+                    <Pressable
+                      style={styles.actionBox}
+                      onPress={() => requestGalleryPermission('bikeInsure')}>
+                      {bikeInsuranceImgPath == '' ? (
+                        <Icons name="image-outline" size={20} />
+                      ) : (
+                        <Image
+                          source={{uri: bikeInsuranceImgPath}}
+                          style={{
+                            height: 95,
+                            width: 95,
+                            borderRadius: 5,
+                          }}
+                        />
+                        // <Icons name="checkbox-outline" size={30} color="green" />
+                      )}
+                    </Pressable>
+                    <View style={styles.actionDiv}>
+                      <Text style={styles.actionTxt}>
+                        Upload Bike's Insurance papers
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+
+                {/* <View style={styles.actionSection}>
+                  <View style={styles.actionRow}>
+                    <Pressable
+                      style={styles.actionBox}
+                      onPress={() => requestGalleryPermission('PollutionImg')}>
+                      {bikePollImgPath == '' ? (
+                        <Icons name="image-outline" size={20} />
+                      ) : (
+                        <Image
+                          source={{uri: bikePollImgPath}}
+                          style={{
+                            height: 95,
+                            width: 95,
+                            borderRadius: 5,
+                          }}
+                        />                    
+                      )}
+                    </Pressable>
+                    <View style={styles.actionDiv}>
+                      <Text style={styles.actionTxt}>
+                        Upload Pollution Papers Image
+                      </Text>
+                    </View>
+                  </View>
+                </View> */}
+              </>
+            ) : null}
 
             <Pressable
               onPress={() => registrationApi()}
@@ -526,6 +657,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderColor: '#5E3360',
     paddingVertical: 5,
+  },
+  bankTypeSection: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    marginTop: 30,
+  },
+  bankTypeContainer: {
+    width: '100%',
+    borderWidth: 1.5,
+    marginTop: 10,
+    borderRadius: 5,
+    paddingVertical: 5,
+    borderColor: '#5E3360',
+    paddingHorizontal: 10,
   },
   input: {
     fontFamily: 'OpenSans-Regular',
@@ -602,5 +748,20 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans-SemiBold',
     fontSize: 18,
     color: '#fff',
+  },
+  labelHolder: {
+    width: '100%',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    marginTop: 20,
+  },
+  labelName: {
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 20,
+  },
+  labelDescription: {
+    fontFamily: 'OpenSans-Regular',
+    fontSize: 16,
+    marginTop: 5,
   },
 });
