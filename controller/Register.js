@@ -161,6 +161,11 @@ const Register = ({navigation}) => {
     } else if (!pincode) {
       showToast('Please Enter Your  Pincode');
       return;
+    } else if (vehicleType == 'Motorcycle') {
+      if (!bikeNumber) {
+        showToast('Please Enter Your  Registered Bike Number');
+        return;
+      }
     } else {
       setLoading(true);
       fetch(
