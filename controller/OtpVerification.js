@@ -81,38 +81,8 @@ const OtpVerification = ({navigation, route}) => {
     } else if (!bikeNumber) {
       showToast('Please Enter Your Registered Bike Number');
       return;
-    } else if (!idImg) {
-      showToast('Upload your Id Proof it`s Required');
-      return;
     } else if (!pincode) {
       showToast('Please Enter Your  Pincode');
-      return;
-    } else if (!bankAccountNumber) {
-      showToast('Please Enter Your  Bank Account Number');
-      return;
-    } else if (!bankAccountType) {
-      showToast('Please Choose Your  Bank Account Type');
-      return;
-    } else if (!bankIFSCCode) {
-      showToast('Please Enter Your  Bank IFSC Code');
-      return;
-    } else if (!genderType) {
-      showToast('Please Choose Your  Gender');
-      return;
-    } else if (!vehicleType) {
-      showToast('Please Choose Your  Vechile Type');
-      return;
-    } else if (!drivingLicense) {
-      showToast('Upload your Driving License it`s Required');
-      return;
-    } else if (!bikeRegImg) {
-      showToast('Upload your Registered Bike Plate Image it`s Required');
-      return;
-    } else if (!bikeInsuranceImg) {
-      showToast('Upload your Bike Insurance Paper it`s Required');
-      return;
-    } else if (!bikePollImg) {
-      showToast('Upload your Bike Pollution paper it`s Required');
       return;
     } else {
       const data = new FormData();
