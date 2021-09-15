@@ -824,7 +824,16 @@ function Home() {
           },
         }}
       />
-      <Stack.Screen name="OrderHistory" component={OrderHistory} />
+      <Stack.Screen
+        name="OrderHistory"
+        component={OrderHistory}
+        options={{
+          title: 'Orders Completed',
+          headerTitleStyle: {
+            fontFamily: 'OpenSans-SemiBold',
+          },
+        }}
+      />
     </Stack.Navigator>
   );
 }
