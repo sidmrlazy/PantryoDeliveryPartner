@@ -28,6 +28,7 @@ import StarRating from 'react-native-star-rating';
 import FeatureTest from './Component/FeaturesTest';
 import NewOrders from './Orders/NewOrders';
 import {setEnabled} from 'react-native/Libraries/Performance/Systrace';
+import OrderHistory from './Orders/OrderHistory';
 
 // Timer for Refreshing
 const wait = timeout => {
@@ -659,7 +660,9 @@ const HomeScreen = ({navigation}) => {
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.tab}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('OrderHistory')}
+              style={styles.tab}>
               <View style={styles.lottieContainer}>
                 <LottieView
                   source={require('../../assets/lottie/completed.json')}
@@ -821,7 +824,7 @@ function Home() {
           },
         }}
       />
-      {/* <Stack.Screen name="FeatureTest" component={FeatureTest} /> */}
+      <Stack.Screen name="OrderHistory" component={OrderHistory} />
     </Stack.Navigator>
   );
 }

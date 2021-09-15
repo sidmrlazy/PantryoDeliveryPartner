@@ -47,6 +47,7 @@ const WalletScreen = ({navigation}) => {
         return response.json();
       })
       .then(function (result) {
+        // console.log(result);
         if (mounted) {
           if (result.error == 0) {
             setTotalAmount(result.total_amount);
@@ -115,11 +116,6 @@ const WalletScreen = ({navigation}) => {
                         <Text style={styles.date}>{item.payment_time}</Text>
                       </View>
                       <Text style={styles.amount}>₹ {item.amount}</Text>
-                      <Icons
-                        name="chevron-forward-outline"
-                        size={20}
-                        color="#5E3360"
-                      />
                     </View>
                   )}
                 />
@@ -237,7 +233,7 @@ const styles = StyleSheet.create({
     color: 'green',
     fontSize: 24,
     marginRight: 10,
-    color: '#000',
+    color: '#43a63a',
   },
   noDataDiv: {
     flex: 1,

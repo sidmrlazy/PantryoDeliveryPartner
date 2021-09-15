@@ -78,9 +78,6 @@ const OtpVerification = ({navigation, route}) => {
     } else if (!address) {
       showToast('Please Enter Your Address');
       return;
-    } else if (!bikeNumber) {
-      showToast('Please Enter Your Registered Bike Number');
-      return;
     } else if (!pincode) {
       showToast('Please Enter Your  Pincode');
       return;
