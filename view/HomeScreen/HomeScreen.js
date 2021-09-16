@@ -553,7 +553,7 @@ const HomeScreen = ({navigation}) => {
     <>
       <View style={styles.container}>
         {/* ====== Header Start ====== */}
-        <View style={styles.topHeader}>
+        {/* <View style={styles.topHeader}>
           <View style={styles.profileBox}>
             {profileImg === '' ? (
               <Icons name="image-outline" size={25} color="#fff" />
@@ -563,8 +563,7 @@ const HomeScreen = ({navigation}) => {
           </View>
           <View style={styles.textContainer}>
             <Text style={styles.userName}>{name}</Text>
-            <Text style={styles.mobile}>{mobile}</Text>
-            {/* <Text style={styles.bike}>{bikeNo}</Text> */}
+            <Text style={styles.mobile}>{mobile}</Text>           
             <Text style={styles.bike}>
               <StarRating
                 disabled={true}
@@ -576,7 +575,7 @@ const HomeScreen = ({navigation}) => {
               />
             </Text>
           </View>
-        </View>
+        </View> */}
         {/* ====== Header End ====== */}
 
         {/* ====== Switch Section Start ====== */}
@@ -587,6 +586,7 @@ const HomeScreen = ({navigation}) => {
           style={{
             width: '100%',
             backgroundColor: '#fff',
+            paddingVertical: 20,
           }}>
           <View style={styles.switchContainer}>
             <View style={styles.switchTab}>
@@ -644,16 +644,16 @@ const HomeScreen = ({navigation}) => {
             <TouchableOpacity
               onPress={() => navigation.navigate('NewOrders')}
               style={styles.tab}>
-              <View style={styles.lottieContainer}>
+              {/* <View style={styles.lottieContainer}>
                 <LottieView
                   source={require('../../assets/lottie/newOrders.json')}
                   autoPlay
                   loop
                   size={styles.lottie}
                 />
-              </View>
+              </View> */}
               <View style={styles.div}>
-                <Text style={styles.label}>New Orders</Text>
+                <Text style={styles.label}>Orders Today</Text>
                 <Text style={styles.new}>
                   {orderCountFtd ? orderCountFtd : '0'}
                 </Text>
@@ -663,14 +663,14 @@ const HomeScreen = ({navigation}) => {
             <TouchableOpacity
               onPress={() => navigation.navigate('OrderHistory')}
               style={styles.tab}>
-              <View style={styles.lottieContainer}>
+              {/* <View style={styles.lottieContainer}>
                 <LottieView
                   source={require('../../assets/lottie/completed.json')}
                   autoPlay
                   loop
                   size={styles.lottie}
                 />
-              </View>
+              </View> */}
               <View style={styles.div}>
                 <Text style={styles.label}>Orders Completed</Text>
                 <Text style={styles.new}>
@@ -895,7 +895,6 @@ const styles = StyleSheet.create({
   },
   tab: {
     flex: 1,
-    height: 150,
     justifyContent: 'center',
     alignItems: 'center',
     marginHorizontal: 5,
@@ -910,6 +909,8 @@ const styles = StyleSheet.create({
     elevation: 11,
     borderRadius: 5,
     flexDirection: 'row',
+    paddingHorizontal: 20,
+    paddingVertical: 20,
   },
   lottieContainer: {
     width: 70,
@@ -940,6 +941,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     width: '100%',
     backgroundColor: '#fff',
+    marginTop: 10,
   },
   switchTab: {
     shadowColor: '#000',
