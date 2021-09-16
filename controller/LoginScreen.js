@@ -17,6 +17,8 @@ import {
   ImageBackground,
   useWindowDimensions,
   TouchableOpacity,
+  PermissionsAndroid,
+  Platform,
 } from 'react-native';
 
 // Libraries
@@ -26,6 +28,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {AuthContext} from './Utils';
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+navigator.geolocation = require('@react-native-community/geolocation');
 
 // Screens
 import Register from './Register';
@@ -39,6 +42,8 @@ const LoginScreen = ({navigation}) => {
   const {signIn} = React.useContext(AuthContext);
   const [banner, setBanner] = useState('');
   const [refreshing, setRefreshing] = useState(false);
+  const [lat, setLat] = React.useState('');
+  const [long, setLong] = React.useState('');
 
   const window = useWindowDimensions();
 
@@ -61,6 +66,55 @@ const LoginScreen = ({navigation}) => {
       50,
     );
   };
+
+  async function requestLocationPermission() {
+    if (Platform.OS === 'ios') {
+      getOneTimeLocation();
+    } else {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          {
+            title: 'Location Access Required',
+            message: 'This App needs access to your location',
+          },
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          getOneTimeLocation();
+        } else {
+          showToast('Permission Denied');
+        }
+        return Promise.resolve();
+      } catch (err) {
+        console.warn(err);
+      }
+    }
+  }
+
+  // Get Longitude and Latitude
+  async function getOneTimeLocation() {
+    // setLoading(true);
+    await navigator.geolocation.getCurrentPosition(
+      position => {
+        const currentLongitude = JSON.stringify(position.coords.longitude);
+        const currentLatitude = JSON.stringify(position.coords.latitude);
+        setLat(currentLatitude);
+        setLong(currentLongitude);
+        console.log('got');
+        setLoading(false);
+      },
+      error => {
+        if (error.code === NO_LOCATION_PROVIDER_AVAILABLE) {
+          showToast('Please grant permission to access your location');
+        }
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 20000,
+        maximumAge: 2000,
+      },
+    );
+  }
 
   // Function to get banner images from the server
   async function getBanner() {
@@ -98,6 +152,12 @@ const LoginScreen = ({navigation}) => {
     } else if (contactNumber.length !== 10) {
       showToast('Enter valid Mobile Number');
       return;
+    } else if (!lat) {
+      showToast('Latitude not fetched');
+      return;
+    } else if (!long) {
+      showToast('longitude not fetched');
+      return;
     } else {
       setLoading(true);
       fetch(
@@ -111,6 +171,8 @@ const LoginScreen = ({navigation}) => {
           body: JSON.stringify({
             contactNumber: contactNumber,
             userToken: token,
+            delivery_partner_latitude: lat,
+            delivery_partner_longitude: long,
           }),
         },
       )
@@ -118,7 +180,6 @@ const LoginScreen = ({navigation}) => {
           return response.json();
         })
         .then(function (result) {
-          // console.log(result);
           if (result.error == 0) {
             let delivery_id = result.delivery_id;
             let contactNumber = result.contactNumber;
@@ -151,6 +212,7 @@ const LoginScreen = ({navigation}) => {
 
   useMemo(() => {
     getBanner();
+    requestLocationPermission();
   }, []);
 
   useEffect(() => {
