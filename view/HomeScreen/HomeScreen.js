@@ -16,7 +16,7 @@ import {
   Platform,
 } from 'react-native';
 
-// Libraries
+// Libraries my
 import {createStackNavigator} from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icons from 'react-native-vector-icons/Ionicons';
