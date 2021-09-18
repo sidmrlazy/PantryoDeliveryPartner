@@ -16,7 +16,7 @@ import {
   Platform,
 } from 'react-native';
 
-// Libraries my
+// Libraries
 import {createStackNavigator} from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icons from 'react-native-vector-icons/Ionicons';
@@ -24,7 +24,7 @@ import LottieView from 'lottie-react-native';
 navigator.geolocation = require('@react-native-community/geolocation');
 import StarRating from 'react-native-star-rating';
 
-// Screens
+//my S Screens
 import FeatureTest from './Component/FeaturesTest';
 import NewOrders from './Orders/NewOrders';
 import {setEnabled} from 'react-native/Libraries/Performance/Systrace';
@@ -622,6 +622,19 @@ const HomeScreen = ({navigation}) => {
             </View>
           </View>
           {/* ====== Switch Section End ====== */}
+
+          {isEnabled !== true ? (
+            <>
+              <TouchableOpacity style={styles.notificationBtn}>
+                <View style={styles.notificationTab}>
+                  <Text style={styles.notifHeading}>You are offline!</Text>
+                  <Text style={styles.notifTxt}>
+                    You will not be able to receive customer orders
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </>
+          ) : null}
 
           {/* ========== Verification Notification Start ========== */}
           {verificationStatus == '1' ? (
