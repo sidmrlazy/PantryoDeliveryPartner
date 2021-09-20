@@ -463,8 +463,9 @@ const HomeScreen = ({navigation}) => {
       });
   }
 
-  ///////////////Update Working Status
+  // Update Working Status
   async function updateWorkingStatus(workstatus) {
+    setLoading(true);
     let userId = await AsyncStorage.getItem('user_id');
     fetch(
       'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/UpdateDeliveryPartnerWorkingStatus.php',
@@ -498,6 +499,9 @@ const HomeScreen = ({navigation}) => {
       })
       .catch(error => {
         console.log(error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }
 

@@ -423,7 +423,7 @@ const Register = ({navigation}) => {
                     setVehicleType(itemValue)
                   }>
                   <Picker.Item
-                    label="Choose Vechile Type"
+                    label="Choose Vehicle Type"
                     value=""
                     color="#000"
                   />
@@ -451,7 +451,7 @@ const Register = ({navigation}) => {
               <>
                 <View style={styles.section}>
                   <TextInput
-                    placeholder="Bike Registration Number"
+                    placeholder="Vehicle Registration Number"
                     placeholderTextColor="#777"
                     keyboardType="default"
                     autoCapitalize="characters"
@@ -481,7 +481,7 @@ const Register = ({navigation}) => {
                     </Pressable>
                     <View style={styles.actionDiv}>
                       <Text style={styles.actionTxt}>
-                        Upload Bike's Registration Plate Image
+                        Upload Vehicle's Registration Plate Image
                       </Text>
                     </View>
                   </View>
@@ -534,7 +534,7 @@ const Register = ({navigation}) => {
                     </Pressable>
                     <View style={styles.actionDiv}>
                       <Text style={styles.actionTxt}>
-                        Upload Bike's Insurance papers
+                        Upload Vehicle's Insurance papers
                       </Text>
                     </View>
                   </View>

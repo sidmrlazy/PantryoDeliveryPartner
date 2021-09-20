@@ -62,7 +62,7 @@ const OrdersList = () => {
         if (result.error == 0) {
           setAllDetails(result.details);
         }
-        //   console.log(result);
+        getOrderList();
       })
       .catch(error => {
         console.log(error);
@@ -121,6 +121,7 @@ const OrdersList = () => {
               style={{
                 fontFamily: 'OpenSans-SemiBold',
                 fontSize: 20,
+                color: '#000',
               }}>
               You dont have any past orders!
             </Text>

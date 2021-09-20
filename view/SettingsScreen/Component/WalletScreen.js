@@ -79,18 +79,18 @@ const WalletScreen = ({navigation}) => {
         <>
           <View style={styles.topContainer}>
             <View style={styles.section}>
-              <Text style={styles.screenName}>Your Account</Text>
+              <Text style={styles.screenName}>Your Earnings</Text>
               <Text
                 style={{
                   fontFamily: 'OpenSans-Regular',
                   fontSize: 16,
-                  color: '#fff',
+                  color: '#000',
                 }}>
                 Credit will reflect in your account everyday at 6:00 PM{' '}
               </Text>
               <View style={styles.salesCard}>
                 <View style={{flex: 1}}>
-                  <Text style={styles.salesCardHeading}>Total Collection</Text>
+                  <Text style={styles.salesCardHeading}>You have earned</Text>
                   <Text style={styles.totalSales}>
                     ₹ {totalAmount ? totalAmount : '0'}
                   </Text>
@@ -148,7 +148,7 @@ export default WalletScreenHolder;
 
 const styles = StyleSheet.create({
   topContainer: {
-    backgroundColor: '#662a73',
+    backgroundColor: '#fff',
     flex: 1,
     justifyContent: 'center',
     alignItems: 'flex-start',
@@ -159,9 +159,9 @@ const styles = StyleSheet.create({
     marginVertical: 50,
   },
   screenName: {
-    fontFamily: 'OpenSans-SemiBold',
+    fontFamily: 'OpenSans-Bold',
     fontSize: 24,
-    color: '#dac3db',
+    color: '#5E3360',
   },
   salesCard: {
     backgroundColor: '#ffffff',
@@ -187,6 +187,7 @@ const styles = StyleSheet.create({
   totalSales: {
     fontFamily: 'OpenSans-Bold',
     fontSize: 36,
+    color: 'green',
   },
   bottomContainer: {
     flex: 2,
