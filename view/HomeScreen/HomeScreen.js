@@ -596,7 +596,7 @@ const HomeScreen = ({navigation}) => {
             <View style={styles.switchTab}>
               {isEnabled ? (
                 <>
-                  <Text style={styles.switchTxt}>You are online</Text>
+                  <Text style={styles.switchTxt}>आप ऑनलाइन हैं</Text>
                   <Switch
                     trackColor={{false: '#767577', true: '#a5a2a8'}}
                     thumbColor={isEnabled ? '#4d8751' : '#f4f3f4'}
@@ -610,7 +610,7 @@ const HomeScreen = ({navigation}) => {
                 </>
               ) : (
                 <>
-                  <Text style={styles.switchTxt}>You are offline</Text>
+                  <Text style={styles.switchTxt}>आप ऑफलाइन हैं</Text>
                   <Switch
                     trackColor={{false: '#767577', true: '#a5a2a8'}}
                     thumbColor={isEnabled ? '#4d8751' : '#f4f3f4'}
@@ -631,9 +631,9 @@ const HomeScreen = ({navigation}) => {
             <>
               <TouchableOpacity style={styles.notificationBtn}>
                 <View style={styles.notificationTab}>
-                  <Text style={styles.notifHeading}>You are offline!</Text>
+                  <Text style={styles.notifHeading}>आप ऑफलाइन हैं!</Text>
                   <Text style={styles.notifTxt}>
-                    You will not be able to receive customer orders
+                    ऑफलाइन होने के कारण कस्टमर आर्डर प्राप्त नहीं हो पाएंगे
                   </Text>
                 </View>
               </TouchableOpacity>
@@ -670,7 +670,7 @@ const HomeScreen = ({navigation}) => {
                 />
               </View> */}
               <View style={styles.div}>
-                <Text style={styles.label}>Orders Today</Text>
+                <Text style={styles.label}>आज के आर्डर </Text>
                 <Text style={styles.new}>
                   {orderCountFtd ? orderCountFtd : '0'}
                 </Text>
@@ -689,7 +689,7 @@ const HomeScreen = ({navigation}) => {
                 />
               </View> */}
               <View style={styles.div}>
-                <Text style={styles.label}>Orders Completed</Text>
+                <Text style={styles.label}>कम्प्लीटेड ऑर्डर्स</Text>
                 <Text style={styles.new}>
                   {totalOrdersLtd ? totalOrdersLtd : '0'}
                 </Text>
@@ -708,7 +708,7 @@ const HomeScreen = ({navigation}) => {
                 />
               </View>
               <View style={[styles.div, {marginLeft: 15}]}>
-                <Text style={styles.label}>You have earned</Text>
+                <Text style={styles.label}>आपने कमाए</Text>
                 <Text style={styles.new}>
                   ₹{earnings ? earnings : '0'}{' '}
                   <Text
@@ -716,7 +716,7 @@ const HomeScreen = ({navigation}) => {
                       fontFamily: 'OpenSans-SemiBold',
                       fontSize: 16,
                     }}>
-                    today
+                    आज
                   </Text>
                 </Text>
               </View>
@@ -978,7 +978,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   switchTxt: {
-    fontFamily: 'OpenSans-SemiBold',
+    fontFamily: 'OpenSans-Bold',
     fontSize: 20,
     flex: 1,
   },
@@ -1081,7 +1081,7 @@ const styles = StyleSheet.create({
   },
   notifHeading: {
     color: '#fff',
-    fontFamily: 'OpenSans-Bold',
+    fontFamily: 'OpenSans-ExtraBold',
     fontSize: 24,
   },
   notifTxt: {

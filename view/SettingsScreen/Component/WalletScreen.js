@@ -79,18 +79,18 @@ const WalletScreen = ({navigation}) => {
         <>
           <View style={styles.topContainer}>
             <View style={styles.section}>
-              <Text style={styles.screenName}>Your Earnings</Text>
+              <Text style={styles.screenName}>आपने आज तक कमाया </Text>
               <Text
                 style={{
                   fontFamily: 'OpenSans-Regular',
-                  fontSize: 16,
+                  fontSize: 18,
                   color: '#000',
                 }}>
-                Credit will reflect in your account everyday at 6:00 PM{' '}
+                क्रेडिट आपके खाते में प्रतिदिन शाम 6:00 बजे रिफ्लेक्ट करेगा{' '}
               </Text>
               <View style={styles.salesCard}>
                 <View style={{flex: 1}}>
-                  <Text style={styles.salesCardHeading}>You have earned</Text>
+                  {/* <Text style={styles.salesCardHeading}>You have earned</Text> */}
                   <Text style={styles.totalSales}>
                     ₹ {totalAmount ? totalAmount : '0'}
                   </Text>

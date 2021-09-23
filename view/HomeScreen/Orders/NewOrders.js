@@ -459,19 +459,19 @@ const NewOrders = ({route, navigation}) => {
                 <>
                   <View style={styles.container}>
                     <View style={styles.card}>
-                      <Text style={styles.cardHeading}>
+                      {/* <Text style={styles.cardHeading}>
                         New Order Received!
-                      </Text>
+                      </Text> */}
 
                       <View style={styles.orderDetailRow}>
                         <View style={styles.div}>
-                          <Text style={styles.divLabel}>Order ID</Text>
+                          <Text style={styles.divLabel}>आर्डर ID</Text>
                           <Text style={styles.orderResponse}>
                             {item.order_id}
                           </Text>
                         </View>
                         <View style={styles.div}>
-                          <Text style={styles.divLabel}>Pickup from</Text>
+                          <Text style={styles.divLabel}>पिक अप पॉइंट </Text>
                           <Text style={styles.orderResponse}>
                             {item.shopName}
                           </Text>
@@ -480,13 +480,13 @@ const NewOrders = ({route, navigation}) => {
 
                       <View style={styles.itemDetailsSection}>
                         <Text style={styles.caption}>
-                          Total products to pick up:{' '}
+                          प्रोडक्ट्स पिक अप करने के लिए :{' '}
                           <Text style={styles.innerCaption}>
                             {item.numberOfProduct}
                           </Text>
                         </Text>
                         <Text style={styles.caption}>
-                          Your Earning:{' '}
+                          आपकी कमाई :{' '}
                           <Text style={styles.innerCaption}>
                             {item.deliveryBoyEarn} ₹
                           </Text>
@@ -510,8 +510,8 @@ const NewOrders = ({route, navigation}) => {
                                     fontFamily: 'OpenSans-SemiBold',
                                     fontSize: 16,
                                   }}>
-                                  Share code with Shop keeper to get Customer
-                                  Location
+                                  कस्टमर की लोकेशन प्राप्त करने के लिए यह कोड
+                                  शॉप पार्टनर से शेयर करें
                                 </Text>
                                 <Text
                                   style={{
@@ -543,7 +543,7 @@ const NewOrders = ({route, navigation}) => {
                                   style={[styles.btn1, {borderColor: 'blue'}]}>
                                   <Text
                                     style={[styles.btn1Txt, {color: 'blue'}]}>
-                                    Reached at Pickup Destination
+                                    पिकअप डेस्टिनेशन पे पोहुंच गयें
                                   </Text>
                                 </TouchableOpacity>
                               </View>
@@ -561,7 +561,7 @@ const NewOrders = ({route, navigation}) => {
                                   }}
                                   style={styles.btn1}>
                                   <Text style={styles.btn1Txt}>
-                                    Get Customer Location
+                                    कस्टमर की लोकेशन प्राप्त करें
                                   </Text>
                                 </TouchableOpacity>
                               </View>
@@ -579,7 +579,7 @@ const NewOrders = ({route, navigation}) => {
                                   }}
                                   style={styles.btn1}>
                                   <Text style={styles.btn1Txt}>
-                                    Reached at Drop Point
+                                    कस्टमर की लोकेशन पर पोहोच गयें
                                   </Text>
                                 </TouchableOpacity>
                               </View>
@@ -598,7 +598,7 @@ const NewOrders = ({route, navigation}) => {
                                   style={[styles.btn1, {borderColor: 'green'}]}>
                                   <Text
                                     style={[styles.btn1Txt, {color: 'green'}]}>
-                                    Order Delivered
+                                    आर्डर डेलीवर्ड
                                   </Text>
                                 </TouchableOpacity>
                               </View>
@@ -621,7 +621,9 @@ const NewOrders = ({route, navigation}) => {
                                 );
                               }}
                               style={styles.btn}>
-                              <Text style={styles.btnTxt}>Accept Order</Text>
+                              <Text style={styles.btnTxt}>
+                                आर्डर एक्सेप्ट करें{' '}
+                              </Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity
@@ -637,7 +639,7 @@ const NewOrders = ({route, navigation}) => {
                                 styles.btn,
                                 {backgroundColor: '#a83d36'},
                               ]}>
-                              <Text style={styles.btnTxt}>Cancel</Text>
+                              <Text style={styles.btnTxt}>कैंसिल </Text>
                             </TouchableOpacity>
                           </View>
                         </>
@@ -658,7 +660,7 @@ const NewOrders = ({route, navigation}) => {
                               style={styles.btnRow}>
                               <View style={styles.btn}>
                                 <Text style={styles.btnTxt}>
-                                  Open Partner's Location
+                                  शॉप पार्टनर की लोकेशन देखें
                                 </Text>
                               </View>
                             </TouchableOpacity>
@@ -673,7 +675,7 @@ const NewOrders = ({route, navigation}) => {
                               style={styles.btnRow}>
                               <View style={styles.btn}>
                                 <Text style={styles.btnTxt}>
-                                  Open Customer Location
+                                  कस्टमर की लोकेशन देखें
                                 </Text>
                               </View>
                             </TouchableOpacity>
@@ -699,7 +701,7 @@ const NewOrders = ({route, navigation}) => {
                                 fontSize: 18,
                                 color: '#a83d36',
                               }}>
-                              Cancelled by you
+                              आपके द्वारा कैंसिल किया गया आर्डर
                             </Text>
                           </View>
                         </>
@@ -721,7 +723,7 @@ const NewOrders = ({route, navigation}) => {
                                   fontSize: 18,
                                   color: 'green',
                                 }}>
-                                Item Delivered
+                                आर्डर डेलीवर्ड
                               </Text>
                             </View>
                           ) : null}
@@ -767,8 +769,8 @@ const NewOrders = ({route, navigation}) => {
                     textAlign: 'center',
                     color: '#777',
                   }}>
-                  Waiting for customer orders. You will receive a notification
-                  as soon as a customer places their order
+                  कस्टमर आर्डर को सर्च किया जा रहा है | कस्टमर आर्डर प्राप्त
+                  होते ही आपको नोटिफिकेशन के द्वारा सूचित किया जाए गए
                 </Text>
               </View>
             </ScrollView>
