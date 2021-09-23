@@ -647,9 +647,15 @@ const HomeScreen = ({navigation}) => {
                 <Text style={styles.notifHeading}>
                   Profile Under Verification!
                 </Text>
-                <Text style={styles.notifTxt}>
+                {/* <Text style={styles.notifTxt}>
                   Please wait while we look at your documents. You may receive a
                   call from our side to confirm the details provided by you.
+                </Text> */}
+                <Text style={styles.notifTxt}>
+                  कृपया प्रतीक्षा करें जब तक हम आपके द्वारा दिए गये डाक्यूमेंट्स
+                  को वेरीफाई कर रहे है दस्तावेज़ देखें। आपके द्वारा प्रदान किए
+                  गए विवरण की पुष्टि करने के लिए आपको हमारी ओर से एक कॉल प्राप्त
+                  हो सकती है।
                 </Text>
               </View>
             </TouchableOpacity>
@@ -779,9 +785,10 @@ const HomeScreen = ({navigation}) => {
                             />
                           </View>
                           <View style={styles.flatListRow}>
-                            <Text style={styles.newOrder}>
+                            {/* <Text style={styles.newOrder}>
                               New Order Received!
-                            </Text>
+                            </Text> */}
+                            <Text style={styles.newOrder}>नया आर्डर!</Text>
                             <Text style={styles.orderIdLabel}>
                               Order ID:{' '}
                               <Text style={styles.orderId}>
@@ -799,12 +806,12 @@ const HomeScreen = ({navigation}) => {
                           onPress={() => navigation.navigate('NewOrders')}
                           style={styles.flatListAccept}>
                           <Text style={styles.flatListAcceptBtnTxt}>
-                            Get Details
+                            डिटेल्स प्राप्त करें
                           </Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity style={styles.rejectBtn}>
-                          <Text style={styles.rejectBtnTxt}>Reject</Text>
+                          <Text style={styles.rejectBtnTxt}>रिजेक्ट</Text>
                         </TouchableOpacity>
                       </>
                     )}
@@ -862,7 +869,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
-    backgroundColor: '#fff',
+    backgroundColor: '#5E3360',
   },
   topHeader: {
     flexDirection: 'row',

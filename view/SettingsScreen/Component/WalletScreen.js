@@ -86,7 +86,7 @@ const WalletScreen = ({navigation}) => {
                   fontSize: 18,
                   color: '#000',
                 }}>
-                क्रेडिट आपके खाते में प्रतिदिन शाम 6:00 बजे रिफ्लेक्ट करेगा{' '}
+                क्रेडिट आपके खाते में प्रतिदिन शाम 6:00 बजे आएगा{' '}
               </Text>
               <View style={styles.salesCard}>
                 <View style={{flex: 1}}>

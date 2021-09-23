@@ -75,7 +75,7 @@ const Settings = ({navigation}) => {
         </Pressable>
         <Pressable style={styles.btn}>
           <Icons name="headset-outline" size={25} color="#5E3360" />
-          <Text style={styles.btnTxt}>support</Text>
+          <Text style={styles.btnTxt}>सपोर्ट </Text>
         </Pressable>
         <Pressable style={styles.btn} onPress={signOut}>
           <Icons name="log-out-outline" size={25} color="#5E3360" />
