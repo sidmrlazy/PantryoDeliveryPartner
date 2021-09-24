@@ -74,7 +74,7 @@ const HomeScreen = ({navigation}) => {
   const [totalOrdersLtd, setTotalOrdersLtd] = React.useState('');
   const [earnings, setEarnings] = React.useState('');
 
-  //////////////Rating
+  // Rating
   const [rating, setRating] = React.useState(3.5);
 
   // API URL variables
@@ -225,6 +225,9 @@ const HomeScreen = ({navigation}) => {
         setLat(currentLatitude);
         setLong(currentLongitude);
         setLoading(false);
+        // console.log(
+        //   'getOneTimeLocation: ' + currentLatitude + ', ' + currentLongitude,
+        // );
       },
       error => {
         if (error.code === NO_LOCATION_PROVIDER_AVAILABLE) {
@@ -239,7 +242,7 @@ const HomeScreen = ({navigation}) => {
     );
   }
 
-  //////////////////////Update Delivery Partner Location
+  // Update Delivery Partner Location
   async function updateDeliveryPartnerLocation(lat, long) {
     let userId = await AsyncStorage.getItem('user_id');
     await fetch(
@@ -262,16 +265,17 @@ const HomeScreen = ({navigation}) => {
       })
       .then(function (result) {
         // console.log(result);
+        getOneTimeLocation();
       })
       .catch(error => {
         console.error(error);
-      })
-      .finally(() => {
-        getOneTimeLocation();
       });
+    // .finally(() => {
+    //   getOneTimeLocation();
+    // });
   }
 
-  /////////////////////////////////Get Order Data
+  // Get Order Data
   async function getOrderData() {
     let userId = await AsyncStorage.getItem('user_id');
     await fetch(
@@ -644,9 +648,7 @@ const HomeScreen = ({navigation}) => {
           {verificationStatus == '1' ? (
             <TouchableOpacity style={styles.notificationBtn}>
               <View style={styles.notificationTab}>
-                <Text style={styles.notifHeading}>
-                  Profile Under Verification!
-                </Text>
+                <Text style={styles.notifHeading}>प्रोफाइल वेरिफिकेशन</Text>
                 {/* <Text style={styles.notifTxt}>
                   Please wait while we look at your documents. You may receive a
                   call from our side to confirm the details provided by you.
@@ -869,7 +871,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
-    backgroundColor: '#5E3360',
+    backgroundColor: '#fff',
   },
   topHeader: {
     flexDirection: 'row',

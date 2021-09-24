@@ -42,6 +42,7 @@ const OtpVerification = ({navigation, route}) => {
   const [bikePollImg, setBikePollImg] = useState('');
   const [genderType, setGenderType] = useState('');
   const [vehicleType, setVehicleType] = useState('');
+  const [razorpayKey, setRazorpayKey] = useState('');
 
   const showToast = msg => {
     ToastAndroid.showWithGravityAndOffset(
@@ -149,6 +150,30 @@ const OtpVerification = ({navigation, route}) => {
     }
   };
 
+  const getRazorpayKey = async () => {
+    const secretKey = 'ja3n4n31n2l35ncmnvlae979sdf73';
+    fetch('https://gizmmoalchemy.com/api/pantryo/razorpayKey.php', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        secretkey: secretKey,
+      }),
+    })
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (result) {
+        setRazorpayKey(result.key);
+        getRazorpayKey();
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
+
   // RazorpayFunction Payment APi
   const RazorpayFunction = async (
     delivery_id,
@@ -164,7 +189,7 @@ const OtpVerification = ({navigation, route}) => {
       description: '',
       image: 'https://gizmmoalchemy.com/api/pantryo/Logo/PantryoLogo.png',
       currency: 'INR',
-      key: 'rzp_test_Q7747Ni4ezPrgO',
+      key: razorpayKey,
       amount: '100',
       name: 'Pantryo',
       prefill: {
@@ -270,6 +295,8 @@ const OtpVerification = ({navigation, route}) => {
     LogBox.ignoreAllLogs();
     LogBox.ignoreLogs(['Warning: ...']);
     LogBox.ignoreLogs(['VirtualizedLists should never be nested...']);
+
+    getRazorpayKey();
 
     // textInputFocus();
     getDeviceToken();

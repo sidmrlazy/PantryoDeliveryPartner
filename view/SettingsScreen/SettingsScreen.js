@@ -13,8 +13,9 @@ import {AuthContext} from '../../controller/Utils';
 import Icons from 'react-native-vector-icons/Ionicons';
 import {createStackNavigator} from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import VersionInfo from 'react-native-version-info';
 
-//////////Screen
+// Screen
 import Payments from './Component/WalletScreen';
 
 const Settings = ({navigation}) => {
@@ -25,6 +26,7 @@ const Settings = ({navigation}) => {
   const [mobile, setMobile] = React.useState('');
   const [bikeNo, setBikeNo] = React.useState('');
   const [profileImg, setProfileImg] = React.useState('');
+  const [appV, setAppV] = React.useState('');
 
   // User Profile
   const userProfileData = async () => {
@@ -37,6 +39,7 @@ const Settings = ({navigation}) => {
 
   React.useEffect(() => {
     userProfileData();
+    setAppV(VersionInfo.appVersion);
     return function cleanup() {
       setmounted(false);
     };
@@ -81,6 +84,30 @@ const Settings = ({navigation}) => {
           <Icons name="log-out-outline" size={25} color="#5E3360" />
           <Text style={styles.btnTxt}>लॉगआउट</Text>
         </Pressable>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+            width: '100%',
+            paddingBottom: 20,
+          }}>
+          <Text
+            style={{
+              fontFamily: 'OpenSans-SemiBold',
+              fontSize: 16,
+              marginBottom: 5,
+            }}>
+            Designed & Developed by GizmmoAlchemy
+          </Text>
+          <Text
+            style={{
+              fontFamily: 'OpenSans-Bold',
+              fontSize: 16,
+            }}>
+            App v({appV})
+          </Text>
+        </View>
       </View>
     </>
   );

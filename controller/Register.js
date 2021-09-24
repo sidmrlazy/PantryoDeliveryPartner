@@ -169,7 +169,7 @@ const Register = ({navigation}) => {
     } else {
       setLoading(true);
       fetch(
-        'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=DeliveryPartnerRegister',
+        'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartnerRegister.php',
         {
           method: 'POST',
           headers: {
@@ -380,38 +380,6 @@ const Register = ({navigation}) => {
               Please upload ID, Address Proof & other documents for veirfication
             </Text>
 
-            <View style={styles.actionSection}>
-              <View style={styles.actionRow}>
-                <Pressable
-                  style={styles.actionBox}
-                  onPress={() => requestGalleryPermission('IdProof')}>
-                  {idImgPath == '' ? (
-                    <Icons name="image-outline" size={20} />
-                  ) : (
-                    <Image
-                      source={{uri: idImgPath}}
-                      style={{
-                        height: 95,
-                        width: 95,
-                        borderRadius: 5,
-                      }}
-                    />
-                    // <Icons name="checkbox-outline" size={30} color="green" />
-                  )}
-                </Pressable>
-                <View style={styles.actionDiv}>
-                  <Text style={styles.actionTxt}>Upload ID Proof Image</Text>
-                  <Text
-                    style={{
-                      fontFamily: 'OpenSans-Regular',
-                      marginTop: 5,
-                    }}>
-                    (Aadhaar Card, Pan Card, Voter ID, Ration Card)
-                  </Text>
-                </View>
-              </View>
-            </View>
-
             <View style={styles.bankTypeSection}>
               <Text style={styles.label}>Select Vehicle Type</Text>
               <View style={styles.bankTypeContainer}>
@@ -444,6 +412,38 @@ const Register = ({navigation}) => {
                     color="#000"
                   /> */}
                 </Picker>
+              </View>
+            </View>
+
+            <View style={styles.actionSection}>
+              <View style={styles.actionRow}>
+                <Pressable
+                  style={styles.actionBox}
+                  onPress={() => requestGalleryPermission('IdProof')}>
+                  {idImgPath == '' ? (
+                    <Icons name="image-outline" size={20} />
+                  ) : (
+                    <Image
+                      source={{uri: idImgPath}}
+                      style={{
+                        height: 95,
+                        width: 95,
+                        borderRadius: 5,
+                      }}
+                    />
+                    // <Icons name="checkbox-outline" size={30} color="green" />
+                  )}
+                </Pressable>
+                <View style={styles.actionDiv}>
+                  <Text style={styles.actionTxt}>Upload ID Proof Image</Text>
+                  <Text
+                    style={{
+                      fontFamily: 'OpenSans-Regular',
+                      marginTop: 5,
+                    }}>
+                    (Aadhaar Card, Pan Card, Voter ID, Ration Card)
+                  </Text>
+                </View>
               </View>
             </View>
 
