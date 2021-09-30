@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Image,
   ImageBackground,
+  Linking,
 } from 'react-native';
 
 // Library
@@ -72,7 +73,13 @@ const Settings = ({navigation}) => {
           <Icons name="wallet-outline" size={25} color="#5E3360" />
           <Text style={styles.btnTxt}>पेमेंट</Text>
         </Pressable>
-        <Pressable style={styles.btn}>
+        <Pressable
+          onPress={() => {
+            Linking.openURL('https://pantryo.in/tnc.php').catch(err => {
+              console.error(err);
+            });
+          }}
+          style={styles.btn}>
           <Icons name="information-circle-outline" size={25} color="#5E3360" />
           <Text style={styles.btnTxt}>नियम एवं शर्तें</Text>
         </Pressable>
@@ -84,29 +91,11 @@ const Settings = ({navigation}) => {
           <Icons name="log-out-outline" size={25} color="#5E3360" />
           <Text style={styles.btnTxt}>लॉगआउट</Text>
         </Pressable>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'flex-end',
-            alignItems: 'center',
-            width: '100%',
-            paddingBottom: 20,
-          }}>
-          <Text
-            style={{
-              fontFamily: 'OpenSans-SemiBold',
-              fontSize: 16,
-              marginBottom: 5,
-            }}>
+        <View style={styles.copyRight}>
+          <Text style={styles.copyRightLabel}>
             Designed & Developed by GizmmoAlchemy
           </Text>
-          <Text
-            style={{
-              fontFamily: 'OpenSans-Bold',
-              fontSize: 16,
-            }}>
-            App v({appV})
-          </Text>
+          <Text style={styles.AppVersion}>App v({appV})</Text>
         </View>
       </View>
     </>
@@ -205,6 +194,22 @@ const styles = StyleSheet.create({
   status: {
     fontFamily: 'OpenSans-SemiBold',
     marginLeft: 5,
+    fontSize: 16,
+  },
+  copyRight: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    width: '100%',
+    paddingBottom: 20,
+  },
+  copyRightLabel: {
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  AppVersion: {
+    fontFamily: 'OpenSans-Bold',
     fontSize: 16,
   },
 });
