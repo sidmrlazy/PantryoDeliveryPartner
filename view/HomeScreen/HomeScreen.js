@@ -586,7 +586,6 @@ const HomeScreen = ({navigation}) => {
         </View> */}
         {/* ====== Header End ====== */}
 
-        {/* ====== Switch Section Start ====== */}
         <ScrollView
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -596,7 +595,8 @@ const HomeScreen = ({navigation}) => {
             backgroundColor: '#fff',
             paddingVertical: 20,
           }}>
-          <View style={styles.switchContainer}>
+          {/* ====== Switch Section Start ====== */}
+          {/* <View style={styles.switchContainer}>
             <View style={styles.switchTab}>
               {isEnabled ? (
                 <>
@@ -628,19 +628,149 @@ const HomeScreen = ({navigation}) => {
                 </>
               )}
             </View>
-          </View>
+          </View> */}
           {/* ====== Switch Section End ====== */}
 
-          {isEnabled !== true ? (
+          {/* {isEnabled !== true ? (
             <>
-              <TouchableOpacity style={styles.notificationBtn}>
-                <View style={styles.notificationTab}>
+              <View style={styles.notificationBtn}>
+                <View
+                  style={[
+                    styles.notificationTab,
+                    {backgroundColor: '#a83232'},
+                  ]}>
                   <Text style={styles.notifHeading}>आप ऑफलाइन हैं!</Text>
                   <Text style={styles.notifTxt}>
                     ऑफलाइन होने के कारण कस्टमर आर्डर प्राप्त नहीं हो पाएंगे
                   </Text>
                 </View>
-              </TouchableOpacity>
+              </View>
+            </>
+          ) : null} */}
+
+          <View
+            style={{
+              width: '100%',
+              paddingHorizontal: 15,
+              paddingVertical: 10,
+            }}>
+            <View
+              style={{
+                width: '100%',
+                flexDirection: 'row',
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+                borderWidth: 0.5,
+                borderColor: '#c7c7c7c7',
+                borderRadius: 5,
+                paddingHorizontal: 10,
+                backgroundColor: '#1c457a',
+                paddingVertical: 10,
+              }}>
+              <View
+                style={{
+                  width: 130,
+                  height: 130,
+                }}>
+                <LottieView
+                  source={require('../../assets/lottie/refer.json')}
+                  autoPlay
+                  loop
+                  size={{
+                    width: 130,
+                    height: 130,
+                  }}
+                />
+              </View>
+              <View
+                style={{
+                  flex: 1,
+                  marginLeft: 10,
+                  paddingHorizontal: 10,
+                  paddingVertical: 10,
+                }}>
+                <Text
+                  style={{
+                    fontFamily: 'OpenSans-Bold',
+                    fontSize: 22,
+                    color: '#ffc400',
+                  }}>
+                  ऑन-बोर्डिंग ऑफर{' '}
+                </Text>
+                <Text
+                  style={{
+                    fontFamily: 'OpenSans-SemiBold',
+                    fontSize: 18,
+                    color: '#fff',
+                    marginTop: 10,
+                  }}>
+                  लॉन्च की तारीख से पहले{' '}
+                  <Text
+                    style={{
+                      fontFamily: 'FredokaOne-Regular',
+                    }}>
+                    PantrYO
+                  </Text>{' '}
+                  के साथ 5 और राइडर्स कनेक्ट करें और ऑर्डर डिलीवर करने के पहले
+                  दिन ₹10/Km प्राप्त करें।
+                </Text>
+
+                <Text
+                  style={{
+                    fontFamily: 'OpenSans-SemiBold',
+                    fontSize: 18,
+                    color: '#fff',
+                    marginTop: 10,
+                  }}>
+                  कृपया ध्यान दें: ऑफ़र केवल डिलीवरी के पहले दिन ही मान्य!
+                </Text>
+              </View>
+            </View>
+          </View>
+
+          {isEnabled !== true ? (
+            <>
+              <View style={styles.notificationBtn}>
+                <View
+                  style={[
+                    styles.notificationTab,
+                    {backgroundColor: '#c7c7c7c7'},
+                  ]}>
+                  <Text
+                    style={[
+                      styles.notifHeading,
+                      {color: '#000', fontSize: 18},
+                    ]}>
+                    कस्टमर के आर्डर प्राप्त करने की तिथि : 1 Nov 2021
+                  </Text>
+
+                  {/* <Text
+                    style={{
+                      fontFamily: 'OpenSans-ExtraBold',
+                      fontSize: 20,
+                      marginTop: 20,
+                      color: '#3252a8',
+                    }}>
+                    ऑन-बोर्डिंग ऑफर{' '}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.notifTxt,
+                      {color: '#3252a8', marginTop: 10},
+                    ]}>
+                    लॉन्च की तारीख से पहले{' '}
+                    <Text
+                      style={{
+                        fontFamily: 'FredokaOne-Regular',
+                      }}>
+                      PantrYO
+                    </Text>{' '}
+                    के साथ 5 और राइडर्स कनेक्ट करें और ऑर्डर देने के अपने पहले
+                    दिन 10 रुपये/किलोमीटर प्राप्त करें। कृपया ध्यान दें: ऑफ़र
+                    केवल आपके डिलीवरी के पहले दिन पर ही मान्य है
+                  </Text> */}
+                </View>
+              </View>
             </>
           ) : null}
 
@@ -665,18 +795,10 @@ const HomeScreen = ({navigation}) => {
           {/* ========== Verification Notification End ========== */}
 
           {/* ====== Tab Row Start ====== */}
-          <View style={styles.row}>
+          {/* <View style={styles.row}>
             <TouchableOpacity
               onPress={() => navigation.navigate('NewOrders')}
-              style={styles.tab}>
-              {/* <View style={styles.lottieContainer}>
-                <LottieView
-                  source={require('../../assets/lottie/newOrders.json')}
-                  autoPlay
-                  loop
-                  size={styles.lottie}
-                />
-              </View> */}
+              style={styles.tab}>              
               <View style={styles.div}>
                 <Text style={styles.label}>आज के आर्डर </Text>
                 <Text style={styles.new}>
@@ -687,15 +809,7 @@ const HomeScreen = ({navigation}) => {
 
             <TouchableOpacity
               onPress={() => navigation.navigate('OrderHistory')}
-              style={styles.tab}>
-              {/* <View style={styles.lottieContainer}>
-                <LottieView
-                  source={require('../../assets/lottie/completed.json')}
-                  autoPlay
-                  loop
-                  size={styles.lottie}
-                />
-              </View> */}
+              style={styles.tab}>              
               <View style={styles.div}>
                 <Text style={styles.label}>कम्प्लीटेड ऑर्डर्स</Text>
                 <Text style={styles.new}>
@@ -703,9 +817,9 @@ const HomeScreen = ({navigation}) => {
                 </Text>
               </View>
             </TouchableOpacity>
-          </View>
+          </View> */}
 
-          <View style={styles.row}>
+          {/* <View style={styles.row}>
             <TouchableOpacity style={styles.tab}>
               <View style={[styles.lottieContainer, {marginLeft: 10}]}>
                 <LottieView
@@ -729,7 +843,7 @@ const HomeScreen = ({navigation}) => {
                 </Text>
               </View>
             </TouchableOpacity>
-          </View>
+          </View> */}
         </ScrollView>
         {/* ====== Tab Row End ====== */}
 

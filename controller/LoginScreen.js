@@ -26,6 +26,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {AuthContext} from './Utils';
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import analytics from '@react-native-firebase/analytics';
 
 // Screens
 import Register from './Register';

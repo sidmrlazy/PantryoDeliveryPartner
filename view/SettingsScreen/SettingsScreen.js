@@ -67,12 +67,12 @@ const Settings = ({navigation}) => {
             </View>
           </View>
         </View>
-        <Pressable
+        {/* <Pressable
           onPress={() => navigation.navigate('Payments')}
           style={styles.btn}>
           <Icons name="wallet-outline" size={25} color="#5E3360" />
           <Text style={styles.btnTxt}>पेमेंट</Text>
-        </Pressable>
+        </Pressable> */}
         <Pressable
           onPress={() => {
             Linking.openURL('https://pantryo.in/tnc.php').catch(err => {
@@ -83,10 +83,10 @@ const Settings = ({navigation}) => {
           <Icons name="information-circle-outline" size={25} color="#5E3360" />
           <Text style={styles.btnTxt}>नियम एवं शर्तें</Text>
         </Pressable>
-        <Pressable style={styles.btn}>
+        {/* <Pressable style={styles.btn}>
           <Icons name="headset-outline" size={25} color="#5E3360" />
           <Text style={styles.btnTxt}>सपोर्ट </Text>
-        </Pressable>
+        </Pressable> */}
         <Pressable style={styles.btn} onPress={signOut}>
           <Icons name="log-out-outline" size={25} color="#5E3360" />
           <Text style={styles.btnTxt}>लॉगआउट</Text>

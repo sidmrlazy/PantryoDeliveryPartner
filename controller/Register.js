@@ -11,6 +11,7 @@ import {
   PermissionsAndroid,
   Image,
   ToastAndroid,
+  TouchableOpacity,
 } from 'react-native';
 
 // Library
@@ -47,6 +48,7 @@ const Register = ({navigation}) => {
   const [isMounted, setIsMounted] = useState(true);
   const [genderType, setGenderType] = useState('');
   const [vehicleType, setVehicleType] = useState('');
+  const [referral, setReferral] = useState('');
 
   const [lat, setLat] = useState('');
   const [long, setLong] = useState('');
@@ -150,23 +152,25 @@ const Register = ({navigation}) => {
       showToast('Enter your Full Name');
       return;
     } else if (!contactNumber) {
-      showToast('Please Enter your Mobile Number');
+      showToast('Please enter your mobile number');
       return;
     } else if (contactNumber.length !== 10) {
-      showToast('Please Enter Valid Mobile Number');
+      showToast('Please enter a valid mobile number');
       return;
     } else if (!address) {
-      showToast('Please Enter Your Address');
+      showToast('Please enter you address');
       return;
     } else if (!pincode) {
-      showToast('Please Enter Your  Pincode');
+      showToast('Please enter your pincode');
       return;
-    } else if (vehicleType == 'Motorcycle') {
-      if (!bikeNumber) {
-        showToast('Please Enter Your  Registered Bike Number');
-        return;
-      }
-    } else {
+    }
+    // else if (vehicleType == 'Motorcycle') {
+    //   showToast('Please select vehicle type');
+    // } else if (!bikeNumber) {
+    //   showToast('Please enter bike registration number');
+    //   return;
+    // }
+    else {
       setLoading(true);
       fetch(
         'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartnerRegister.php',
@@ -203,6 +207,7 @@ const Register = ({navigation}) => {
               bikeRegistrationPaperImage: bikeRegImg,
               bikeInsurancepaperImage: bikeInsuranceImg,
               pollutionPaperImage: bikePollImg,
+              referral: referral,
               generatedOtp: result.resend_otp,
             });
           } else {
@@ -380,6 +385,38 @@ const Register = ({navigation}) => {
               Please upload ID, Address Proof & other documents for veirfication
             </Text>
 
+            <View style={styles.actionSection}>
+              <View style={styles.actionRow}>
+                <Pressable
+                  style={styles.actionBox}
+                  onPress={() => requestGalleryPermission('IdProof')}>
+                  {idImgPath == '' ? (
+                    <Icons name="image-outline" size={20} />
+                  ) : (
+                    <Image
+                      source={{uri: idImgPath}}
+                      style={{
+                        height: 95,
+                        width: 95,
+                        borderRadius: 5,
+                      }}
+                    />
+                    // <Icons name="checkbox-outline" size={30} color="green" />
+                  )}
+                </Pressable>
+                <View style={styles.actionDiv}>
+                  <Text style={styles.actionTxt}>Upload Aadhar Card Image</Text>
+                  {/* <Text
+                    style={{
+                      fontFamily: 'OpenSans-Regular',
+                      marginTop: 5,
+                    }}>
+                    (Aadhaar Card, Pan Card, Voter ID, Ration Card)
+                  </Text> */}
+                </View>
+              </View>
+            </View>
+
             <View style={styles.bankTypeSection}>
               <Text style={styles.label}>Select Vehicle Type</Text>
               <View style={styles.bankTypeContainer}>
@@ -415,38 +452,6 @@ const Register = ({navigation}) => {
               </View>
             </View>
 
-            <View style={styles.actionSection}>
-              <View style={styles.actionRow}>
-                <Pressable
-                  style={styles.actionBox}
-                  onPress={() => requestGalleryPermission('IdProof')}>
-                  {idImgPath == '' ? (
-                    <Icons name="image-outline" size={20} />
-                  ) : (
-                    <Image
-                      source={{uri: idImgPath}}
-                      style={{
-                        height: 95,
-                        width: 95,
-                        borderRadius: 5,
-                      }}
-                    />
-                    // <Icons name="checkbox-outline" size={30} color="green" />
-                  )}
-                </Pressable>
-                <View style={styles.actionDiv}>
-                  <Text style={styles.actionTxt}>Upload ID Proof Image</Text>
-                  <Text
-                    style={{
-                      fontFamily: 'OpenSans-Regular',
-                      marginTop: 5,
-                    }}>
-                    (Aadhaar Card, Pan Card, Voter ID, Ration Card)
-                  </Text>
-                </View>
-              </View>
-            </View>
-
             {vehicleType == 'Motorcycle' ? (
               <>
                 <View style={styles.section}>
@@ -458,33 +463,6 @@ const Register = ({navigation}) => {
                     style={styles.input}
                     onChangeText={text => setBikeNumber(text)}
                   />
-                </View>
-
-                <View style={styles.actionSection}>
-                  <View style={styles.actionRow}>
-                    <Pressable
-                      style={styles.actionBox}
-                      onPress={() => requestGalleryPermission('RegBikePlate')}>
-                      {bikeRegImgPath == '' ? (
-                        <Icons name="image-outline" size={20} />
-                      ) : (
-                        <Image
-                          source={{uri: bikeRegImgPath}}
-                          style={{
-                            height: 95,
-                            width: 95,
-                            borderRadius: 5,
-                          }}
-                        />
-                        // <Icons name="checkbox-outline" size={30} color="green" />
-                      )}
-                    </Pressable>
-                    <View style={styles.actionDiv}>
-                      <Text style={styles.actionTxt}>
-                        Upload Vehicle's Registration Plate Image
-                      </Text>
-                    </View>
-                  </View>
                 </View>
 
                 <View style={styles.actionSection}>
@@ -512,68 +490,25 @@ const Register = ({navigation}) => {
                     </View>
                   </View>
                 </View>
-
-                <View style={styles.actionSection}>
-                  <View style={styles.actionRow}>
-                    <Pressable
-                      style={styles.actionBox}
-                      onPress={() => requestGalleryPermission('bikeInsure')}>
-                      {bikeInsuranceImgPath == '' ? (
-                        <Icons name="image-outline" size={20} />
-                      ) : (
-                        <Image
-                          source={{uri: bikeInsuranceImgPath}}
-                          style={{
-                            height: 95,
-                            width: 95,
-                            borderRadius: 5,
-                          }}
-                        />
-                        // <Icons name="checkbox-outline" size={30} color="green" />
-                      )}
-                    </Pressable>
-                    <View style={styles.actionDiv}>
-                      <Text style={styles.actionTxt}>
-                        Upload Vehicle's Insurance papers
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-
-                {/* <View style={styles.actionSection}>
-                  <View style={styles.actionRow}>
-                    <Pressable
-                      style={styles.actionBox}
-                      onPress={() => requestGalleryPermission('PollutionImg')}>
-                      {bikePollImgPath == '' ? (
-                        <Icons name="image-outline" size={20} />
-                      ) : (
-                        <Image
-                          source={{uri: bikePollImgPath}}
-                          style={{
-                            height: 95,
-                            width: 95,
-                            borderRadius: 5,
-                          }}
-                        />                    
-                      )}
-                    </Pressable>
-                    <View style={styles.actionDiv}>
-                      <Text style={styles.actionTxt}>
-                        Upload Pollution Papers Image
-                      </Text>
-                    </View>
-                  </View>
-                </View> */}
               </>
             ) : null}
 
-            <Pressable
+            <View style={styles.section}>
+              <TextInput
+                placeholder="Referred by (RTN of Delivery Partner)"
+                placeholderTextColor="#777"
+                keyboardType="phone-pad"
+                style={styles.input}
+                onChangeText={text => setReferral(text)}
+              />
+            </View>
+
+            <TouchableOpacity
               onPress={() => registrationApi()}
               // onPress={() => navigation.navigate('OtpVerification')}
               style={styles.loginBtn}>
               <Text style={styles.loginBtnTxt}>SUBMIT</Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
