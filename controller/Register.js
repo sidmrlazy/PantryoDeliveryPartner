@@ -184,7 +184,6 @@ const Register = ({navigation}) => {
         .then(function (result) {
           if (result.error == 0) {
             navigation.navigate('OtpVerification', {
-              profileImg: profileImg,
               fullname: name,
               contactNumber: contactNumber,
               address: address,
@@ -195,11 +194,17 @@ const Register = ({navigation}) => {
               deliveryPartnerGender: genderType,
               deliveryPartnerVechileType: vehicleType,
               bikeRegistrationNumber: bikeNumber,
+
+              // ==========Images ============
               idProofImage: idImg,
               drivingLicenseImage: drivingLicense,
-              bikeRegistrationPaperImage: bikeRegImg,
-              bikeInsurancepaperImage: bikeInsuranceImg,
-              pollutionPaperImage: bikePollImg,
+              profileImage: profileImg,
+              // ==========Images ============
+
+              // bikeRegistrationPaperImage: bikeRegImg,
+              // bikeInsurancepaperImage: bikeInsuranceImg,
+              // pollutionPaperImage: bikePollImg,
+
               referral: referral,
               generatedOtp: result.resend_otp,
             });
@@ -493,7 +498,6 @@ const Register = ({navigation}) => {
                 keyboardType="phone-pad"
                 style={styles.input}
                 onChangeText={text => setReferral(text)}
-                value={referral}
               />
             </View>
 

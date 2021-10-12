@@ -83,6 +83,7 @@ const App = () => {
           verificationStatus,
           bikeRegistrationNumber,
           profileImage,
+          // drivingLicenseImage,
         } = data;
         AsyncStorage.setItem('contactNumber', contactNumber);
         AsyncStorage.setItem('userName', userName);
@@ -91,6 +92,7 @@ const App = () => {
         AsyncStorage.setItem('user_id', delivery_id);
         AsyncStorage.setItem('bikeRegistrationNumber', bikeRegistrationNumber);
         AsyncStorage.setItem('profileImage', profileImage);
+        // AsyncStorage.setItem('drivingLicenseImage', drivingLicenseImage);
         dispatch({type: 'SIGN_IN', token: 'userToken'});
         AsyncStorage.setItem('userToken', userToken);
         showToast('Welcome Partner!');

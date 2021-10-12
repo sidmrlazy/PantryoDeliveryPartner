@@ -22,12 +22,15 @@ import Payments from './Component/WalletScreen';
 
 const Settings = ({navigation}) => {
   const {signOut} = React.useContext(AuthContext);
+
   const [mounted, setmounted] = React.useState(true);
   const [userId, setUserId] = React.useState('');
   const [name, setName] = React.useState('');
   const [mobile, setMobile] = React.useState('');
   const [bikeNo, setBikeNo] = React.useState('');
+
   const [profileImg, setProfileImg] = React.useState('');
+
   const [appV, setAppV] = React.useState('');
   const [status, setStatus] = React.useState('');
 
@@ -69,13 +72,13 @@ const Settings = ({navigation}) => {
         return response.json();
       })
       .then(function (result) {
+        console.log(result);
         if (result.error == 0) {
           let verificationStatus = result.verificationStatus;
           AsyncStorage.setItem('verificationStatus', verificationStatus);
           userProfileData();
         }
-        getDeliveryPartnerVerificationStatus();
-        return Promise.resolve();
+        // getDeliveryPartnerVerificationStatus();
       })
       .catch(error => {
         console.error('getDeliveryPartnerVerificationStatus() : ' + error);
@@ -86,6 +89,7 @@ const Settings = ({navigation}) => {
     userProfileData();
     setAppV(VersionInfo.appVersion);
     getDeliveryPartnerVerificationStatus();
+    console.log('PROFILE IMAGE PATH: ' + profileImg);
     return function cleanup() {
       setmounted(false);
     };
@@ -96,7 +100,7 @@ const Settings = ({navigation}) => {
       <View style={styles.container}>
         <View style={styles.profileSection}>
           <View style={styles.imgContainer}>
-            {profileImg === '' ? (
+            {profileImg == '' ? (
               <Icons name="image-outline" size={25} color="#fff" />
             ) : (
               <Image source={{uri: profileImg}} style={styles.img} />
@@ -106,7 +110,7 @@ const Settings = ({navigation}) => {
           <View style={styles.div}>
             <Text style={styles.userName}>{name}</Text>
             <Text style={styles.userContact}>{mobile}</Text>
-            {status == '2' ? (
+            {status == '1' ? (
               <>
                 <View style={styles.innerRow}>
                   <Icons name="checkmark-circle" size={25} color="#36c734" />

@@ -494,7 +494,7 @@ const HomeScreen = ({navigation}) => {
           ) : null}
 
           {/* ========== Verification Notification Start ========== */}
-          {verificationStatus == '1' ? (
+          {verificationStatus !== '1' ? (
             <TouchableOpacity style={styles.notificationBtn}>
               <View style={styles.notificationTab}>
                 <Text style={styles.notifHeading}>प्रोफाइल वेरिफिकेशन</Text>
@@ -510,43 +510,7 @@ const HomeScreen = ({navigation}) => {
                 </Text>
               </View>
             </TouchableOpacity>
-          ) : (
-            <TouchableOpacity style={styles.notificationBtn}>
-              <View
-                style={[
-                  styles.notificationTab,
-                  {
-                    backgroundColor: '#2d780d',
-                    flexDirection: 'row',
-                    justifyContent: 'flex-start',
-                    alignItems: 'center',
-                  },
-                ]}>
-                <Icons name="shield-checkmark-outline" color="#fff" size={25} />
-                <Text
-                  style={[
-                    styles.notifHeading,
-                    {
-                      flex: 1,
-                      marginLeft: 10,
-                      fontFamily: 'OpenSans-Regular',
-                    },
-                  ]}>
-                  प्रोफाइल वेरिफाइड{' '}
-                </Text>
-                {/* <Text style={styles.notifTxt}>
-                  Please wait while we look at your documents. You may receive a
-                  call from our side to confirm the details provided by you.
-                </Text> */}
-                {/* <Text style={styles.notifTxt}>
-                  कृपया प्रतीक्षा करें जब तक हम आपके द्वारा दिए गये डाक्यूमेंट्स
-                  को वेरीफाई कर रहे है दस्तावेज़ देखें। आपके द्वारा प्रदान किए
-                  गए विवरण की पुष्टि करने के लिए आपको हमारी ओर से एक कॉल प्राप्त
-                  हो सकती है।
-                </Text> */}
-              </View>
-            </TouchableOpacity>
-          )}
+          ) : null}
           {/* ========== Verification Notification End ========== */}
 
           {/* ====== Tab Row Start ====== */}

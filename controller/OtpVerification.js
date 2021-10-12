@@ -95,29 +95,40 @@ const OtpVerification = ({navigation, route}) => {
       return;
     } else {
       const data = new FormData();
-      data.append('profileImg', profileImg);
+
       data.append('generatedOtp', otp);
       data.append('enteredOtp', internalVal);
+
       data.append('fullname', name);
       data.append('contactNumber', contactNumber);
       data.append('address', address);
       data.append('pincode', pincode);
+
+      // ========= Bank =========
       data.append('bankAccountNumber', bankAccountNumber);
       data.append('bankAccountType', bankAccountType);
       data.append('bankIFSCCode', bankIFSCCode);
+      // ========= Bank =========
+
       data.append('deliveryPartnerGender', genderType);
       data.append('deliveryPartnerVechileType', vehicleType);
       data.append('bikeRegistrationNumber', bikeNumber);
+
+      // ========= Images =========
+      data.append('profileImage', profileImg);
       data.append('idProofImage', idImg);
       data.append('drivingLicenseImage', drivingLicense);
-      data.append('bikeRegistrationPaperImage', bikeRegImg);
-      data.append('bikeInsurancepaperImage', bikeInsuranceImg);
-      data.append('pollutionPaperImage', bikePollImg);
+      // ========= Images =========
+
+      // data.append('bikeRegistrationPaperImage', bikeRegImg);
+      // data.append('bikeInsurancepaperImage', bikeInsuranceImg);
+      // data.append('pollutionPaperImage', bikePollImg);
+
       data.append('referral', referral);
       data.append('userToken', FCMToken);
       setLoading(true);
       await fetch(
-        'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/PantryoDeliveryPartnerRegistration.php',
+        'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/PantryoDPOtpVerification.php',
         {
           method: 'POST',
           headers: {
@@ -141,6 +152,8 @@ const OtpVerification = ({navigation, route}) => {
             let verificationStatus = result.verificationStatus;
             let profileImage = result.profileImage;
             let bikeRegistrationNumber = result.bikeRegistrationNumber;
+            let drivingLicenseImage = result.drivingLicenseImage;
+            let idProofImage = result.idProofImage;
             signIn({
               delivery_id,
               contactNumber,
@@ -150,6 +163,8 @@ const OtpVerification = ({navigation, route}) => {
               userName,
               bikeRegistrationNumber,
               profileImage,
+              drivingLicenseImage,
+              idProofImage,
             });
             // RazorpayFunction(
             //   delivery_id,
@@ -162,7 +177,7 @@ const OtpVerification = ({navigation, route}) => {
             //   profileImage,
             // );
           } else {
-            showToast(result.msg);
+            showToast('Error 404 (otpMatch): ' + result.msg);
           }
         })
         .catch(error => {
@@ -172,130 +187,9 @@ const OtpVerification = ({navigation, route}) => {
     }
   };
 
-  // const getRazorpayKey = async () => {
-  //   const secretKey = 'ja3n4n31n2l35ncmnvlae979sdf73';
-  //   fetch('https://gizmmoalchemy.com/api/pantryo/razorpayKey.php', {
-  //     method: 'POST',
-  //     headers: {
-  //       Accept: 'application/json',
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify({
-  //       secretkey: secretKey,
-  //     }),
-  //   })
-  //     .then(function (response) {
-  //       return response.json();
-  //     })
-  //     .then(function (result) {
-  //       setRazorpayKey(result.key);
-  //       getRazorpayKey();
-  //     })
-  //     .catch(error => {
-  //       console.error(error);
-  //     });
-  // };
-
-  // RazorpayFunction Payment APi
-  // const RazorpayFunction = async (
-  //   delivery_id,
-  //   contactNumber,
-  //   userToken,
-  //   userName,
-  //   userStatus,
-  //   verificationStatus,
-  //   bikeRegistrationNumber,
-  //   profileImage,
-  // ) => {
-  //   var options = {
-  //     description: '',
-  //     image: 'https://gizmmoalchemy.com/api/pantryo/Logo/PantryoLogo.png',
-  //     currency: 'INR',
-  //     key: razorpayKey,
-  //     amount: '100',
-  //     name: 'Pantryo',
-  //     prefill: {
-  //       email: 'support@pantryo.com',
-  //       contact: contactNumber,
-  //       name: userName,
-  //     },
-  //     theme: {color: '#6a3091'},
-  //   };
-
-  //   RazorpayCheckout.open(options)
-  //     .then(data => {
-  //       let payment_id = `${data.razorpay_payment_id}`;
-  //       getPaymentStatus(
-  //         payment_id,
-  //         delivery_id,
-  //         contactNumber,
-  //         userToken,
-  //         userName,
-  //         userStatus,
-  //         verificationStatus,
-  //         bikeRegistrationNumber,
-  //         profileImage,
-  //       );
-  //     })
-  //     .catch(error => {
-  //       console.log(
-  //         'RazorPay Function Error: ' +
-  //           JSON.stringify(`${error.code} | ${error.description}`),
-  //       );
-  //     });
-  // };
-
-  // Check Payment Status
-  // const getPaymentStatus = async (
-  //   payment_id,
-  //   delivery_id,
-  //   contactNumber,
-  //   userToken,
-  //   userName,
-  //   userStatus,
-  //   verificationStatus,
-  //   bikeRegistrationNumber,
-  //   profileImage,
-  // ) => {
-  //   setLoading(true);
-  //   await fetch(
-  //     'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/paymentdetails.php?flag=delivery_transaction',
-  //     {
-  //       method: 'POST',
-  //       headers: {
-  //         Accept: 'application/json',
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({
-  //         payment_id: payment_id,
-  //         delivery_id: delivery_id,
-  //       }),
-  //     },
-  //   )
-  //     .then(function (response) {
-  //       return response.json();
-  //     })
-  //     .then(function (result) {
-  //       if (result.payment_status === 'success') {
-  //         signIn({
-  //           delivery_id,
-  //           contactNumber,
-  //           userToken,
-  //           userStatus,
-  //           verificationStatus,
-  //           userName,
-  //           bikeRegistrationNumber,
-  //           profileImage,
-  //         });
-  //       } else {
-  //         showToast('Status of Payment' + ' ' + JSON.stringify(result));
-  //       }
-  //     })
-  //     .catch(error => {
-  //       console.error('getPaymentStatus function: ' + error);
-  //     })
-  //     .finally(() => setLoading(false));
-  // };
+  const reSendOtp = () => {
+    console.log('OTP Resent!');
+  };
 
   useEffect(() => {
     LogBox.ignoreAllLogs();
@@ -306,11 +200,9 @@ const OtpVerification = ({navigation, route}) => {
 
     // textInputFocus();
     getDeviceToken();
-    console.log('UserToken: ' + FCMToken);
 
     setOTP(route.params.generatedOtp);
     setContactNumber(route.params.contactNumber);
-    setProfileImg(route.params.profileImg);
     setName(route.params.fullname);
     setAddress(route.params.address);
     setPincode(route.params.pincode);
@@ -320,13 +212,18 @@ const OtpVerification = ({navigation, route}) => {
     setVehicleType(route.params.deliveryPartnerVechileType);
     setBankAccountType(route.params.bankAccountType);
     setBikeNumber(route.params.bikeRegistrationNumber);
+
+    // =======Images=========
+    setProfileImg(route.params.profileImage);
     setIdImg(route.params.idProofImage);
     setDrivingLicense(route.params.drivingLicenseImage);
+    // =======Images=========
+
     setFCMToken(route.params.userToken);
+    setReferral(route.params.referral);
     // setBikeRegImg(route.params.bikeRegistrationPaperImage);
     // setBikeInsuranceImg(route.params.bikeInsurancepaperImage);
     // setBikePollImg(route.params.pollutionPaperImage);
-    setReferral(route.params.referral);
   }, []);
 
   return (
@@ -395,50 +292,24 @@ const OtpVerification = ({navigation, route}) => {
             SUBMIT
           </Text>
         </TouchableOpacity>
-      </View>
-      {/* <View style={styles.container}>
-        <KeyboardAvoidingView
-          keyboardVerticalOffset={50}
-          behavior="padding"
-          style={styles.containerAvoidingView}>
-          <Text style={styles.textTile}>
-            Enter your 6 Digit OTP sent via SMS
-          </Text>
 
-          <View>
-            <TextInput
-              placeHolder=""
-              value={internalVal}
-              maxLength={lengthInput}
-              onChangeText={onChangeText}
-              returnKeyType="done"
-              keyboardType="numeric"
-              style={styles.otpInput}
-              ref={input => (textInput = input)}
-            />
-            <View style={styles.containerInput}>
-              {Array(lengthInput)
-                .fill()
-                .map((data, index) => (
-                  <View key={index} style={styles.cellView}>
-                    <Text
-                      style={styles.cellTxt}
-                      onPress={() => textInput.focus()}>
-                      {internalVal && internalVal.length > 0
-                        ? internalVal[index]
-                        : ''}
-                    </Text>
-                  </View>
-                ))}
-            </View>
-          </View>
-          <Pressable            
-            onPress={() => otpMatch()}
-            style={styles.btn}>
-            <Text style={styles.btnTxt}>SUBMIT</Text>
-          </Pressable>
-        </KeyboardAvoidingView>
-      </View> */}
+        <TouchableOpacity
+          style={{
+            width: '100%',
+            marginTop: 10,
+            justifyContent: 'center',
+            alignItems: 'flex-end',
+          }}
+          onPress={reSendOtp}>
+          <Text
+            style={{
+              fontFamily: 'OpenSans-SemiBold',
+              fontSize: 18,
+            }}>
+            Re-Send OTP
+          </Text>
+        </TouchableOpacity>
+      </View>
     </>
   );
 };
@@ -498,3 +369,128 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
 });
+
+// const getRazorpayKey = async () => {
+//   const secretKey = 'ja3n4n31n2l35ncmnvlae979sdf73';
+//   fetch('https://gizmmoalchemy.com/api/pantryo/razorpayKey.php', {
+//     method: 'POST',
+//     headers: {
+//       Accept: 'application/json',
+//       'Content-Type': 'application/json',
+//     },
+//     body: JSON.stringify({
+//       secretkey: secretKey,
+//     }),
+//   })
+//     .then(function (response) {
+//       return response.json();
+//     })
+//     .then(function (result) {
+//       setRazorpayKey(result.key);
+//       getRazorpayKey();
+//     })
+//     .catch(error => {
+//       console.error(error);
+//     });
+// };
+
+// RazorpayFunction Payment APi
+// const RazorpayFunction = async (
+//   delivery_id,
+//   contactNumber,
+//   userToken,
+//   userName,
+//   userStatus,
+//   verificationStatus,
+//   bikeRegistrationNumber,
+//   profileImage,
+// ) => {
+//   var options = {
+//     description: '',
+//     image: 'https://gizmmoalchemy.com/api/pantryo/Logo/PantryoLogo.png',
+//     currency: 'INR',
+//     key: razorpayKey,
+//     amount: '100',
+//     name: 'Pantryo',
+//     prefill: {
+//       email: 'support@pantryo.com',
+//       contact: contactNumber,
+//       name: userName,
+//     },
+//     theme: {color: '#6a3091'},
+//   };
+
+//   RazorpayCheckout.open(options)
+//     .then(data => {
+//       let payment_id = `${data.razorpay_payment_id}`;
+//       getPaymentStatus(
+//         payment_id,
+//         delivery_id,
+//         contactNumber,
+//         userToken,
+//         userName,
+//         userStatus,
+//         verificationStatus,
+//         bikeRegistrationNumber,
+//         profileImage,
+//       );
+//     })
+//     .catch(error => {
+//       console.log(
+//         'RazorPay Function Error: ' +
+//           JSON.stringify(`${error.code} | ${error.description}`),
+//       );
+//     });
+// };
+
+// Check Payment Status
+// const getPaymentStatus = async (
+//   payment_id,
+//   delivery_id,
+//   contactNumber,
+//   userToken,
+//   userName,
+//   userStatus,
+//   verificationStatus,
+//   bikeRegistrationNumber,
+//   profileImage,
+// ) => {
+//   setLoading(true);
+//   await fetch(
+//     'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/paymentdetails.php?flag=delivery_transaction',
+//     {
+//       method: 'POST',
+//       headers: {
+//         Accept: 'application/json',
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({
+//         payment_id: payment_id,
+//         delivery_id: delivery_id,
+//       }),
+//     },
+//   )
+//     .then(function (response) {
+//       return response.json();
+//     })
+//     .then(function (result) {
+//       if (result.payment_status === 'success') {
+//         signIn({
+//           delivery_id,
+//           contactNumber,
+//           userToken,
+//           userStatus,
+//           verificationStatus,
+//           userName,
+//           bikeRegistrationNumber,
+//           profileImage,
+//         });
+//       } else {
+//         showToast('Status of Payment' + ' ' + JSON.stringify(result));
+//       }
+//     })
+//     .catch(error => {
+//       console.error('getPaymentStatus function: ' + error);
+//     })
+//     .finally(() => setLoading(false));
+// };
