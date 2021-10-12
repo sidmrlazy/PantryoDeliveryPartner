@@ -23,6 +23,7 @@ import Icons from 'react-native-vector-icons/Ionicons';
 import LottieView from 'lottie-react-native';
 navigator.geolocation = require('@react-native-community/geolocation');
 import StarRating from 'react-native-star-rating';
+import messaging from '@react-native-firebase/messaging';
 
 //my S Screens
 import FeatureTest from './Component/FeaturesTest';
@@ -69,6 +70,8 @@ const HomeScreen = ({navigation}) => {
   const [itemQty, setItemQty] = React.useState('');
   const [productName, setProductName] = React.useState('');
 
+  const [FCMToken, setFCMToken] = React.useState('');
+
   // Order Count Variables
   const [orderCountFtd, setOrderCountFtd] = React.useState('');
   const [totalOrdersLtd, setTotalOrdersLtd] = React.useState('');
@@ -83,6 +86,16 @@ const HomeScreen = ({navigation}) => {
   const ReceiveOrders =
     'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=deliveryPartnerStatus';
 
+  // OnRefresh
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    // getOrderData();
+    getDeviceToken();
+    getDeliveryPartnerVerificationStatus();
+    // updateDeliveryPartnerLocation();
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
+
   // User Profile
   async function userProfileData() {
     setUserId(await AsyncStorage.getItem('user_id'));
@@ -94,13 +107,6 @@ const HomeScreen = ({navigation}) => {
     setProfileImg(await AsyncStorage.getItem('profileImage'));
     userProfileData();
   }
-
-  // OnRefresh
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    getOrderData();
-    wait(2000).then(() => setRefreshing(false));
-  }, []);
 
   // ======= Show Toast ========== //
   function showToast(msg) {
@@ -117,78 +123,6 @@ const HomeScreen = ({navigation}) => {
     'AAAAIIoSzdk:APA91bFqAg9Vu4T-_LYX5EPz9UVtqZTp0bRWOpkJLgm6GqIf4QAJtrW6RISmqWHZl6T-ykQrNLpo39kbRHLBsfGmqyz5JP8hxNCUzrfw8ECkcOItsO173OGeIrPf01_jiTLGjJsgwr33';
   const PartnerServerKey =
     'AAAALC3Ugt8:APA91bFdhqYhHLlDedpHpuCBX7puDR5x1qsrmc6k3gh-pXIBaUoxTJ3t91pVuBwV51GdrSnYLb9McgZYbGnkVR6-A8BnqsUL8nQKN8Bg3qwwH9puZ01uCt4tnGU7w0qNXL0S-x8Ofnaf';
-
-  // Notification to Partner
-  async function sendNotificationToPartner() {
-    const userToken = partnerToken;
-    const DELIVERY_PARTNER_FIREBASE_API_KEY = PartnerServerKey;
-    const message = {
-      to: userToken,
-      notification: {
-        title: 'Order Confirmation',
-        body: name + ' has accepted your order and is on his way.',
-        vibrate: 1,
-        sound: 1,
-        show_in_foreground: true,
-        priority: 'high',
-        content_available: true,
-      },
-      data: {
-        title: 'Order Confirmation',
-        body: name + ' has accepted your order and is on his way.',
-      },
-    };
-
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      Authorization: 'key=' + DELIVERY_PARTNER_FIREBASE_API_KEY,
-    });
-    let response = await fetch('https://fcm.googleapis.com/fcm/send', {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(message),
-    });
-    response = await response.json();
-    console.log(response);
-  }
-
-  // Notification to Customer
-  async function sendNotificationToCustomer() {
-    const userToken = customerToken;
-    const DELIVERY_PARTNER_FIREBASE_API_KEY = CustomerServerKey;
-    const message = {
-      to: userToken,
-      notification: {
-        title: 'Pantryo Delivery Partner Assigned',
-        body:
-          name +
-          ' has been assigned to pick up your order. Please wait while your order is being picked up',
-        vibrate: 1,
-        sound: 1,
-        show_in_foreground: true,
-        priority: 'high',
-        content_available: true,
-      },
-      data: {
-        title: 'Pantryo Delivery Partner Assigned',
-        body:
-          name +
-          ' has been assigned to pick up your order. Please wait while your order is being picked up',
-      },
-    };
-
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      Authorization: 'key=' + DELIVERY_PARTNER_FIREBASE_API_KEY,
-    });
-    let response = await fetch('https://fcm.googleapis.com/fcm/send', {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(message),
-    });
-    response = await response.json();
-    console.log(response);
-  }
 
   async function requestLocationPermission() {
     if (Platform.OS === 'ios') {
@@ -209,7 +143,7 @@ const HomeScreen = ({navigation}) => {
         }
         return Promise.resolve();
       } catch (err) {
-        console.warn(err);
+        console.warn('requestLocationPermission: ' + err);
       }
     }
   }
@@ -264,250 +198,26 @@ const HomeScreen = ({navigation}) => {
         return response.json();
       })
       .then(function (result) {
-        // console.log(result);
+        // console.log('Delivery Partner Location: ' + JSON.stringify(result));
         getOneTimeLocation();
       })
       .catch(error => {
-        console.error(error);
+        console.error('updateDeliveryPartnerLocation: ' + error);
       });
     // .finally(() => {
     //   getOneTimeLocation();
     // });
   }
 
-  // Get Order Data
-  async function getOrderData() {
-    let userId = await AsyncStorage.getItem('user_id');
-    await fetch(
-      'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=showOrderDeliveryPartner',
-      {
-        method: 'POST',
-        headers: {
-          Accept: 'application/JSON',
-          'Content-Type': 'application/JSON',
-        },
-        body: JSON.stringify({
-          delivery_id: userId,
-        }),
-      },
-    )
-      .then(function (response) {
-        return response.json();
-      })
-      .then(function (result) {
-        if (result.error == 0) {
-          setNewOrder(result.allorder);
-        }
-      })
-      .catch(error => {
-        console.error(error);
-      })
-      .finally(() => {
-        setLoading(false);
-        getOrderData();
-        return Promise.resolve();
+  // FCM Token
+  const getDeviceToken = async () => {
+    messaging()
+      .getToken()
+      .then(token => {
+        getDeviceToken();
+        return setFCMToken(token);
       });
-  }
-
-  // Order Count Today
-  async function orderCountToday() {
-    let userId = await AsyncStorage.getItem('user_id');
-    fetch(
-      'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartnerCount.php?flag=todayOrdercount',
-      {
-        method: 'POST',
-        headers: {
-          Accept: 'application/JSON',
-          'Content-Type': 'application/JSON',
-        },
-        body: JSON.stringify({
-          delivery_id: userId,
-        }),
-      },
-    )
-      .then(function (response) {
-        return response.json();
-      })
-      .then(function (result) {
-        if (result.error == 0) {
-          setOrderCountFtd(result.todayOrder);
-        }
-        return Promise.resolve();
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  }
-
-  // Total Orders Life To Date
-  async function totalOrders() {
-    let userId = await AsyncStorage.getItem('user_id');
-    fetch(
-      'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartnerCount.php?flag=allOrdercount',
-      {
-        method: 'POST',
-        headers: {
-          Accept: 'application/JSON',
-          'Content-Type': 'application/JSON',
-        },
-        body: JSON.stringify({
-          delivery_id: userId,
-        }),
-      },
-    )
-      .then(function (response) {
-        return response.json();
-      })
-      .then(function (result) {
-        if (result.error == 0) {
-          setTotalOrdersLtd(result.todayOrder);
-        }
-        return Promise.resolve();
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  }
-
-  // Total Earnings for the day
-  async function totalEarningFtd() {
-    let userId = await AsyncStorage.getItem('user_id');
-    fetch(
-      'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartnerCount.php?flag=todayearning',
-      {
-        method: 'POST',
-        headers: {
-          Accept: 'application/JSON',
-          'Content-Type': 'application/JSON',
-        },
-        body: JSON.stringify({
-          delivery_id: userId,
-        }),
-      },
-    )
-      .then(function (response) {
-        return response.json();
-      })
-      .then(function (result) {
-        if (result.error == 0) {
-          setEarnings(result.todayearn);
-        }
-        return Promise.resolve();
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  }
-
-  // Partner Status
-  async function getStatus() {
-    let delivery_id = await AsyncStorage.getItem('user_id');
-    await fetch(
-      'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/checkpartnerStatus.php',
-      {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          delivery_id: delivery_id,
-        }),
-      },
-    )
-      .then(response => {
-        return response.json();
-      })
-      .then(result => {
-        if (result.error == 0) {
-          let userStatus = result.userStatus;
-          if (userStatus == '1') {
-            setIsEnabled(true);
-          } else {
-            setIsEnabled(false);
-          }
-
-          setStatus(userStatus);
-          AsyncStorage.setItem('userStatus', userStatus);
-          return Promise.resolve();
-        }
-        return Promise.resolve();
-        // getStatus();
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  }
-
-  // Partner Rating
-  async function getRatingPoint() {
-    let delivery_id = await AsyncStorage.getItem('user_id');
-    await fetch('https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        delivery_id: delivery_id,
-      }),
-    })
-      .then(response => {
-        return response.json();
-      })
-      .then(result => {
-        if (result.error == 0) {
-          setRating(result.rating);
-        }
-        return Promise.resolve();
-        // getStatus();
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  }
-
-  // Update Working Status
-  async function updateWorkingStatus(workstatus) {
-    setLoading(true);
-    let userId = await AsyncStorage.getItem('user_id');
-    fetch(
-      'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/UpdateDeliveryPartnerWorkingStatus.php',
-      {
-        method: 'POST',
-        headers: {
-          Accept: 'application/JSON',
-          'Content-Type': 'application/JSON',
-        },
-        body: JSON.stringify({
-          delivery_id: userId,
-          userStatus: workstatus,
-        }),
-      },
-    )
-      .then(function (response) {
-        return response.json();
-      })
-      .then(function (result) {
-        if (result.error == 0) {
-          let userStatus = result.userStatus;
-          if (userStatus == '1') {
-            setIsEnabled(true);
-          } else {
-            setIsEnabled(false);
-          }
-          setStatus(userStatus);
-          AsyncStorage.setItem('userStatus', userStatus);
-        }
-        return Promise.resolve();
-      })
-      .catch(error => {
-        console.log(error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }
+  };
 
   // Check Verification Status
   async function getDeliveryPartnerVerificationStatus() {
@@ -538,7 +248,7 @@ const HomeScreen = ({navigation}) => {
         return Promise.resolve();
       })
       .catch(error => {
-        console.error(error);
+        console.error('getDeliveryPartnerVerificationStatus() : ' + error);
       });
   }
 
@@ -548,13 +258,18 @@ const HomeScreen = ({navigation}) => {
     LogBox.ignoreLogs(['VirtualizedLists should never be nested...']);
 
     requestLocationPermission();
-    getOrderData();
-    getStatus();
-    userProfileData();
-    orderCountToday();
-    totalOrders();
     getDeliveryPartnerVerificationStatus();
-    totalEarningFtd();
+    getDeviceToken();
+    userProfileData();
+
+    // console.log('User Token: ' + FCMToken);
+    // getOrderData();
+    // getStatus();
+    // orderCountToday();
+    // totalOrders();
+    // totalEarningFtd();
+    // console.log('LAT: ' + lat);
+    // console.log('LONG: ' + long);
   }, []);
 
   return (
@@ -692,7 +407,7 @@ const HomeScreen = ({navigation}) => {
                 <Text
                   style={{
                     fontFamily: 'OpenSans-Bold',
-                    fontSize: 22,
+                    fontSize: 28,
                     color: '#ffc400',
                   }}>
                   ऑन-बोर्डिंग ऑफर{' '}
@@ -700,7 +415,7 @@ const HomeScreen = ({navigation}) => {
                 <Text
                   style={{
                     fontFamily: 'OpenSans-SemiBold',
-                    fontSize: 18,
+                    fontSize: 20,
                     color: '#fff',
                     marginTop: 10,
                   }}>
@@ -711,14 +426,14 @@ const HomeScreen = ({navigation}) => {
                     }}>
                     PantrYO
                   </Text>{' '}
-                  के साथ 5 और राइडर्स कनेक्ट करें और ऑर्डर डिलीवर करने के पहले
-                  दिन ₹10/Km प्राप्त करें।
+                  के साथ 5 राइडर्स कनेक्ट करें और ऑर्डर डिलीवर करने के पहले दिन
+                  ₹10/Km प्राप्त करें।
                 </Text>
 
                 <Text
                   style={{
                     fontFamily: 'OpenSans-SemiBold',
-                    fontSize: 18,
+                    fontSize: 20,
                     color: '#fff',
                     marginTop: 10,
                   }}>
@@ -739,9 +454,13 @@ const HomeScreen = ({navigation}) => {
                   <Text
                     style={[
                       styles.notifHeading,
-                      {color: '#000', fontSize: 18},
+                      {
+                        color: '#000',
+                        fontSize: 18,
+                        fontFamily: 'OpenSans-SemiBold',
+                      },
                     ]}>
-                    कस्टमर के आर्डर प्राप्त करने की तिथि : 1 Nov 2021
+                    डिलीवरी ऑर्डर्स 1st Nov 2021 से शुरू किये जायेंगे
                   </Text>
 
                   {/* <Text
@@ -791,7 +510,43 @@ const HomeScreen = ({navigation}) => {
                 </Text>
               </View>
             </TouchableOpacity>
-          ) : null}
+          ) : (
+            <TouchableOpacity style={styles.notificationBtn}>
+              <View
+                style={[
+                  styles.notificationTab,
+                  {
+                    backgroundColor: '#2d780d',
+                    flexDirection: 'row',
+                    justifyContent: 'flex-start',
+                    alignItems: 'center',
+                  },
+                ]}>
+                <Icons name="shield-checkmark-outline" color="#fff" size={25} />
+                <Text
+                  style={[
+                    styles.notifHeading,
+                    {
+                      flex: 1,
+                      marginLeft: 10,
+                      fontFamily: 'OpenSans-Regular',
+                    },
+                  ]}>
+                  प्रोफाइल वेरिफाइड{' '}
+                </Text>
+                {/* <Text style={styles.notifTxt}>
+                  Please wait while we look at your documents. You may receive a
+                  call from our side to confirm the details provided by you.
+                </Text> */}
+                {/* <Text style={styles.notifTxt}>
+                  कृपया प्रतीक्षा करें जब तक हम आपके द्वारा दिए गये डाक्यूमेंट्स
+                  को वेरीफाई कर रहे है दस्तावेज़ देखें। आपके द्वारा प्रदान किए
+                  गए विवरण की पुष्टि करने के लिए आपको हमारी ओर से एक कॉल प्राप्त
+                  हो सकती है।
+                </Text> */}
+              </View>
+            </TouchableOpacity>
+          )}
           {/* ========== Verification Notification End ========== */}
 
           {/* ====== Tab Row Start ====== */}
@@ -1213,3 +968,310 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
 });
+
+// Notification to Partner
+// async function sendNotificationToPartner() {
+//   const userToken = partnerToken;
+//   const DELIVERY_PARTNER_FIREBASE_API_KEY = PartnerServerKey;
+//   const message = {
+//     to: userToken,
+//     notification: {
+//       title: 'Order Confirmation',
+//       body: name + ' has accepted your order and is on his way.',
+//       vibrate: 1,
+//       sound: 1,
+//       show_in_foreground: true,
+//       priority: 'high',
+//       content_available: true,
+//     },
+//     data: {
+//       title: 'Order Confirmation',
+//       body: name + ' has accepted your order and is on his way.',
+//     },
+//   };
+
+//   let headers = new Headers({
+//     'Content-Type': 'application/json',
+//     Authorization: 'key=' + DELIVERY_PARTNER_FIREBASE_API_KEY,
+//   });
+//   let response = await fetch('https://fcm.googleapis.com/fcm/send', {
+//     method: 'POST',
+//     headers,
+//     body: JSON.stringify(message),
+//   });
+//   response = await response.json();
+//   console.log(response);
+// }
+
+// Notification to Customer
+// async function sendNotificationToCustomer() {
+//   const userToken = customerToken;
+//   const DELIVERY_PARTNER_FIREBASE_API_KEY = CustomerServerKey;
+//   const message = {
+//     to: userToken,
+//     notification: {
+//       title: 'Pantryo Delivery Partner Assigned',
+//       body:
+//         name +
+//         ' has been assigned to pick up your order. Please wait while your order is being picked up',
+//       vibrate: 1,
+//       sound: 1,
+//       show_in_foreground: true,
+//       priority: 'high',
+//       content_available: true,
+//     },
+//     data: {
+//       title: 'Pantryo Delivery Partner Assigned',
+//       body:
+//         name +
+//         ' has been assigned to pick up your order. Please wait while your order is being picked up',
+//     },
+//   };
+
+//   let headers = new Headers({
+//     'Content-Type': 'application/json',
+//     Authorization: 'key=' + DELIVERY_PARTNER_FIREBASE_API_KEY,
+//   });
+//   let response = await fetch('https://fcm.googleapis.com/fcm/send', {
+//     method: 'POST',
+//     headers,
+//     body: JSON.stringify(message),
+//   });
+//   response = await response.json();
+//   console.log(response);
+// }
+
+// Get Order Data
+// async function getOrderData() {
+//   let userId = await AsyncStorage.getItem('user_id');
+//   await fetch(
+//     'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartner.php?flag=showOrderDeliveryPartner',
+//     {
+//       method: 'POST',
+//       headers: {
+//         Accept: 'application/JSON',
+//         'Content-Type': 'application/JSON',
+//       },
+//       body: JSON.stringify({
+//         delivery_id: userId,
+//         // userToken: FCMToken,
+//       }),
+//     },
+//   )
+//     .then(function (response) {
+//       return response.json();
+//     })
+//     .then(function (result) {
+//       if (result.error == 0) {
+//         setNewOrder(result.allorder);
+//       }
+//     })
+//     .catch(error => {
+//       console.error(error);
+//     })
+//     .finally(() => {
+//       setLoading(false);
+//       getOrderData();
+//       return Promise.resolve();
+//     });
+// }
+
+// Order Count Today
+// async function orderCountToday() {
+//   let userId = await AsyncStorage.getItem('user_id');
+//   fetch(
+//     'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartnerCount.php?flag=todayOrdercount',
+//     {
+//       method: 'POST',
+//       headers: {
+//         Accept: 'application/JSON',
+//         'Content-Type': 'application/JSON',
+//       },
+//       body: JSON.stringify({
+//         delivery_id: userId,
+//       }),
+//     },
+//   )
+//     .then(function (response) {
+//       return response.json();
+//     })
+//     .then(function (result) {
+//       if (result.error == 0) {
+//         setOrderCountFtd(result.todayOrder);
+//       }
+//       return Promise.resolve();
+//     })
+//     .catch(error => {
+//       console.log(error);
+//     });
+// }
+
+// Total Orders Life To Date
+// async function totalOrders() {
+//   let userId = await AsyncStorage.getItem('user_id');
+//   fetch(
+//     'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartnerCount.php?flag=allOrdercount',
+//     {
+//       method: 'POST',
+//       headers: {
+//         Accept: 'application/JSON',
+//         'Content-Type': 'application/JSON',
+//       },
+//       body: JSON.stringify({
+//         delivery_id: userId,
+//       }),
+//     },
+//   )
+//     .then(function (response) {
+//       return response.json();
+//     })
+//     .then(function (result) {
+//       if (result.error == 0) {
+//         setTotalOrdersLtd(result.todayOrder);
+//       }
+//       return Promise.resolve();
+//     })
+//     .catch(error => {
+//       console.log(error);
+//     });
+// }
+
+// Total Earnings for the day
+// async function totalEarningFtd() {
+//   let userId = await AsyncStorage.getItem('user_id');
+//   fetch(
+//     'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartnerCount.php?flag=todayearning',
+//     {
+//       method: 'POST',
+//       headers: {
+//         Accept: 'application/JSON',
+//         'Content-Type': 'application/JSON',
+//       },
+//       body: JSON.stringify({
+//         delivery_id: userId,
+//       }),
+//     },
+//   )
+//     .then(function (response) {
+//       return response.json();
+//     })
+//     .then(function (result) {
+//       if (result.error == 0) {
+//         setEarnings(result.todayearn);
+//       }
+//       return Promise.resolve();
+//     })
+//     .catch(error => {
+//       console.log(error);
+//     });
+// }
+
+// Partner Rating
+// async function getRatingPoint() {
+//   let delivery_id = await AsyncStorage.getItem('user_id');
+//   await fetch('https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/', {
+//     method: 'POST',
+//     headers: {
+//       Accept: 'application/json',
+//       'Content-Type': 'application/json',
+//     },
+//     body: JSON.stringify({
+//       delivery_id: delivery_id,
+//     }),
+//   })
+//     .then(response => {
+//       return response.json();
+//     })
+//     .then(result => {
+//       if (result.error == 0) {
+//         setRating(result.rating);
+//       }
+//       return Promise.resolve();
+//       // getStatus();
+//     })
+//     .catch(error => {
+//       console.log(error);
+//     });
+// }
+
+// Update Working Status
+// async function updateWorkingStatus(workstatus) {
+//   setLoading(true);
+//   let userId = await AsyncStorage.getItem('user_id');
+//   fetch(
+//     'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/UpdateDeliveryPartnerWorkingStatus.php',
+//     {
+//       method: 'POST',
+//       headers: {
+//         Accept: 'application/JSON',
+//         'Content-Type': 'application/JSON',
+//       },
+//       body: JSON.stringify({
+//         delivery_id: userId,
+//         userStatus: workstatus,
+//       }),
+//     },
+//   )
+//     .then(function (response) {
+//       return response.json();
+//     })
+//     .then(function (result) {
+//       if (result.error == 0) {
+//         let userStatus = result.userStatus;
+//         if (userStatus == '1') {
+//           setIsEnabled(true);
+//         } else {
+//           setIsEnabled(false);
+//         }
+//         setStatus(userStatus);
+//         AsyncStorage.setItem('userStatus', userStatus);
+//       }
+//       return Promise.resolve();
+//     })
+//     .catch(error => {
+//       console.log(error);
+//     })
+//     .finally(() => {
+//       setLoading(false);
+//     });
+// }
+
+// Partner Online/Offline Status
+// async function getStatus() {
+//   let delivery_id = await AsyncStorage.getItem('user_id');
+//   await fetch(
+//     'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/checkpartnerStatus.php',
+//     {
+//       method: 'POST',
+//       headers: {
+//         Accept: 'application/json',
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({
+//         delivery_id: delivery_id,
+//       }),
+//     },
+//   )
+//     .then(response => {
+//       return response.json();
+//     })
+//     .then(result => {
+//       if (result.error == 0) {
+//         let userStatus = result.userStatus;
+//         if (userStatus == '1') {
+//           setIsEnabled(true);
+//         } else {
+//           setIsEnabled(false);
+//         }
+
+//         setStatus(userStatus);
+//         AsyncStorage.setItem('userStatus', userStatus);
+//         return Promise.resolve();
+//       }
+//       return Promise.resolve();
+//       // getStatus();
+//     })
+//     .catch(error => {
+//       console.log(error);
+//     });
+// }

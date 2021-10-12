@@ -7,6 +7,7 @@ import {
   Image,
   ImageBackground,
   Linking,
+  TouchableOpacity,
 } from 'react-native';
 
 // Library
@@ -28,6 +29,7 @@ const Settings = ({navigation}) => {
   const [bikeNo, setBikeNo] = React.useState('');
   const [profileImg, setProfileImg] = React.useState('');
   const [appV, setAppV] = React.useState('');
+  const [status, setStatus] = React.useState('');
 
   // User Profile
   const userProfileData = async () => {
@@ -36,11 +38,54 @@ const Settings = ({navigation}) => {
     setMobile(await AsyncStorage.getItem('contactNumber'));
     setBikeNo(await AsyncStorage.getItem('bikeRegistrationNumber'));
     setProfileImg(await AsyncStorage.getItem('profileImage'));
+    setStatus(await AsyncStorage.getItem('verificationStatus'));
   };
+
+  const supportNumber = '+918808808888';
+
+  const openWhatsapp = () => {
+    Linking.openURL(
+      `whatsapp://send?phone=${supportNumber}&text=${'Hi, I need help with: '}`,
+    );
+  };
+
+  // Check Verification Status
+  async function getDeliveryPartnerVerificationStatus() {
+    let delivery_id = await AsyncStorage.getItem('user_id');
+    fetch(
+      'https://gizmmoalchemy.com/api/pantryo/PartnerAppApi/checkVerificationStatus.php',
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          delivery_id: delivery_id,
+        }),
+      },
+    )
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (result) {
+        if (result.error == 0) {
+          let verificationStatus = result.verificationStatus;
+          AsyncStorage.setItem('verificationStatus', verificationStatus);
+          userProfileData();
+        }
+        getDeliveryPartnerVerificationStatus();
+        return Promise.resolve();
+      })
+      .catch(error => {
+        console.error('getDeliveryPartnerVerificationStatus() : ' + error);
+      });
+  }
 
   React.useEffect(() => {
     userProfileData();
     setAppV(VersionInfo.appVersion);
+    getDeliveryPartnerVerificationStatus();
     return function cleanup() {
       setmounted(false);
     };
@@ -61,10 +106,14 @@ const Settings = ({navigation}) => {
           <View style={styles.div}>
             <Text style={styles.userName}>{name}</Text>
             <Text style={styles.userContact}>{mobile}</Text>
-            <View style={styles.innerRow}>
-              <Icons name="checkmark-circle" size={25} color="#36c734" />
-              <Text style={styles.status}>Approved</Text>
-            </View>
+            {status == '2' ? (
+              <>
+                <View style={styles.innerRow}>
+                  <Icons name="checkmark-circle" size={25} color="#36c734" />
+                  <Text style={styles.status}>Approved</Text>
+                </View>
+              </>
+            ) : null}
           </View>
         </View>
         {/* <Pressable
@@ -83,10 +132,10 @@ const Settings = ({navigation}) => {
           <Icons name="information-circle-outline" size={25} color="#5E3360" />
           <Text style={styles.btnTxt}>नियम एवं शर्तें</Text>
         </Pressable>
-        {/* <Pressable style={styles.btn}>
-          <Icons name="headset-outline" size={25} color="#5E3360" />
+        <TouchableOpacity onPress={openWhatsapp} style={styles.btn}>
+          <Icons name="logo-whatsapp" size={25} color="#5E3360" />
           <Text style={styles.btnTxt}>सपोर्ट </Text>
-        </Pressable> */}
+        </TouchableOpacity>
         <Pressable style={styles.btn} onPress={signOut}>
           <Icons name="log-out-outline" size={25} color="#5E3360" />
           <Text style={styles.btnTxt}>लॉगआउट</Text>
@@ -95,7 +144,7 @@ const Settings = ({navigation}) => {
           <Text style={styles.copyRightLabel}>
             Designed & Developed by GizmmoAlchemy
           </Text>
-          <Text style={styles.AppVersion}>App v({appV})</Text>
+          <Text style={styles.AppVersion}>App v ({appV})</Text>
         </View>
       </View>
     </>
@@ -209,7 +258,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   AppVersion: {
-    fontFamily: 'OpenSans-Bold',
+    fontFamily: 'OpenSans-Regular',
     fontSize: 16,
   },
 });

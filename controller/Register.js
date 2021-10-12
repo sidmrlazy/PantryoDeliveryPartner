@@ -163,14 +163,7 @@ const Register = ({navigation}) => {
     } else if (!pincode) {
       showToast('Please enter your pincode');
       return;
-    }
-    // else if (vehicleType == 'Motorcycle') {
-    //   showToast('Please select vehicle type');
-    // } else if (!bikeNumber) {
-    //   showToast('Please enter bike registration number');
-    //   return;
-    // }
-    else {
+    } else {
       setLoading(true);
       fetch(
         'https://gizmmoalchemy.com/api/pantryo/DeliveryPartnerApi/DeliveryPartnerRegister.php',
@@ -495,11 +488,12 @@ const Register = ({navigation}) => {
 
             <View style={styles.section}>
               <TextInput
-                placeholder="Referred by (RTN of Delivery Partner)"
+                placeholder="Referred by (Registered Mobile Number of Partner)"
                 placeholderTextColor="#777"
                 keyboardType="phone-pad"
                 style={styles.input}
                 onChangeText={text => setReferral(text)}
+                value={referral}
               />
             </View>
 
