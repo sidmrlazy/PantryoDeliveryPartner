@@ -1,5 +1,15 @@
 import React, {useRef, useState, useEffect, useMemo, useReducer} from 'react';
-import {ToastAndroid, View, Text, Alert} from 'react-native';
+import {
+  ToastAndroid,
+  View,
+  Text,
+  Alert,
+  Modal,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  useWindowDimensions,
+} from 'react-native';
 
 // ===== Libraries ===== //
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -22,9 +32,16 @@ const App = () => {
   const navigationRef = useRef();
   const routeNameRef = useRef();
 
+  const [modalVisible, setModalVisible] = useState(false);
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+  const [modalImage, setModalImage] = useState('');
+
   // const navigationNew = useNavigation();
   const [loading, setLoading] = useState(true);
   const [initialRoute, setInitialRoute] = useState('Navigation');
+
+  const window = useWindowDimensions();
 
   const showToast = msg => {
     ToastAndroid.showWithGravityAndOffset(
@@ -118,14 +135,34 @@ const App = () => {
     requestUserPermission();
 
     const unsubscribe = messaging().onMessage(async remoteMessage => {
-      console.log(
-        JSON.stringify(
-          remoteMessage.notification.title +
-            ' ' +
-            remoteMessage.notification.body,
-        ),
-      );
+      // console.log(JSON.stringify(remoteMessage));
+      setTitle(remoteMessage.data.title);
+      setBody(remoteMessage.data.body);
+      setModalImage(remoteMessage.data.image);
+      setModalVisible(true);
     });
+
+    messaging().onNotificationOpenedApp(remoteMessage => {
+      console.log(
+        'Notification caused app to open from background state:',
+        remoteMessage.notification,
+      );
+      // navigation.navigate(remoteMessage.data.type);
+    });
+
+    // Check whether an initial notification is available
+    messaging()
+      .getInitialNotification()
+      .then(remoteMessage => {
+        if (remoteMessage) {
+          console.log(
+            'Notification caused app to open from quit state:',
+            remoteMessage.notification,
+          );
+          setInitialRoute(remoteMessage.data.type); // e.g. "Settings"
+        }
+        setLoading(false);
+      });
 
     setTimeout(() => {
       const bootstrapAsync = async () => {
@@ -143,57 +180,154 @@ const App = () => {
   }, []);
 
   return (
-    <AuthContext.Provider value={authContext}>
-      <NavigationContainer
-        ref={navigationRef}
-        onReady={() =>
-          (routeNameRef.current = navigationRef.current.getCurrentRoute().name)
-        }
-        onReady={() =>
-          (routeNameRef.current = navigationRef.current.getCurrentRoute().name)
-        }
-        onStateChange={async () => {
-          const previousRouteName = routeNameRef.current;
-          const currentRouteName = navigationRef.current.getCurrentRoute().name;
-
-          if (previousRouteName !== currentRouteName) {
-            // await Analytics.setCurrentScreen(currentRouteName);
-            await analytics().logScreenView({
-              screen_name: currentRouteName,
-              screen_class: currentRouteName,
-            });
+    <>
+      <AuthContext.Provider value={authContext}>
+        <NavigationContainer
+          ref={navigationRef}
+          onReady={() =>
+            (routeNameRef.current =
+              navigationRef.current.getCurrentRoute().name)
           }
+          onReady={() =>
+            (routeNameRef.current =
+              navigationRef.current.getCurrentRoute().name)
+          }
+          onStateChange={async () => {
+            const previousRouteName = routeNameRef.current;
+            const currentRouteName =
+              navigationRef.current.getCurrentRoute().name;
 
-          // Save the current route name for later comparison
-          routeNameRef.current = currentRouteName;
-        }}
-        linking={linking}>
-        <Stack.Navigator initialRouteName={initialRoute} headerMode="none">
-          {state.isLoading ? (
-            <Stack.Screen name="SplashScreen" component={SplashScreen} />
-          ) : state.userToken == null ? (
-            <Stack.Screen
-              name="LoginScreen"
-              component={LoginScreen}
-              options={{
-                title: 'Sign in',
-                animationTypeForReplace: state.isSignout ? 'pop' : 'push',
-              }}
-            />
-          ) : (
-            <Stack.Screen
-              name="Navigation"
-              component={Navigation}
-              options={{
-                title: 'Home',
-                animationTypeForReplace: state.isSignout ? 'pop' : 'push',
-              }}
-            />
-          )}
-        </Stack.Navigator>
-      </NavigationContainer>
-    </AuthContext.Provider>
+            if (previousRouteName !== currentRouteName) {
+              // await Analytics.setCurrentScreen(currentRouteName);
+              await analytics().logScreenView({
+                screen_name: currentRouteName,
+                screen_class: currentRouteName,
+              });
+            }
+
+            // Save the current route name for later comparison
+            routeNameRef.current = currentRouteName;
+          }}
+          linking={linking}>
+          <Stack.Navigator initialRouteName={initialRoute} headerMode="none">
+            {state.isLoading ? (
+              <Stack.Screen name="SplashScreen" component={SplashScreen} />
+            ) : state.userToken == null ? (
+              <Stack.Screen
+                name="LoginScreen"
+                component={LoginScreen}
+                options={{
+                  title: 'Sign in',
+                  animationTypeForReplace: state.isSignout ? 'pop' : 'push',
+                }}
+              />
+            ) : (
+              <Stack.Screen
+                name="Navigation"
+                component={Navigation}
+                options={{
+                  title: 'Home',
+                  animationTypeForReplace: state.isSignout ? 'pop' : 'push',
+                }}
+              />
+            )}
+          </Stack.Navigator>
+        </NavigationContainer>
+      </AuthContext.Provider>
+      {/* ========= Order Modal ========= */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}>
+        <View style={styles.container}>
+          <View style={styles.card}>
+            <Text style={styles.orderTitle}>{title}</Text>
+            {modalImage ? (
+              <>
+                <View style={styles.modalImgContainer}>
+                  <Image
+                    source={{uri: modalImage}}
+                    style={{
+                      width: window.width - 70,
+                      height: window.height - 700,
+                      resizeMode: 'cover',
+                    }}
+                  />
+                </View>
+              </>
+            ) : null}
+
+            <Text style={styles.orderBody}>{body}</Text>
+
+            <TouchableOpacity
+              style={styles.orderBtn}
+              onPress={() => setModalVisible(!modalVisible)}>
+              <Text style={styles.orderBtnTxt}>OK</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+      {/* ========= Order Modal ========= */}
+    </>
   );
 };
 
 export default App;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(52, 52, 52, 0.8)',
+    paddingHorizontal: 20,
+  },
+  card: {
+    width: '100%',
+    backgroundColor: '#fff',
+    paddingBottom: 50,
+    paddingHorizontal: 20,
+    paddingTop: 3,
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    paddingTop: 20,
+  },
+  orderTitle: {
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 20,
+    color: '#5E3360',
+  },
+  orderBody: {
+    fontFamily: 'OpenSans-Regular',
+    fontSize: 18,
+    marginTop: 10,
+    textAlign: 'left',
+    width: '100%',
+  },
+  orderBtn: {
+    marginTop: 40,
+    width: '100%',
+    backgroundColor: '#5E3360',
+    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 10,
+  },
+  orderBtnTxt: {
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 18,
+    color: '#fff',
+  },
+  modalImgContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 30,
+    marginBottom: 30,
+    maxWidth: '95%',
+    maxHeight: '95%',
+    alignSelf: 'center',
+  },
+});

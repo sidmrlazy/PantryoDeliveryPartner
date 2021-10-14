@@ -9,7 +9,7 @@ import messaging from '@react-native-firebase/messaging';
 import 'react-native-gesture-handler';
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
-  console.log(JSON.stringify(remoteMessage));
+  // console.log(JSON.stringify(remoteMessage));
 });
 
 AppRegistry.registerComponent(appName, () => App);
