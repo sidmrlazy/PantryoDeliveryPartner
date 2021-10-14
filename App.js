@@ -33,9 +33,16 @@ const App = () => {
   const routeNameRef = useRef();
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [title, setTitle] = useState('');
-  const [body, setBody] = useState('');
-  const [modalImage, setModalImage] = useState('');
+
+  const [data, setData] = useState('');
+  const [dataTitle, setDataTitle] = useState('');
+  const [dataBody, setDataBody] = useState('');
+  const [dataModalImage, setDataModalImage] = useState('');
+
+  const [notification, setNotification] = useState('');
+  const [notificationTitle, setNotificationTitle] = useState('');
+  const [notificationBody, setNotificationBody] = useState('');
+  const [notificationModalImage, setNotificationModalImage] = useState('');
 
   // const navigationNew = useNavigation();
   const [loading, setLoading] = useState(true);
@@ -135,10 +142,22 @@ const App = () => {
     requestUserPermission();
 
     const unsubscribe = messaging().onMessage(async remoteMessage => {
-      // console.log(JSON.stringify(remoteMessage));
-      setTitle(remoteMessage.data.title);
-      setBody(remoteMessage.data.body);
-      setModalImage(remoteMessage.data.image);
+      // console.log('Notification: ' + remoteMessage.notification);
+      // console.log('Data: ' + remoteMessage.data);
+
+      // setData(remoteMessage.data);
+      // setDataTitle(remoteMessage.data.title);
+      // setDataBody(remoteMessage.data.body);
+      // setDataModalImage(remoteMessage.data.image);
+      console.log(remoteMessage);
+      console.log(remoteMessage.notification.title);
+      console.log(remoteMessage.notification.body);
+      console.log(remoteMessage.notification.image);
+
+      setNotificationTitle(remoteMessage.notification.title);
+      setNotificationBody(remoteMessage.notification.body);
+      setNotificationModalImage(remoteMessage.notification.image);
+
       setModalVisible(true);
     });
 
@@ -234,7 +253,8 @@ const App = () => {
           </Stack.Navigator>
         </NavigationContainer>
       </AuthContext.Provider>
-      {/* ========= Order Modal ========= */}
+
+      {/* ========= Notification Modal ========= */}
       <Modal
         animationType="fade"
         transparent={true}
@@ -244,12 +264,12 @@ const App = () => {
         }}>
         <View style={styles.container}>
           <View style={styles.card}>
-            <Text style={styles.orderTitle}>{title}</Text>
-            {modalImage ? (
+            <Text style={styles.orderTitle}>{notificationTitle}</Text>
+            {notificationModalImage ? (
               <>
                 <View style={styles.modalImgContainer}>
                   <Image
-                    source={{uri: modalImage}}
+                    source={{uri: notificationModalImage}}
                     style={{
                       width: window.width - 70,
                       height: window.height - 700,
@@ -260,7 +280,7 @@ const App = () => {
               </>
             ) : null}
 
-            <Text style={styles.orderBody}>{body}</Text>
+            <Text style={styles.orderBody}>{notificationBody}</Text>
 
             <TouchableOpacity
               style={styles.orderBtn}
@@ -270,7 +290,7 @@ const App = () => {
           </View>
         </View>
       </Modal>
-      {/* ========= Order Modal ========= */}
+      {/* ========= Notification Modal ========= */}
     </>
   );
 };

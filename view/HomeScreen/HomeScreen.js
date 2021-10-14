@@ -262,7 +262,7 @@ const HomeScreen = ({navigation}) => {
     getDeviceToken();
     userProfileData();
 
-    console.log('User Token: ' + FCMToken);
+    // console.log('User Token: ' + FCMToken);
     // getOrderData();
     // getStatus();
     // orderCountToday();
